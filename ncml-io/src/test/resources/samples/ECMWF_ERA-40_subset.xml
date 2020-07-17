@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="ECMWF_ERA-40_subset.nc">
+  <dimension name="longitude" length="144" />
+  <dimension name="latitude" length="73" />
+  <dimension name="time" length="62" isUnlimited="true" />
+  <attribute name="Conventions" value="CF-1.0" />
+  <attribute name="history" value="2004-09-15 17:04:29 GMT by mars2netcdf-0.92" />
+  <variable name="longitude" shape="longitude" type="float">
+    <attribute name="units" value="degrees_east" />
+    <attribute name="long_name" value="longitude" />
+  </variable>
+  <variable name="latitude" shape="latitude" type="float">
+    <attribute name="units" value="degrees_north" />
+    <attribute name="long_name" value="latitude" />
+  </variable>
+  <variable name="time" shape="time" type="int">
+    <attribute name="units" value="hours since 1900-01-01 00:00:0.0" />
+    <attribute name="long_name" value="time" />
+  </variable>
+  <variable name="tcw" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.0013500981745481" />
+    <attribute name="add_offset" type="double" value="44.3250482744756" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="kg m**-2" />
+    <attribute name="long_name" value="Total column water" />
+  </variable>
+  <variable name="tcwv" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.001327110772669" />
+    <attribute name="add_offset" type="double" value="43.5704635546154" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="kg m**-2" />
+    <attribute name="long_name" value="Total column water vapour" />
+  </variable>
+  <variable name="lsp" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="8.03329303850659e-07" />
+    <attribute name="add_offset" type="double" value="0.0263210846406669" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m" />
+    <attribute name="long_name" value="Stratiform precipitation (Large-scale precipitation)" />
+  </variable>
+  <variable name="cp" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="4.82483645945993e-07" />
+    <attribute name="add_offset" type="double" value="0.0158085766594205" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m" />
+    <attribute name="long_name" value="Convective precipitation" />
+  </variable>
+  <variable name="msl" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.1721754257462" />
+    <attribute name="add_offset" type="double" value="99424.2653245743" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="Pa" />
+    <attribute name="long_name" value="Mean sea level pressure" />
+  </variable>
+  <variable name="blh" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.108739383344517" />
+    <attribute name="add_offset" type="double" value="3570.14367055165" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m" />
+    <attribute name="long_name" value="Boundary layer height" />
+  </variable>
+  <variable name="tcc" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.52597204419215e-05" />
+    <attribute name="add_offset" type="double" value="0.499984740280558" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="(0 - 1)" />
+    <attribute name="long_name" value="Total cloud cover" />
+  </variable>
+  <variable name="p10u" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.0007584155104299" />
+    <attribute name="add_offset" type="double" value="-0.440509086897149" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m s**-1" />
+    <attribute name="long_name" value="10 metre U wind component" />
+  </variable>
+  <variable name="p10v" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.000664359461014752" />
+    <attribute name="add_offset" type="double" value="-0.745888358484452" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m s**-1" />
+    <attribute name="long_name" value="10 metre V wind component" />
+  </variable>
+  <variable name="p2t" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.00183558351993706" />
+    <attribute name="add_offset" type="double" value="262.398478747535" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="K" />
+    <attribute name="long_name" value="2 metre temperature" />
+  </variable>
+  <variable name="p2d" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="0.00161126451178551" />
+    <attribute name="add_offset" type="double" value="251.887106386855" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="K" />
+    <attribute name="long_name" value="2 metre dewpoint temperature" />
+  </variable>
+  <variable name="e" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.16702451907916e-07" />
+    <attribute name="add_offset" type="double" value="-0.00232199712964108" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m of water" />
+    <attribute name="long_name" value="Evaporation" />
+  </variable>
+  <variable name="lcc" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.52597204419215e-05" />
+    <attribute name="add_offset" type="double" value="0.499984740279558" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="(0 - 1)" />
+    <attribute name="long_name" value="Low cloud cover" />
+  </variable>
+  <variable name="mcc" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.52597204419215e-05" />
+    <attribute name="add_offset" type="double" value="0.499984740279558" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="(0 - 1)" />
+    <attribute name="long_name" value="Medium cloud cover" />
+  </variable>
+  <variable name="hcc" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.52597204419215e-05" />
+    <attribute name="add_offset" type="double" value="0.499984740280558" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="(0 - 1)" />
+    <attribute name="long_name" value="High cloud cover" />
+  </variable>
+  <variable name="tco3" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="7.69770539069593e-08" />
+    <attribute name="add_offset" type="double" value="0.00736908367510674" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="kg m**-2" />
+    <attribute name="long_name" value="Total column ozone" />
+  </variable>
+  <variable name="tp" shape="time latitude longitude" type="short">
+    <attribute name="scale_factor" type="double" value="1.05226955985452e-06" />
+    <attribute name="add_offset" type="double" value="0.0344776121286335" />
+    <attribute name="_FillValue" type="short" value="-32767" />
+    <attribute name="missing_value" type="short" value="-32767" />
+    <attribute name="units" value="m" />
+    <attribute name="long_name" value="Total precipitation" />
+  </variable>
+</netcdf>

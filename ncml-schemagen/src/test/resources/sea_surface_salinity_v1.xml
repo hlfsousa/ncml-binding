@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf
+  location="http://opendap.jpl.nasa.gov/opendap/allData/aquarius/L3/mapped/V2/7day/SCI/2013/134/Q20131342013140.L3m_7D_SCI_V2.0_SSS_1deg.bz2"
+  xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
+  <dimension name="Latitude" length="180" />
+  <dimension name="Longitude" length="360" />
+  <variable name="Latitude" shape="Latitude" type="float">
+    <values start="89.5" increment="-1" />
+  </variable>
+  <variable name="Longitude" shape="Longitude" type="float">
+    <values start="-179.5" increment="1" />
+  </variable>
+  <variable name="l3m_data" shape="Latitude Longitude" orgName="_l3m_data" type="float" />
+  
+  <group name="metadata">
+    <dimension name="revision_count" isUnlimited="true" />
+    <attribute name="authors" type="string" />
+    <variable name="revision_date" type="long" shape="revision_count" />
+  </group>
+  
+</netcdf>
