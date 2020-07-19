@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -203,8 +205,15 @@ public class NetcdfWriter {
                 if (name.isEmpty()) {
                     name = getDefaultName(accessor);
                 }
-                Group childGroup = writer.addGroup(group, name);
-                createStructure(writer, childGroup, childModel);
+                if (childModel instanceof Map) {
+                    for (Entry<String, Object> entry : ((Map<String,Object>)childModel).entrySet()) {
+                        Group childGroup = writer.addGroup(group, entry.getKey());
+                        createStructure(writer, childGroup, entry.getValue());
+                    }
+                } else {
+                    Group childGroup = writer.addGroup(group, name);
+                    createStructure(writer, childGroup, childModel);
+                }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to read metadata to create group from method " + accessor, e);
             }
@@ -266,11 +275,17 @@ public class NetcdfWriter {
                 if (groupDecl == null || (childModel = accessor.invoke(model)) == null) {
                     return;
                 }
-                String name = groupDecl.name();
-                if (name.isEmpty()) {
-                    name = getDefaultName(accessor);
+                if (childModel instanceof Map) {
+                    for (Entry<String,Object> entry : ((Map<String,Object>)childModel).entrySet()) {
+                        writeContent(writer, group.findGroup(entry.getKey()), entry.getValue());
+                    }
+                } else {
+                    String name = groupDecl.name();
+                    if (name.isEmpty()) {
+                        name = getDefaultName(accessor);
+                    }
+                    writeContent(writer, group.findGroup(name), childModel);
                 }
-                writeContent(writer, group.findGroup(name), childModel);
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to read metadata to create group from method " + accessor, e);
             }

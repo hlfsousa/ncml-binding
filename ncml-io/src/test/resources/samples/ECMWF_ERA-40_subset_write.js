@@ -8,7 +8,16 @@ function random(min, max) {
 }
 
 function createModel(model) {
-	assertNotNull(model.longitude); // interface, let handler create
+	print(model.class.classLoader);
+	if (!model.longitude) {
+		var LongitudeVO = Java.type("hsousa.ncml.io.test.TestNetcdfVO.LongitudeVO");
+		print(LongitudeVO);
+		print(LongitudeVO.classLoader);
+		var longitude = LongitudeVO.create();
+		print(longitude);
+		model.longitude = longitude;
+	}
+	assertNotNull(model.longitude, "empty/longitude"); // interface, let handler create
 	var IntArray = Java.type("int[]");
 	var shape = new IntArray(1);
 	shape[0] = 144;

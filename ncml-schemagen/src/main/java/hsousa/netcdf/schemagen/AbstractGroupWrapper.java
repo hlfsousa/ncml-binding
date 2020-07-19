@@ -24,7 +24,7 @@ public abstract class AbstractGroupWrapper extends AbstractAttributeContainer {
     public abstract List<VariableWrapper> getVariables();
 
     public boolean isMapped() {
-        return getName().endsWith(properties.getProperty("ncml.mappedGroupSuffix", "*"));
+        return false;
     }
 
     public List<AttributeWrapper> getConsolidatedVariableAttributes() {

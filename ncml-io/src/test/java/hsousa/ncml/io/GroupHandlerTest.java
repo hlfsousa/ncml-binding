@@ -46,7 +46,8 @@ public class GroupHandlerTest {
 
     @Test
     public void testGetGroup() {
-        TestFile testFile = (TestFile) Proxy.newProxyInstance(getClass().getClassLoader(),
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        TestFile testFile = (TestFile) Proxy.newProxyInstance(classLoader,
                 new Class<?>[] { TestFile.class }, new GroupHandler(rootGroup, true));
         assertThat(testFile.getChildGroup(), is(notNullValue()));
         assertTrue(testFile.getChildGroup() == testFile.getChildGroup(), "Each call returns a different instance");
@@ -54,7 +55,8 @@ public class GroupHandlerTest {
 
     @Test
     public void testGetVariable() {
-        ChildGroup child = (ChildGroup) Proxy.newProxyInstance(getClass().getClassLoader(),
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ChildGroup child = (ChildGroup) Proxy.newProxyInstance(classLoader,
                 new Class<?>[] { ChildGroup.class }, new GroupHandler(childGroup, true));
         assertThat(child.getSomeVariable(), is(notNullValue()));
         assertTrue(child.getSomeVariable() == child.getSomeVariable(), "Each call returns a different instance");

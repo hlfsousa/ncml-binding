@@ -3,8 +3,13 @@ package hsousa.ncml.io.read;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
 
 import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLGroup;
@@ -75,19 +80,43 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
         if (Array.class.isAssignableFrom(method.getReturnType())) {
             return variable == null ? null : variable.read();
         }
-        return Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { method.getReturnType() },
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
                 new VariableHandler(variable, method.getGenericReturnType(), readOnly));
     }
 
     private Object getGroup(Method method) {
         CDLGroup groupAnnotation = method.getAnnotation(CDLGroup.class);
         String groupName = getActualName(method, groupAnnotation.name());
+        if (isMapped(groupName)) {
+            return groupMap(groupName);
+        }
         Group child = node == null ? null : node.findGroup(groupName);
         if (readOnly && child == null) {
             return null;
         }
-        return Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { method.getReturnType() },
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
                 new GroupHandler(child, readOnly));
+    }
+
+    private Map<String,Object> groupMap(String groupName) {
+        Map<String,Object> map = new LinkedHashMap<>();
+        Pattern regex = Pattern.compile(groupName.substring(groupName.indexOf(':') + 1));
+        for (Group child : node.getGroups()) {
+            Matcher matcher = regex.matcher(child.getShortName());
+            if (matcher.matches()) {
+                map.put(child.getShortName(), child);
+            }
+        }
+        if (readOnly) {
+            map = Collections.unmodifiableMap(map);
+        }
+        return map;
+    }
+
+    private boolean isMapped(String propertyName) {
+        return propertyName.matches("[a-zA-Z_][a-zA-Z_0-9]*:.*");
     }
 
 }

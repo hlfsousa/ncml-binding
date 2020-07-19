@@ -28,8 +28,6 @@ import hsousa.netcdf.schemagen.NCMLCodeGenerator;
 
 public class IOTest {
 
-    protected static int testCounter;
-
     protected static final FileVisitor<Path> DELETE_ALL = new FileVisitor<Path>() {
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -55,7 +53,7 @@ public class IOTest {
             && pathname.getName().endsWith(".java");
     private static final FileFilter DIR_FILTER = pathname -> pathname.isDirectory();
 
-    public void generateModel(URL schemaURL, File sourcesDir, String rootClassName) throws Exception {
+    public void generateModel(URL schemaURL, File sourcesDir, File classesDir, String rootClassName) throws Exception {
         String rootPackage = rootClassName.substring(0, rootClassName.lastIndexOf('.'));
         String rootGroupName = rootClassName.substring(rootPackage.length() + 1);
 
@@ -65,26 +63,16 @@ public class IOTest {
         templates.put("/templates/NetcdfWrapper.java.vtl", (group, destDir) -> {
             return new File(destDir, group.camelCase(group.getName()) + "Wrapper.java");
         });
-//        templates.put("/templates/ValueObject.java.vtl", (group, destDir) -> {
-//            return new File(destDir, group.camelCase(group.getName()) + "VO.java");
-//        });
+        templates.put("/templates/ValueObject.java.vtl", (group, destDir) -> {
+            return new File(destDir, group.camelCase(group.getName()) + "VO.java");
+        });
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage);
         generator.setRootGroupName(rootGroupName);
         generator.generateSources(sourcesDir);
 
         // compile to the current classpath to simplify class loading
-        compileModel(sourcesDir, getClassesDir());
-    }
-
-    private File getClassesDir() throws Exception {
-        String typeName = getClass().getName();
-        String resourcePath = '/' + typeName.replace('.', '/') + ".class";
-        URL resource = getClass().getResource(resourcePath);
-        File resourceFile = new File(resource.toURI());
-        String relativePath = resourcePath.replace('/', File.separatorChar);
-        String dirPath = resourceFile.getAbsolutePath().replace(relativePath, "");
-        return new File(dirPath);
+        compileModel(sourcesDir, classesDir);
     }
 
     protected void compileModel(File sourcesDir, File classesDir) {
