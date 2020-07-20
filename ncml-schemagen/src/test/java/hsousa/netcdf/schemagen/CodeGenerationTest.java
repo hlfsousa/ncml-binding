@@ -7,25 +7,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
-
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -47,34 +34,10 @@ import ucar.ma2.Array;
  *
  */
 @TestMethodOrder(OrderAnnotation.class)
-public class CodeGenerationTest {
+public class CodeGenerationTest extends AbstractCodeGenerationTest {
 
-    private static final FileVisitor<Path> DELETE_ALL = new FileVisitor<Path>() {
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            return file.toFile().delete() ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
-        }
-
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            return FileVisitResult.TERMINATE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            return dir.toFile().delete() ? FileVisitResult.CONTINUE : FileVisitResult.TERMINATE;
-        }
-    };
-    private final FileFilter sourcesFilter = pathname -> pathname.isFile() && pathname.getName().endsWith(".java");
-    private final FileFilter dirFilter = pathname -> pathname.isDirectory();
-
-    private final File sourcesDir = new File("target/test-gen-src");
-    private final File classesDir = new File("target/test-gen-classes");
+    protected final File sourcesDir = new File("target/test-gen-src");
+    protected final File classesDir = new File("target/test-gen-classes");
 
     @Test
     @Order(1)
@@ -85,13 +48,9 @@ public class CodeGenerationTest {
 
         final String rootPackage = "hsousa.netcdf.schemagen.salinity.v2";
         final String rootGroupName = "SeaSurfaceSalinity";
-
+        
         Properties properties = new Properties();
-        NCMLCodeGenerator generator = new NCMLCodeGenerator(getClass().getResource("/sea_surface_salinity_v2.xml"),
-                properties);
-        generator.setModelPackage(rootPackage); // TODO required? move to constructor or snake config
-        generator.setRootGroupName(rootGroupName); // TODO required? move to constructor or snake config
-        generator.generateSources(sourcesDir);
+        generateCode(sourcesDir, rootPackage, rootGroupName, "/sea_surface_salinity_v2.xml", properties);
 
         assertThat("Code was not generated", new File(sourcesDir,
                 rootPackage.replace('.', File.separatorChar) + File.separator + rootGroupName + ".java").isFile(),
@@ -101,18 +60,9 @@ public class CodeGenerationTest {
     @Test
     @Order(2)
     public void testGeneratedCodeCompiles() {
-        List<File> sources = new ArrayList<>();
-        addSources(sourcesDir, sources);
         classesDir.mkdirs();
-        assertThat("Nothing to compile", sources.isEmpty(), is(false));
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        List<String> arguments = new ArrayList<>();
-        arguments.addAll(Arrays.asList("-cp", System.getProperty("java.class.path"),
-                "-g", "-d", classesDir.getAbsolutePath()));
-
-        arguments.addAll(sources.stream().map(file -> file.getPath()).collect(Collectors.toList()));
-
-        assertThat(compiler.run(null, null, null, arguments.toArray(new String[0])), is(0));
+        int compilerResultCode = compileCode(sourcesDir, classesDir);
+        assertThat(compilerResultCode, is(0));
     }
 
     @Test
@@ -194,11 +144,6 @@ public class CodeGenerationTest {
             }
 
         }
-    }
-
-    private void addSources(File dir, List<File> result) {
-        Arrays.asList(dir.listFiles(sourcesFilter)).forEach(file -> result.add(file));
-        Arrays.asList(dir.listFiles(dirFilter)).forEach(subDir -> addSources(subDir, result));
     }
 
 }

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +78,7 @@ public class NCMLCodeGenerator {
         velocity = new VelocityEngine();
         velocity.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
         velocity.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
+        velocity.setProperty("velocimacro.inline.local_scope", true);
         velocity.init();
 
         templates.put("/templates/DataInterface.java.vtl",
@@ -141,6 +143,7 @@ public class NCMLCodeGenerator {
             context.put("group", group);
             Map<String, String> customContent = new HashMap<>();
             context.put("customContent", customContent);
+            context.put("escapeString", (Function<String,String>) str -> str.replaceAll("[\"\\\\]", "\\\\$0"));
 
             File packageDir = new File(destination, group.getPackageName().replace('.', File.separatorChar));
             packageDir.mkdirs();

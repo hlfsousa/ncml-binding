@@ -14,12 +14,29 @@ public class GroupWrapper extends AbstractGroupWrapper {
     private Group group;
     private String groupName;
     private String packageName;
+    private boolean mapped = false;
 
     public GroupWrapper(AbstractGroupWrapper parent, Group group, String packageName, Properties properties) {
         super(parent, properties);
         this.group = group;
-        this.groupName = substitute(parent.getFullName() + '.' + group.getName(), group.getName());
+        if (group.getName().matches("[a-zA-Z0-9]+:.*")) {
+            // mapped group
+            String baseName = group.getName().substring(0, group.getName().indexOf(':'));
+            this.groupName = substitute(parent.getFullName() + '.' + baseName, baseName);
+            mapped = true;
+        } else {
+            this.groupName = substitute(parent.getFullName() + '.' + group.getName(), group.getName());
+        }
         this.packageName = packageName;
+    }
+    
+    @Override
+    public boolean isMapped() {
+        return mapped;
+    }
+    
+    public String getMapExpression() {
+        return group.getName().substring(group.getName().indexOf(':') + 1);
     }
 
     @Override

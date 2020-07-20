@@ -5,9 +5,9 @@ ${customContent.imports}
 #else
 // imports >>
 import hsousa.ncml.io.wrapper.NetcdfWrapper;
-
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.*;
 import ucar.ma2.Array;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
@@ -171,12 +171,46 @@ $!{customContent.additionalFields}
     #end
   #end
 #end
-#if(!${group.attributes.empty})
-  #foreach($attributeWrapper in ${group.attributes})
-    #declareAttribute($attributeWrapper, "group", "")
+#foreach($attributeWrapper in ${group.attributes})
+  #declareAttribute($attributeWrapper, "group", "")
+#end
+#if (!$group.groups.empty)
+    private Map<String, Object> groupCache = new HashMap<String,Object>();
+  #foreach($childGroup in $group.groups)
+    #set($typeName = $childGroup.camelCase($childGroup.name))
+    #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
+    #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
+    #if($childGroup.mapped)
+    public Map<String, ${typeName}> ${accessor}() {
+        return (Map<String, ${typeName}>) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}", key -> {
+            Map<String, ${typeName}> groupMap = new LinkedHashMap<>();
+            Pattern regex = Pattern.compile("${escapeString.apply($childGroup.mapExpression)}");
+            for (Group child : group.getGroups()) {
+                Matcher matcher = regex.matcher(child.getShortName());
+                if (matcher.matches()) {
+                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child));
+                }
+            }
+            return groupMap;
+        });
+    }
+    
+    public void ${modifier}(Map<String, ${typeName}> ${childGroup.dromedaryCase($childGroup.name)}) {
+        throw new UnsupportedOperationException();
+    }
+    #else
+    public ${typeName} ${accessor}() {
+        return groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
+                key -> Optional.ofNullable(group.findGroup(key)).map(${typeName}Wrapper::new).orElse(null));
+    }
+
+    public void ${modifier}(${typeName} ${childGroup.dromedaryCase($childGroup.name)}) {
+        throw new UnsupportedOperationException();
+    }
+    #end
+
   #end
 #end
-
     // additionalMethods >>
 $!{customContent.additionalMethods}
     // << additionalMethods
