@@ -4,7 +4,10 @@ import static java.util.stream.Collectors.joining;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -14,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,40 +156,74 @@ public class NetcdfWriter {
             }
             try {
                 Object varModel = accessor.invoke(model);
-                Object varValue;
-                Class<?> javaType;
-                if (varModel != null && accessor.getReturnType().isInterface()) {
-                    final Method getValue = varModel.getClass().getMethod("getValue");
-                    varValue = getValue.invoke(varModel);
-                    javaType = getValue.getReturnType();
+                if (varModel instanceof Map) {
+                    // variable is mapped, validate names
+                    Pattern nameRegex = Pattern.compile(variableDecl.name().substring(variableDecl.name().indexOf(':') + 1));
+                    Map<String, Object> map = (Map<String, Object>) varModel;
+                    for (Entry<String, Object> entry : map.entrySet()) {
+                        if (!nameRegex.matcher(entry.getKey()).matches()) {
+                            throw new IllegalArgumentException(
+                                    "Variable name " + entry.getKey() + " does not match definition " + variableDecl.name());
+                        }
+                        createSingleVariable(writer, entry.getKey(), group, accessor, variableDecl, entry.getValue());
+                    }
                 } else {
-                    varValue = varModel;
-                    javaType = accessor.getReturnType();
-                }
-                if (varValue == null) {
-                    return;
-                }
-                String name = variableDecl.name();
-                if (name.isEmpty()) {
-                    name = getDefaultName(accessor);
-                }
-                DataType dataType;
-                if (varValue instanceof Array) {
-                    dataType = ((Array)varValue).getDataType();
-                } else {
-                    boolean unsigned = variableDecl.unsigned();
-                    dataType = DataType.getType(javaType, unsigned);
-                }
-                String[] shape = variableDecl.shape();
-                String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
-                Variable variable = writer.addVariable(group, name, dataType, shapeStr);
-                if (accessor.getReturnType().isInterface()) {
-                    createVariableStructure(writer, variable, varModel);
+                    String name = variableDecl.name();
+                    if (name.isEmpty()) {
+                        name = getDefaultName(accessor);
+                    }
+                    createSingleVariable(writer, name, group, accessor, variableDecl, varModel);
                 }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to declare variable from accessor " + accessor, e);
             }
         });
+    }
+
+    private void createSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor, CDLVariable variableDecl,
+            Object varModel) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Object varValue;
+        Class<?> javaType;
+        Class<?> variableType = accessor.getReturnType();
+        if (Map.class.isAssignableFrom(variableType)) {
+            Type genericType = ((ParameterizedType)accessor.getGenericReturnType()).getActualTypeArguments()[1];
+            if (genericType instanceof ParameterizedType) {
+                variableType = (Class<?>) ((ParameterizedType)genericType).getRawType();
+            } else {
+                variableType = (Class<?>) genericType;
+            }
+        }
+        if (varModel != null && hsousa.ncml.declaration.Variable.class.isAssignableFrom(variableType)) {
+            final Method getValue = varModel.getClass().getMethod("getValue");
+            varValue = getValue.invoke(varModel);
+            javaType = getValue.getReturnType();
+            if (javaType == Object.class) {
+                javaType = varValue.getClass();
+            }
+        } else {
+            varValue = varModel;
+            javaType = accessor.getReturnType();
+            if (Map.class.isAssignableFrom(javaType)) {
+                Type valueType = ((ParameterizedType)accessor.getGenericReturnType()).getActualTypeArguments()[1];
+                javaType = (valueType instanceof Class) ? (Class<?>) valueType : null;
+            }
+        }
+        if (varValue == null) {
+            return;
+        }
+        DataType dataType;
+        if (varValue instanceof Array) {
+            dataType = ((Array)varValue).getDataType();
+        } else {
+            boolean unsigned = variableDecl.unsigned();
+            dataType = DataType.getType(javaType, unsigned);
+        }
+        String[] shape = variableDecl.shape();
+        String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
+        Variable variable = writer.addVariable(group, name, dataType, shapeStr);
+        if (accessor.getReturnType().isInterface()) {
+            createVariableStructure(writer, variable, varModel);
+        }
     }
 
     private void createVariableStructure(NetcdfFileWriter writer, Variable variable, Object model) {
@@ -234,37 +272,57 @@ public class NetcdfWriter {
             try {
                 LOGGER.debug("Evaluating variable bound to " + accessor.getDeclaringClass().getSimpleName() + '.' + accessor.getName());
                 Object varModel = accessor.invoke(model);
-                Object varValue;
-                //Class<?> javaType;
-                if (varModel != null && accessor.getReturnType().isInterface()) {
-                    final Method getValue = varModel.getClass().getMethod("getValue");
-                    varValue = getValue.invoke(varModel);
-                    //javaType = getValue.getReturnType();
+                if (varModel instanceof Map) {
+                    // names were validated before
+                    Map<String, Object> map = (Map<String, Object>) varModel;
+                    for (Entry<String, Object> entry : map.entrySet()) {
+                        writeSingleVariable(writer, entry.getKey(), group, accessor, variableDecl, entry.getValue());
+                    }
                 } else {
-                    varValue = varModel;
-                    //javaType = accessor.getReturnType();
+                    String name = variableDecl.name();
+                    if (name.isEmpty()) {
+                        name = getDefaultName(accessor);
+                    }
+                    writeSingleVariable(writer, name, group, accessor, variableDecl, varModel);
                 }
-                if (varValue == null) {
-                    LOGGER.debug("no value, nothing to write");
-                    return;
-                }
-                String name = variableDecl.name();
-                if (name.isEmpty()) {
-                    name = getDefaultName(accessor);
-                }
-                LOGGER.debug("actual var name to be written is " + name);
-                Array ncArray;
-                if (varValue instanceof Array) {
-                    ncArray = (Array) varValue;
-                } else {
-                    ncArray = Array.factory(DataType.getType(varValue.getClass(), variableDecl.unsigned()), new int[] { 1 });
-                    ncArray.setObject(0, varValue);
-                }
-                writer.write(group.findVariable(name), ncArray);
             } catch (ReflectiveOperationException | IOException | InvalidRangeException e) {
-                throw new IllegalStateException("Unable to write variable from accessor " + accessor);
+                throw new IllegalStateException("Unable to write variable from accessor " + accessor, e);
             }
         });
+    }
+
+    private void writeSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
+            CDLVariable variableDecl, Object varModel) throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, IOException, InvalidRangeException {
+        Object varValue;
+        Class<?> variableType = accessor.getReturnType();
+        if (Map.class.isAssignableFrom(variableType)) {
+            Type genericType = ((ParameterizedType)accessor.getGenericReturnType()).getActualTypeArguments()[1];
+            if (genericType instanceof ParameterizedType) {
+                variableType = (Class<?>) ((ParameterizedType)genericType).getRawType();
+            } else {
+                variableType = (Class<?>) genericType;
+            }
+        }
+        if (varModel != null && hsousa.ncml.declaration.Variable.class.isAssignableFrom(variableType)) {
+            final Method getValue = varModel.getClass().getMethod("getValue");
+            varValue = getValue.invoke(varModel);
+        } else {
+            varValue = varModel;
+        }
+        if (varValue == null) {
+            LOGGER.debug("no value, nothing to write");
+            return;
+        }
+        LOGGER.debug("actual var name to be written is " + name);
+        Array ncArray;
+        if (varValue instanceof Array) {
+            ncArray = (Array) varValue;
+        } else {
+            ncArray = Array.factory(DataType.getType(varValue.getClass(), variableDecl.unsigned()), new int[] { 1 });
+            ncArray.setObject(0, varValue);
+        }
+        writer.write(group.findVariable(name), ncArray);
     }
 
     private void writeChildGroups(NetcdfFileWriter writer, Group group, Object model) {

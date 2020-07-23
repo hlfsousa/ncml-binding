@@ -19,7 +19,7 @@ public class GroupWrapper extends AbstractGroupWrapper {
     public GroupWrapper(AbstractGroupWrapper parent, Group group, String packageName, Properties properties) {
         super(parent, properties);
         this.group = group;
-        if (group.getName().matches("[a-zA-Z0-9]+:.*")) {
+        if (group.getName().matches("[a-zA-Z_0-9]+:.*")) {
             // mapped group
             String baseName = group.getName().substring(0, group.getName().indexOf(':'));
             this.groupName = substitute(parent.getFullName() + '.' + baseName, baseName);
@@ -29,12 +29,12 @@ public class GroupWrapper extends AbstractGroupWrapper {
         }
         this.packageName = packageName;
     }
-    
+
     @Override
     public boolean isMapped() {
         return mapped;
     }
-    
+
     public String getMapExpression() {
         return group.getName().substring(group.getName().indexOf(':') + 1);
     }

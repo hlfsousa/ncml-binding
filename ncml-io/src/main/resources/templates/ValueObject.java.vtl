@@ -65,6 +65,29 @@ ${indent}        this.${localVar} = ${localVar};
 ${indent}    }
 
 #end
+#macro(declareScalarVariable $varWrapper)
+  #set($property = ${varWrapper.camelCase($varWrapper.name)})
+  #set($className = $property + "VO")
+  #set($intfName = $property + "Variable")
+  #findType($varWrapper.variable.type)
+    public static class ${className} implements ${intfName}<${typeName}> {
+
+        private ${typeName} value;
+        
+        @Override
+        public ${typeName} getValue() {
+            return value;
+        }
+
+        public void setValue(${typeName} value) {
+            this.value = value;
+        }
+
+  #foreach($attributeWrapper in ${varWrapper.attributes})
+    #declareAttribute($attributeWrapper, "    ")
+  #end
+    }
+#end
 #macro(declareArrayVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
   #set($typeName = $property + "VO")
@@ -72,10 +95,6 @@ ${indent}    }
     public static class ${typeName} implements ${intfName}<Array> {
 
         private Array value;
-        
-        public static ${typeName} create() {
-            return new ${typeName}();
-        }
         
         public ${typeName}() {}
         
@@ -99,7 +118,7 @@ ${indent}    }
 #foreach($varWrapper in $group.variables)
   #if(!${varWrapper.attributes.empty})
     #if(${varWrapper.dimensions.empty})
-    // incomplete template: declare scalar variable ${varWrapper.variable.name}, which contains attributes
+      #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
     #end
@@ -109,33 +128,50 @@ ${indent}    }
 
 #if(!${group.variables.empty})
     // additionalFields >>
-$!{customContent.additionalFields}
+$!{customContent.additionalFields}##
     // << additionalFields
 
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
     #set($localVar = ${varWrapper.dromedaryCase($varWrapper.name)})
     #if(${varWrapper.attributes.empty})
-    private Array ${localVar};
+      #if(${varWrapper.dimensions.empty})
+        #findType($varWrapper.variable.type)
+      #else
+        #set($typeName = "Array")
+      #end
+    private ${typeName} ${localVar};
     
-    public Array get${property}() {
+    public ${typeName} get${property}() {
         return ${localVar};
     }
 
-    public void set${property}(Array ${localVar}) {
+    public void set${property}(${typeName} ${localVar}) {
         this.${localVar} = ${localVar};
     }
 
     #else
+      #set($typeName = $property + "VO")
+      #set($intfName = $property + "Variable")
       #if(${varWrapper.dimensions.empty})
-    // scalar variable $varWrapper.variable.name
-        
+        #findType($varWrapper.variable.type)
       #else
-        #set($typeName = $property + "VO")
-        #set($intfName = $property + "Variable")
+        #set($typeName = "Array")
+      #end
+      #if($varWrapper.mapped)
+    private Map<String, ${intfName}<${typeName}>> ${localVar};
+
+    public Map<String, ${intfName}<${typeName}>> get${property}() {
+        return ${localVar};
+    }
+
+    public void set${property}(Map<String, ${intfName}<${typeName}>> ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+
+      #else
     private ${intfName}<Array> ${localVar};
 
-    @SuppressWarnings("unchecked")
     public ${intfName}<Array> get${property}() {
         return ${localVar};
     }
@@ -150,7 +186,7 @@ $!{customContent.additionalFields}
 #end
 #if(!${group.attributes.empty})
   #foreach($attributeWrapper in ${group.attributes})
-    #declareAttribute($attributeWrapper, "/**/")
+    #declareAttribute($attributeWrapper, "")
   #end
 #end
 #foreach($childGroup in $group.groups)
@@ -183,7 +219,7 @@ $!{customContent.additionalFields}
 #end
 
     // additionalMethods >>
-$!{customContent.additionalMethods}
+$!{customContent.additionalMethods}##
     // << additionalMethods
 
 }

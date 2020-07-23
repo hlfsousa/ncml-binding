@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="ECMWF_ERA-40_subset.nc">
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd"
+    location="ECMWF_ERA-40_subset.nc">
   <dimension name="longitude" length="144" />
   <dimension name="latitude" length="73" />
   <dimension name="time" length="62" isUnlimited="true" />
