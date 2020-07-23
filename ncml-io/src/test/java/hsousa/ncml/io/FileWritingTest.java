@@ -26,7 +26,7 @@ public class FileWritingTest extends IOTest {
     private Throwable failure;
     
     @ParameterizedTest
-    @ValueSource(strings = { "ECMWF_ERA-40_subset", "mapped_properties" })
+    @ValueSource(strings = { /*"ECMWF_ERA-40_subset", */"mapped_properties" })
     public void testLifecycle(String referenceName) throws Throwable {
         // locate all files
         URL schemaURL = getClass().getResource(String.format("/samples/%s.xml", referenceName));

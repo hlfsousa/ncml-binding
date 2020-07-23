@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
   <dimension name="number_of_items" length="10" />
   
   <group name="groupMap:g\d+">
@@ -7,4 +10,9 @@
     <variable name="items" shape="number_of_items" type="int" />
   </group>
   
+  <variable name="temperatureMap:temp_.*" type="float">
+    <attribute name="long_name" type="string" />
+    <attribute name="units" type="string" value="Celsius degrees" />
+  </variable>
+
 </netcdf>

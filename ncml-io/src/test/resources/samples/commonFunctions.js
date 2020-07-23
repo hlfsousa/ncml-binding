@@ -3,7 +3,7 @@ load("nashorn:mozilla_compat.js");
 function assertEquals(actual, expected, message) {
     var msg = "Expected true, but got " + actual;
 	if (message)
-	    msg += ". " + message;
+	    msg += ": " + message;
 	if (expected != actual) {
 		throw msg;
 	}
@@ -12,14 +12,14 @@ function assertEquals(actual, expected, message) {
 function assertTrue(value, message) {
     var msg = "Expected true, but got " + value;
     if (value != true) {
-        throw message ? msg + " / " + message  : msg;
+        throw message ? msg + ": " + message  : msg;
     }
 }
 
 function assertNotNull(value, message) {
     var msg = "Expected something, but got nothing";
     if (value == undefined || value == null) {
-        throw message ? msg : msg + " / " + message;
+        throw message ? msg + ": " + message : msg;
     }
 }
 

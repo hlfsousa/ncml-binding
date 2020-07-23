@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="tos_O1_2001-2002.nc">
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd"
+    location="tos_O1_2001-2002.nc">
   <dimension name="lon" length="180" />
   <dimension name="lat" length="170" />
   <dimension name="time" length="24" isUnlimited="true" />

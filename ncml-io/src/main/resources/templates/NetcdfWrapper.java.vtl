@@ -7,8 +7,9 @@ ${customContent.imports}
 import hsousa.ncml.io.wrapper.NetcdfWrapper;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.*;
-import ucar.ma2.Array;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import ucar.ma2.*;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
 // << imports
@@ -51,7 +52,7 @@ public class ${group.camelCase($group.name)}Wrapper extends NetcdfWrapper implem
     #set($typeName = "") // TODO locate enumTypedef
   #end
 #end
-#macro(declareAttribute $attributeWrapper $netcdfObject $indent) ## TODO set indentation
+#macro(declareAttribute $attributeWrapper $netcdfObject $indent)
   #set($property = ${attributeWrapper.camelCase($attributeWrapper.name)})
   #set($localVar = ${attributeWrapper.dromedaryCase($attributeWrapper.name)})
   #findType(${attributeWrapper.attribute.type})
@@ -71,6 +72,51 @@ ${indent}    public void set${property}(${typeName} ${localVar}) {
 ${indent}        throw new UnsupportedOperationException();
 ${indent}    }
 
+#end
+#macro(declareScalarVariable $varWrapper)
+  #set($property = ${varWrapper.camelCase($varWrapper.name)})
+  #set($className = $property + "Wrapper")
+  #set($intfName = $property + "Variable")
+  #findType($varWrapper.variable.type)
+    private class ${className} implements ${intfName}<${typeName}> {
+
+        private final Variable variable;
+        private ${typeName} value;
+        
+        public ${className}(Variable variable) {
+            this.variable = variable;
+        }
+
+        @Override
+        public ${typeName} getValue() {
+            if (value == null) {
+            	Array ncArray;
+            	DataType dataType = variable.getDataType();
+            	if (dataType.isNumeric()) {
+                    ncArray = getNumericArray("${varWrapper.variable.name}");
+                } else if (dataType.isString()) {
+                    try {
+                        ncArray = variable.read();
+                    } catch (IOException e) {
+                        throw new IllegalStateException("Unable to read variable value", e);
+                    }
+                } else {
+                    throw new IllegalStateException("not implemented yet :(");
+                }
+                value = (${typeName}) ncArray.getObject(Index.scalarIndexImmutable);
+            }
+            return value;
+        }
+
+        public void setValue(${typeName} value) {
+            throw new UnsupportedOperationException();
+        }
+        
+
+  #foreach($attributeWrapper in ${varWrapper.attributes})
+    #declareAttribute($attributeWrapper, "variable", "    ")
+  #end
+    }
 #end
 #macro(declareArrayVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
@@ -108,7 +154,7 @@ ${indent}    }
 #foreach($varWrapper in $group.variables)
   #if(!${varWrapper.attributes.empty})
     #if(${varWrapper.dimensions.empty})
-    // incomplete template: declare scalar variable ${varWrapper.variable.name}, which contains attributes
+      #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
     #end
@@ -123,14 +169,44 @@ ${indent}    }
 #if(!${group.variables.empty})
     private Map<String, Object> variableCache = new HashMap<String,Object>();
     
-    // additionalFields >>
-$!{customContent.additionalFields}
+    // additionalFields >>$!{customContent.additionalFields}
     // << additionalFields
 
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
     #if(${varWrapper.attributes.empty})
-    // no attributes array
+      #if($varWrapper.mapped)
+    @SuppressWarnings("unchecked")
+    public Map<String, Array> get${property}() {
+        return (Array) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
+            Pattern regex = varName.substring(varName.indexOf(':') + 1);
+            Map<String, Array> value = new LinkedHashMap<>();
+            for (Variable variable : group.getVariables()) {
+                Matcher matcher = regex.matcher(variable.getShortName());
+                if (matcher.matches()) {
+                    Array ncArray;
+                    if (variable.getDataType().isNumeric()) {
+                        ncArray = getNumericArray(variable.getShortName());
+                    } else {
+                        try {
+                            ncArray = variable.read();
+                        } catch (IOException e) {
+                            throw new IllegalStateException("Unable to read variable " + variable.getShortName(), e);
+                        }
+                    }
+                    value.put(variable.getName(), ncArray);
+                }
+            }
+            return value;
+        });
+    }
+    
+    public void set${property}(Map<String, Array> ${varWrapper.dromedaryCase($varWrapper.name)}) {
+        throw new UnsupportedOperationException();
+    }
+
+      #else
+    @SuppressWarnings("unchecked")
     public Array get${property}() {
         return (Array) variableCache.computeIfAbsent("${varWrapper.variable.name}",
                 varName -> Optional.ofNullable(group.findVariable(varName))
@@ -148,13 +224,62 @@ $!{customContent.additionalFields}
         throw new UnsupportedOperationException();
     }
 
+      #end
     #else
       #if(${varWrapper.dimensions.empty})
-    // scalar variable $varWrapper.variable.name
-        
+        #set($className = $property + "Wrapper")
+        #set($intfName = $property + "Variable")
+        #findType($varWrapper.variable.type)
+        #if($varWrapper.mapped)
+    public Map<String, ${intfName}<${typeName}>> get${property}() {
+        return (Map<String, ${intfName}<${typeName}>>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
+            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Map<String, ${intfName}<${typeName}>> value = new LinkedHashMap<>();
+            for (Variable variable : group.getVariables()) {
+                Matcher matcher = regex.matcher(variable.getShortName());
+                if (matcher.matches()) {
+                    value.put(variable.getName(), new ${className}(variable));
+                }
+            }
+            return value;
+        });
+    }
+    
+    public void set${property}(Map<String, ${intfName}<${typeName}>> ${varWrapper.dromedaryCase($varWrapper.name)}) {
+        throw new UnsupportedOperationException();
+    }
+
+        #else
+    @SuppressWarnings("unchecked")
+    public ${intfName}<${typeName}> get${property}() {
+        return (${intfName}<Array>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
+                varName -> Optional.ofNullable(group.findVariable(varName))
+                        .map(${typeName}::new)
+                        .orElse(null));
+    }
+
+    public void set${property}(${intfName}<Array> ${varWrapper.dromedaryCase($varWrapper.name)}) {
+        throw new UnsupportedOperationException();
+    }
+
+        #end
       #else
         #set($typeName = $property + "Wrapper")
         #set($intfName = $property + "Variable")
+        #if($varWrapper.mapped)
+    @SuppressWarnings("unchecked")
+    public Map<String, ${intfName}<Array>> get${property}() {
+        return (Map<String, ${intfName}<Array>>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
+                varName -> Optional.ofNullable(group.findVariable(varName))
+                        .map(${typeName}::new)
+                        .orElse(null));
+    }
+
+    public void set${property}(${intfName}<Array> ${varWrapper.dromedaryCase($varWrapper.name)}) {
+        throw new UnsupportedOperationException();
+    }
+
+        #else
     @SuppressWarnings("unchecked")
     public ${intfName}<Array> get${property}() {
         return (${intfName}<Array>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
@@ -167,6 +292,7 @@ $!{customContent.additionalFields}
         throw new UnsupportedOperationException();
     }
 
+        #end
       #end
     #end
   #end
@@ -176,11 +302,13 @@ $!{customContent.additionalFields}
 #end
 #if (!$group.groups.empty)
     private Map<String, Object> groupCache = new HashMap<String,Object>();
+    
   #foreach($childGroup in $group.groups)
     #set($typeName = $childGroup.camelCase($childGroup.name))
     #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
     #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
     #if($childGroup.mapped)
+    @SuppressWarnings("unchecked")
     public Map<String, ${typeName}> ${accessor}() {
         return (Map<String, ${typeName}>) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}", key -> {
             Map<String, ${typeName}> groupMap = new LinkedHashMap<>();
@@ -211,8 +339,7 @@ $!{customContent.additionalFields}
 
   #end
 #end
-    // additionalMethods >>
-$!{customContent.additionalMethods}
+    // additionalMethods >>$!{customContent.additionalMethods}
     // << additionalMethods
 
 }

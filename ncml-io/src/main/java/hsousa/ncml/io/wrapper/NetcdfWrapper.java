@@ -54,6 +54,10 @@ public abstract class NetcdfWrapper {
         if (variable == null) {
             return null;
         }
+        return getNumericArray(variable);
+    }
+
+    private Array getNumericArray(Variable variable) {
         try {
             Array value = variable.read();
             Number missingValue = null;
@@ -76,7 +80,7 @@ public abstract class NetcdfWrapper {
             }
             return value;
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to read variable " + shortName);
+            throw new IllegalStateException("Unable to read variable " + variable.getShortName());
         }
     }
     

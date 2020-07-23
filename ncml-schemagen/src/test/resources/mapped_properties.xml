@@ -7,4 +7,9 @@
     <variable name="items" shape="number_of_items" type="int" />
   </group>
   
+  <variable name="temperatureMap:temp_.*" type="float">
+    <attribute name="long_name" type="string" />
+    <attribute name="units" type="string" value="Celsius degrees" />
+  </variable>
+
 </netcdf>
