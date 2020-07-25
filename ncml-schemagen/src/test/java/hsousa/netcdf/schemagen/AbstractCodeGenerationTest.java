@@ -12,8 +12,10 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import javax.tools.JavaCompiler;
@@ -52,6 +54,9 @@ public class AbstractCodeGenerationTest {
     protected void generateCode(File sourcesDir, String rootPackage, String rootGroupName, String headerPath, Properties properties) throws Exception {
         NCMLCodeGenerator generator = new NCMLCodeGenerator(getClass().getResource(headerPath),
                 properties);
+        HashMap<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
+        templates.remove(NCMLCodeGenerator.TEMPLATE_NETCDF_WRAPPER);
+        generator.setTemplates(templates);
         generator.setModelPackage(rootPackage); // TODO required? move to constructor or snake config
         generator.setRootGroupName(rootGroupName); // TODO required? move to constructor or snake config
         generator.generateSources(sourcesDir);

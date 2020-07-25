@@ -2,7 +2,7 @@ package ${group.packageName};
 
 // imports >>
 #if ($customContent.imports)
-${customContent.imports}
+${customContent.imports}##
 #else
 import hsousa.ncml.annotation.*;
 import hsousa.ncml.declaration.*;
@@ -24,6 +24,7 @@ import ucar.ma2.Array;
 #end
 })
 public interface ${group.camelCase($group.name)}  {
+#set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
 #macro(findType $type)
   #set($unsigned = false)
   #if($type == "string" || $type == "String")
@@ -69,11 +70,15 @@ public interface ${group.camelCase($group.name)}  {
       #set($attribute = $attributeWrapper.attribute)
       #set($accessor = "get" + $attributeWrapper.camelCase($attributeWrapper.name))
       #set($modifier = "set" + $attributeWrapper.camelCase($attributeWrapper.name))
+      #set($localVar = $attributeWrapper.dromedaryCase($attributeWrapper.name))
+      #if($reservedWords.contains($localVar))
+        #set($localVar = "_" + $localVar)
+      #end
       #findType($attribute.type)
         @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
         ${typeName} ${accessor}();
 
-        void ${modifier}(${typeName} ${attributeWrapper.dromedaryCase($attributeWrapper.name)});
+        void ${modifier}(${typeName} ${localVar});
 
     #end
     }
@@ -85,11 +90,15 @@ public interface ${group.camelCase($group.name)}  {
   #set($attribute = $attributeWrapper.attribute)
   #set($accessor = "get" + $attributeWrapper.camelCase($attributeWrapper.name))
   #set($modifier = "set" + $attributeWrapper.camelCase($attributeWrapper.name))
+  #set($localVar = ${attributeWrapper.dromedaryCase($attributeWrapper.name)})
+  #if($reservedWords.contains($localVar))
+    #set($localVar = "_" + $localVar)
+  #end
   #findType($attribute.type)
-    @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${attribute.value}"#end)
+    @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
     ${typeName} ${accessor}();
 
-    void ${modifier}(${typeName} ${attributeWrapper.dromedaryCase($attributeWrapper.name)});
+    void ${modifier}(${typeName} ${localVar});
 
 #end
 #foreach($variableContainer in $group.variables)
@@ -140,7 +149,7 @@ public interface ${group.camelCase($group.name)}  {
 
 #end
     // methods >>
-$!{customContent.methods}
+$!{customContent.methods}##
     // << methods
 
 }
