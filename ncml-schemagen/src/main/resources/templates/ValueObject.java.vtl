@@ -1,0 +1,235 @@
+package ${group.packageName};
+
+#if ($customContent.imports)
+${customContent.imports}
+#else
+// imports >>
+import java.util.*;
+import ucar.ma2.Array;
+import ucar.nc2.Group;
+import ucar.nc2.Variable;
+// << imports
+#end
+
+public class ${group.camelCase($group.name)}VO implements ${group.camelCase($group.name)} {
+#set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
+#macro(findType $type)
+  #set($unsigned = false)
+  #if($type == "string" || $type == "String")
+    #set($typeName = "String")
+  #elseif($type == "byte" || $type == "ubyte")
+    #set($typeName = "Byte")
+    #set($unsigned = $type.charAt(0) == 'u')
+  #elseif($type == "char")
+    #set($typeName = "Character")
+  #elseif($type == "short" || $type == "ushort")
+    #set($typeName = "Short")
+    #set($unsigned = $type.charAt(0) == 'u')
+  #elseif($type == "int" || $type == "uint")
+    #set($typeName = "Integer")
+    #set($unsigned = $type.charAt(0) == 'u')
+  #elseif($type == "long" || $type == "ulong")
+    #set($typeName = "Long")
+    #set($unsigned = $type.charAt(0) == 'u')
+  #elseif($type == "float")
+    #set($typeName = "Float")
+  #elseif($type == "double")
+    #set($typeName = "Double")
+  #elseif($type == "Structure")
+    #set($typeName = "Object") // TODO locate type
+  #elseif($type == "Sequence")
+    #set($typeName = "") // TODO Sequence
+  #elseif($type == "opaque")
+    #set($typeName = "Object") // TODO locate type
+  #elseif($type == "enum1")
+    #set($typeName = "") // TODO locate enumTypedef
+  #elseif($type == "enum2")
+    #set($typeName = "") // TODO locate enumTypedef
+  #elseif($type == "enum4")
+    #set($typeName = "") // TODO locate enumTypedef
+  #end
+#end
+#macro(declareAttribute $attributeWrapper $indent)
+  #set($property = ${attributeWrapper.camelCase($attributeWrapper.name)})
+  #set($localVar = ${attributeWrapper.dromedaryCase($attributeWrapper.name)})
+  #if($reservedWords.contains($localVar))
+    #set($localVar = "_" + $localVar)
+  #end
+  #findType(${attributeWrapper.attribute.type})
+${indent}    private ${typeName} ${localVar};
+
+${indent}    @Override
+${indent}    public ${typeName} get${property}() {
+${indent}        return ${localVar};
+${indent}    }
+
+${indent}    @Override
+${indent}    public void set${property}(${typeName} ${localVar}) {
+${indent}        this.${localVar} = ${localVar};
+${indent}    }
+
+#end
+#macro(declareScalarVariable $varWrapper)
+  #set($property = ${varWrapper.camelCase($varWrapper.name)})
+  #set($className = $property + "VO")
+  #set($intfName = $property + "Variable")
+  #findType($varWrapper.variable.type)
+    public static class ${className} implements ${intfName}<${typeName}> {
+
+        private ${typeName} value;
+        
+        @Override
+        public ${typeName} getValue() {
+            return value;
+        }
+
+        public void setValue(${typeName} value) {
+            this.value = value;
+        }
+
+  #foreach($attributeWrapper in ${varWrapper.attributes})
+    #declareAttribute($attributeWrapper, "    ")
+  #end
+    }
+#end
+#macro(declareArrayVariable $varWrapper)
+  #set($property = ${varWrapper.camelCase($varWrapper.name)})
+  #set($typeName = $property + "VO")
+  #set($intfName = $property + "Variable")
+    public static class ${typeName} implements ${intfName}<Array> {
+
+        private Array value;
+        
+        public ${typeName}() {}
+        
+        @Override
+        public Array getValue() {
+            return value;
+        }
+        
+        @Override
+        public void setValue(Array value) {
+            this.value = value;
+        }
+
+  #foreach($attributeWrapper in ${varWrapper.attributes})
+    #declareAttribute($attributeWrapper, "    ")
+  #end
+    }
+
+#end
+
+#foreach($varWrapper in $group.variables)
+  #if(!${varWrapper.attributes.empty})
+    #if(${varWrapper.dimensions.empty})
+      #declareScalarVariable($varWrapper)
+    #else
+      #declareArrayVariable($varWrapper)
+    #end
+
+  #end
+#end
+
+#if(!${group.variables.empty})
+    // additionalFields >>
+$!{customContent.additionalFields}##
+    // << additionalFields
+
+  #foreach($varWrapper in $group.variables)
+    #set($property = ${varWrapper.camelCase($varWrapper.name)})
+    #set($localVar = ${varWrapper.dromedaryCase($varWrapper.name)})
+    #if($reservedWords.contains($localVar))
+      #set($localVar = "_" + $localVar)
+    #end
+    #if(${varWrapper.attributes.empty})
+      #if(${varWrapper.dimensions.empty})
+        #findType($varWrapper.variable.type)
+      #else
+        #set($typeName = "Array")
+      #end
+    private ${typeName} ${localVar};
+    
+    public ${typeName} get${property}() {
+        return ${localVar};
+    }
+
+    public void set${property}(${typeName} ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+
+    #else
+      #set($typeName = $property + "VO")
+      #set($intfName = $property + "Variable")
+      #if(${varWrapper.dimensions.empty})
+        #findType($varWrapper.variable.type)
+      #else
+        #set($typeName = "Array")
+      #end
+      #if($varWrapper.mapped)
+    private Map<String, ${intfName}<${typeName}>> ${localVar};
+
+    public Map<String, ${intfName}<${typeName}>> get${property}() {
+        return ${localVar};
+    }
+
+    public void set${property}(Map<String, ${intfName}<${typeName}>> ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+
+      #else
+    private ${intfName}<${typeName}> ${localVar};
+
+    public ${intfName}<${typeName}> get${property}() {
+        return ${localVar};
+    }
+
+    public void set${property}(${intfName}<${typeName}> ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+
+      #end
+    #end
+  #end
+#end
+#if(!${group.attributes.empty})
+  #foreach($attributeWrapper in ${group.attributes})
+    #declareAttribute($attributeWrapper, "")
+  #end
+#end
+#foreach($childGroup in $group.groups)
+  #set($typeName = $childGroup.camelCase($childGroup.name))
+  #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
+  #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
+  #set($localVar = ${childGroup.dromedaryCase($childGroup.name)})
+  #if($reservedWords.contains($localVar))
+    #set($localVar = "_" + $localVar)
+  #end
+  #if($childGroup.mapped)
+    private Map<String, ${typeName}> ${localVar};
+  
+    public Map<String, ${typeName}> ${accessor}() {
+        return ${localVar};
+    }
+    
+    public void ${modifier}(Map<String, ${typeName}> ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+  #else
+    private ${typeName} ${localVar};
+  
+    public ${typeName} ${accessor}() {
+        return ${localVar};
+    }
+    
+    public void ${modifier}(${typeName} ${localVar}) {
+        this.${localVar} = ${localVar};
+    }
+  #end
+
+#end
+
+    // additionalMethods >>
+$!{customContent.additionalMethods}##
+    // << additionalMethods
+
+}

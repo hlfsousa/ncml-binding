@@ -52,6 +52,10 @@ import edu.ucar.unidata.netcdf.ncml.Netcdf;
  * @author Henrique Sousa
  */
 public class NCMLCodeGenerator {
+
+    public static final String TEMPLATE_VALUE_OBJECT = "/templates/ValueObject.java.vtl";
+    public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/NetcdfWrapper.java.vtl";
+    public static final String TEMPLATE_DATA_INTERFACE = "/templates/DataInterface.java.vtl";
     
     private static final Logger LOG = LoggerFactory.getLogger(NCMLCodeGenerator.class);
 
@@ -81,8 +85,12 @@ public class NCMLCodeGenerator {
         velocity.setProperty("velocimacro.inline.local_scope", true);
         velocity.init();
 
-        templates.put("/templates/DataInterface.java.vtl",
+        templates.put(TEMPLATE_DATA_INTERFACE,
                 (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + ".java"));
+        templates.put(TEMPLATE_NETCDF_WRAPPER,
+                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "Wrapper.java"));
+        templates.put(TEMPLATE_VALUE_OBJECT,
+                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "VO.java"));
     }
 
     /**
@@ -143,7 +151,7 @@ public class NCMLCodeGenerator {
             context.put("group", group);
             Map<String, String> customContent = new HashMap<>();
             context.put("customContent", customContent);
-            context.put("escapeString", (Function<String,String>) str -> str.replaceAll("[\"\\\\]", "\\\\$0"));
+            context.put("escapeString", (Function<String,String>) str -> str.replaceAll("[\"\\\\]", "\\\\$0").replace("\n", "\\n"));
 
             File packageDir = new File(destination, group.getPackageName().replace('.', File.separatorChar));
             packageDir.mkdirs();
