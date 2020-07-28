@@ -10,6 +10,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
@@ -61,13 +64,17 @@ public class NetcdfWriter {
         if (rootAnnotation == null) {
             throw new IllegalArgumentException("Object is not annotated with @CDLRoot");
         }
+        
+        Map<String,List<Dimension>> declaredDimensions = new HashMap<>();
+        collectDimensions(model, declaredDimensions, "/");
+        
         LOGGER.debug("Writing to " + location);
         // assuming new file or overwrite
         NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4, location.getAbsolutePath());
         // create root group
         Group rootGroup = writer.addGroup(null, null);
         LOGGER.debug("Creating structure");
-        createStructure(writer, rootGroup, model);
+        createStructure(writer, rootGroup, model, declaredDimensions);
         writer.create();
         LOGGER.debug("Writing content");
         writeContent(writer, rootGroup, model);
@@ -75,6 +82,101 @@ public class NetcdfWriter {
         return writer.getNetcdfFile();
     }
     
+    private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, String localPath) {
+        for (Class<?> type : getFullHierarchy(model)) {
+            List<CDLDimension> dimensionsList = new ArrayList<>();
+            Optional.ofNullable(type.getAnnotation(CDLDimensions.class))
+            .ifPresent(dims -> dimensionsList.addAll(Arrays.asList(dims.value())));
+            Optional.ofNullable(type.getAnnotation(CDLDimension.class)).ifPresent(dimensionsList::add);
+            for (CDLDimension localDimension : dimensionsList) {
+                declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>())
+                .add(new Dimension(localDimension.name(), localDimension.length(), true,
+                        localDimension.unlimited(), localDimension.variableLength()));
+            }
+        }
+        
+        forEachAccessor(model, accessor -> {
+            CDLGroup groupAnnotation = accessor.getAnnotation(CDLGroup.class);
+            if (groupAnnotation != null) {
+                // is it a group? collect dimensions and recurse
+                try {
+                    Object value = accessor.invoke(model);
+                    if (value instanceof Map) {
+                        for (Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
+                            collectDimensions(entry.getValue(), declaredDimensions, localPath + entry.getKey() + '/');
+                        }
+                    } else if (value != null) {
+                        String name = groupAnnotation.name();
+                        if (name.isEmpty()) {
+                            name = accessor.getName().substring("get".length());
+                        }
+                        collectDimensions(value, declaredDimensions, localPath + name + '/');
+                    }
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalStateException(e);
+                }
+                
+                return; // accessor dealt with
+            }
+            CDLVariable variableAnnotation = accessor.getAnnotation(CDLVariable.class);
+            if (variableAnnotation != null) {
+                Object value;
+                try {
+                    value = accessor.invoke(model);
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    throw new IllegalStateException(e);
+                }
+                if (!(value instanceof hsousa.ncml.declaration.Variable)) {
+                    return;
+                }
+                
+                hsousa.ncml.declaration.Variable<?> variable = (hsousa.ncml.declaration.Variable<?>) value;
+                if (variable != null && variable.getDimensions() != null) {
+                    for (Dimension dimension : variable.getDimensions()) {
+                        updateDimension(declaredDimensions, localPath, dimension);
+                    }
+                }
+                return;
+            }
+        });
+        
+    }
+
+    private void updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
+            Dimension dimension) {
+        String scope = localPath;
+        while (!scope.equals("")) {
+            List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
+            boolean found = false;
+            for (Iterator<Dimension> dimIterator = dimensionsInScope.iterator(); dimIterator.hasNext() && !found; ) {
+                Dimension existing = dimIterator.next();
+                if (existing.getShortName().equals(dimension.getShortName())) {
+                    // TODO use equals in version 6
+                    // assume all properties but size are equal
+                    if (!existing.isVariableLength() && existing.getLength() != dimension.getLength()) {
+                        LOGGER.debug("Dropping declared dimension for replacement: {}", existing);
+                        dimIterator.remove();
+                        found = true;
+                    } else {
+                        return;
+                    }
+                }
+            }
+            if (found) {
+                // add dimension to list
+                LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
+                dimensionsInScope.add(dimension);
+                return;
+            }
+            scope = scope.replaceAll("[^/]*+/$", "");
+        }
+        
+        List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>());
+        LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
+        dimensionsInScope.add(dimension);
+
+    }
+
     private Set<Class<?>> getFullHierarchy(Object obj) {
         Set<Class<?>> hierarchy = new LinkedHashSet<>();
         for (Class<?> type = obj.getClass(); !type.equals(Object.class) && type != null; type = type.getSuperclass()) {
@@ -84,29 +186,21 @@ public class NetcdfWriter {
         return hierarchy;
     }
 
-    private void createStructure(NetcdfFileWriter writer, Group group, Object model) {
-        createLocalDimensions(writer, group, model);
+    private void createStructure(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
         createAttributes(writer, group, model);
+        createLocalDimensions(writer, group, model, declaredDimensions);
         createVariables(writer, group, model);
-        createGroups(writer, group, model);
+        createGroups(writer, group, model, declaredDimensions);
     }
 
-    private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model) {
-        for (Class<?> intf : model.getClass().getInterfaces()) {
-            List<CDLDimension> declaredDimensions = new ArrayList<>();
-            CDLDimensions dimensions = intf.getAnnotation(CDLDimensions.class);
-            if (dimensions != null) {
-                declaredDimensions.addAll(Arrays.asList(dimensions.value()));
-            }
-            Optional.ofNullable(intf.getAnnotation(CDLDimension.class)).ifPresent(declaredDimensions::add);
-            for (CDLDimension dimension : declaredDimensions) {
-                final boolean variableLength = dimension.variableLength();
-                int length = dimension.length();
-                if (variableLength) {
-                    length = -1;
-                }
-                writer.addDimension(group, dimension.name(), length, dimension.unlimited(), variableLength);
-            }
+    private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
+        String fullName = group.getFullName() + "/";
+        if (!fullName.startsWith("/")) {
+            fullName = '/' + fullName;
+        }
+        List<Dimension> dimensions = declaredDimensions.get(fullName);
+        if (dimensions != null) {
+            dimensions.forEach(group::addDimension);
         }
     }
 
@@ -196,6 +290,9 @@ public class NetcdfWriter {
         if (varModel != null && hsousa.ncml.declaration.Variable.class.isAssignableFrom(variableType)) {
             final Method getValue = varModel.getClass().getMethod("getValue");
             varValue = getValue.invoke(varModel);
+            if (varValue == null) {
+                return;
+            }
             javaType = getValue.getReturnType();
             if (javaType == Object.class) {
                 javaType = varValue.getClass();
@@ -231,7 +328,7 @@ public class NetcdfWriter {
         createAttributes(writer, model, attribute -> writer.addVariableAttribute(variable, attribute));
     }
 
-    private void createGroups(NetcdfFileWriter writer, Group group, Object model) {
+    private void createGroups(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
         forEachAccessor(model, accessor -> {
             try {
                 CDLGroup groupDecl = accessor.getAnnotation(CDLGroup.class);
@@ -246,11 +343,11 @@ public class NetcdfWriter {
                 if (childModel instanceof Map) {
                     for (Entry<String, Object> entry : ((Map<String,Object>)childModel).entrySet()) {
                         Group childGroup = writer.addGroup(group, entry.getKey());
-                        createStructure(writer, childGroup, entry.getValue());
+                        createStructure(writer, childGroup, entry.getValue(), declaredDimensions);
                     }
                 } else {
                     Group childGroup = writer.addGroup(group, name);
-                    createStructure(writer, childGroup, childModel);
+                    createStructure(writer, childGroup, childModel, declaredDimensions);
                 }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to read metadata to create group from method " + accessor, e);

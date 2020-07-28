@@ -26,7 +26,8 @@ function createModel(model) {
     model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
     var group = new Packages.hsousa.ncml.io.test.GroupMapVO();
     group.name = "g01";
-    group.items = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
+    group.items = new Packages.hsousa.ncml.io.test.GroupMapVO.ItemsVO();
+    group.items.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
         it.setIntNext(Math.round(random(0, 100)));
     });
     model.groupMap = new java.util.LinkedHashMap();
@@ -57,8 +58,8 @@ function verifyCreatedFile(netcdf, model) {
         var groupObj = actualGroupMap[key];
         assertNotNull(groupObj, "/groupMap[" + key + "]");
         assertEquals(groupObj.name, key, "/groupMap[" + key + "]/name");
-        var actualItems = groupObj.items;
-        assertNotNull(actualItems, "/groupMap[" + key + "]/items")
+        var actualItems = groupObj.items.value;
+        assertNotNull(actualItems, "/groupMap[" + key + "]/items/value")
     }
     
     var expectedVarMap = model.temperatureMap;
@@ -83,7 +84,8 @@ function editModel(netcdf) {
     for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
         it.setIntNext(Math.round(random(0, 100)));
     }
-    group.items = ncArray;
+    group.items = new Packages.hsousa.ncml.io.test.GroupMapVO.ItemsVO();
+    group.items.value = ncArray;
     netcdf.groupMap["g02"] = group;
 
     var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
