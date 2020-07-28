@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import ucar.ma2.*;
+import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
 // << imports
@@ -115,7 +116,14 @@ ${indent}    }
         public void setValue(${typeName} value) {
             throw new UnsupportedOperationException();
         }
-        
+
+        public List<Dimension> getDimensions() {
+            return Collections.emptyList();
+        }
+
+        public void setDimensions(List<Dimension> dimensions) {
+            throw new UnsupportedOperationException("This is a scalar variable");
+        }
 
   #foreach($attributeWrapper in ${varWrapper.attributes})
     #declareAttribute($attributeWrapper, "variable", "    ")
@@ -148,6 +156,14 @@ ${indent}    }
             throw new UnsupportedOperationException();
         }
 
+        public List<Dimension> getDimensions() {
+            return variable.getDimensions();
+        }
+
+        public void setDimensions(List<Dimension> dimensions) {
+            throw new UnsupportedOperationException();
+        }
+
   #foreach($attributeWrapper in ${varWrapper.attributes})
     #declareAttribute($attributeWrapper, "variable", "    ")
   #end
@@ -156,7 +172,7 @@ ${indent}    }
 #end
 
 #foreach($varWrapper in $group.variables)
-  #if(!${varWrapper.attributes.empty})
+  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
     #if(${varWrapper.dimensions.empty})
       #declareScalarVariable($varWrapper)
     #else
@@ -178,13 +194,14 @@ ${indent}    }
 
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
-    #if(${varWrapper.attributes.empty})
+    #if($varWrapper.attributes.empty && $varWrapper.dimensions.empty)
+      #findType($varWrapper.variable.type)
       #if($varWrapper.mapped)
     @SuppressWarnings("unchecked")
-    public Map<String, Array> get${property}() {
+    public Map<String, ${typeName}> get${property}() {
         return (Array) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
             Pattern regex = varName.substring(varName.indexOf(':') + 1);
-            Map<String, Array> value = new LinkedHashMap<>();
+            Map<String, ${typeName}> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
                 if (matcher.matches()) {

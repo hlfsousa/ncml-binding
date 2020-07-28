@@ -61,9 +61,9 @@ public interface ${group.camelCase($group.name)}  {
     #set($typeName = "") // TODO locate enumTypedef
   #end  
 #end
-#if(!$group.consolidatedVariableAttributes.empty)
-  ## INNER INTERFACE (VARIABLES WITH ATTRIBUTES)
-  #foreach($variable in $group.variables)
+## INNER INTERFACE (VARIABLES WITH ATTRIBUTES)
+#foreach($variable in $group.variables)
+  #if(!$variable.dimensions.empty || !$variable.attributes.empty)
     interface ${variable.camelCase($variable.name)}Variable<T> extends Variable<T> {
 
     #foreach($attributeWrapper in $variable.attributes)
@@ -101,32 +101,32 @@ public interface ${group.camelCase($group.name)}  {
     void ${modifier}(${typeName} ${localVar});
 
 #end
-#foreach($variableContainer in $group.variables)
-  #set($variable = $variableContainer.variable)
-  #set($accessor = "get" + $variableContainer.camelCase($variableContainer.name))
-  #set($modifier = "set" + $variableContainer.camelCase($variableContainer.name))
+#foreach($varWrapper in $group.variables)
+  #set($variable = $varWrapper.variable)
+  #set($accessor = "get" + $varWrapper.camelCase($varWrapper.name))
+  #set($modifier = "set" + $varWrapper.camelCase($varWrapper.name))
   #findType($variable.type)
     @CDLVariable(name = "${escapeString.apply($variable.name)}", type = ${typeName}.class, unsigned = ${unsigned}#if($variable.shape), shape = { #foreach($dimension in $variable.shape.split(" "))"${dimension}"#if($foreach.hasNext), #end#end }#end)
-  #if(!$variable.attribute.empty)
-    #if($variableContainer.mapped)
-    Map<String, ${variableContainer.camelCase($variableContainer.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${accessor}();
+  #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
+    #if($varWrapper.mapped)
+    Map<String, ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${accessor}();
 
-    void ${modifier}(Map<String, ${variableContainer.camelCase($variableContainer.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${variableContainer.dromedaryCase($variableContainer.name)});
+    void ${modifier}(Map<String, ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${varWrapper.dromedaryCase($varWrapper.name)});
     #else
-    ${variableContainer.camelCase($variableContainer.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${accessor}();
+    ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${accessor}();
 
-    void ${modifier}(${variableContainer.camelCase($variableContainer.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${variableContainer.dromedaryCase($variableContainer.name)});
+    void ${modifier}(${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${varWrapper.dromedaryCase($varWrapper.name)});
     #end
   #else
-    #if($variableContainer.mapped)
+    #if($varWrapper.mapped)
     Map<String, #if(${variable.shape})Array#else${typeName}#end> ${accessor}();
 
-    void ${modifier}(Map<String, #if(${variable.shape})Array#else${typeName}#end> ${variableContainer.dromedaryCase($variableContainer.name)});
+    void ${modifier}(Map<String, #if(${variable.shape})Array#else${typeName}#end> ${varWrapper.dromedaryCase($varWrapper.name)});
     #else
       #if(${variable.shape})
     Array#else${typeName}#end ${accessor}();
 
-    void ${modifier}(#if(${variable.shape})Array#else${typeName}#end ${variableContainer.dromedaryCase($variableContainer.name)});
+    void ${modifier}(#if(${variable.shape})Array#else${typeName}#end ${varWrapper.dromedaryCase($varWrapper.name)});
     #end
   #end
 

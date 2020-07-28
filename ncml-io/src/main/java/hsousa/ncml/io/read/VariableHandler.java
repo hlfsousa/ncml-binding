@@ -58,6 +58,8 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
         } else if (method.getDeclaringClass().equals(hsousa.ncml.declaration.Variable.class)) {
             if (method.getName().equals("getValue")) {
                 result = getVariableValue(method);
+            } else if (method.getName().equals("getDimensions")) {
+                result = node == null ? null : node.getDimensions();
             } else {
                 throw new UnsupportedOperationException("No super/default calls yet: " + method);
             }
