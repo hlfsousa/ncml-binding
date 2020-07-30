@@ -98,7 +98,7 @@ ${indent}    }
             	Array ncArray;
             	DataType dataType = variable.getDataType();
             	if (dataType.isNumeric()) {
-                    ncArray = getNumericArray("${varWrapper.variable.name}");
+                    ncArray = getNumericArray(variable);
                 } else if (dataType.isString()) {
                     try {
                         ncArray = variable.read();
@@ -146,7 +146,7 @@ ${indent}    }
         @Override
         public Array getValue() {
             if (value == null) {
-                value = getNumericArray("${varWrapper.variable.name}");
+                value = getNumericArray(variable);
             }
             return value;
         }
@@ -349,7 +349,7 @@ ${indent}    }
     }
     #else
     public ${typeName} ${accessor}() {
-        return groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
+        return (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
                 key -> Optional.ofNullable(group.findGroup(key)).map(${typeName}Wrapper::new).orElse(null));
     }
 

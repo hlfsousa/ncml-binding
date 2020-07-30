@@ -53,11 +53,10 @@ public class IOTest {
             && pathname.getName().endsWith(".java");
     private static final FileFilter DIR_FILTER = pathname -> pathname.isDirectory();
 
-    public void generateModel(URL schemaURL, File sourcesDir, File classesDir, String rootClassName) throws Exception {
+    public void generateModel(URL schemaURL, File sourcesDir, File classesDir, String rootClassName, Properties properties) throws Exception {
         String rootPackage = rootClassName.substring(0, rootClassName.lastIndexOf('.'));
         String rootGroupName = rootClassName.substring(rootPackage.length() + 1);
 
-        Properties properties = new Properties();
         NCMLCodeGenerator generator = new NCMLCodeGenerator(schemaURL, properties);
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
         templates.put("/templates/NetcdfWrapper.java.vtl",

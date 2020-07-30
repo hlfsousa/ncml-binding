@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
+  <dimension name="number_of_items" length="10" />
+
+  <attribute name="customglobalattribute" type="string" />
+  
+  <group name="groupMap:g\d+">
+    <attribute name="name" type="string" />
+    <variable name="items" shape="number_of_items" type="int">
+      <attribute name="my_attribute" type="string" />
+    </variable>
+  </group>
+  
+  <variable name="temperatureMap:temp_.*" type="float">
+    <attribute name="long_name" type="string" />
+    <attribute name="units" type="string" value="Celsius degrees" />
+  </variable>
+
+  <!-- If you add a group with spaces to a NetCDF file, they will be replaced with underscores. If we 
+    want the model to be consistent, the group name must be spec-compliant -->
+  <group name="this_group_name_is_not_good_for_a_property">
+    <variable name="AVCPNWIAAA" type="int" shape="number_of_items">
+      <attribute name="long_name" type="string" value="A Very Complicated Property Name Which Is Actually An Acronym" />
+    </variable>
+  </group>
+
+</netcdf>

@@ -22,7 +22,11 @@ public abstract class NetcdfWrapper {
     public NetcdfWrapper(Group group) {
         this.group = group;
     }
-    
+
+    public Group unwrap() {
+        return group;
+    }
+
     /**
      * Applies <a href="https://www.unidata.ucar.edu/software/netcdf/docs/attribute_conventions.html">attribute
      * conventions</a> to an array value being read.
@@ -57,7 +61,7 @@ public abstract class NetcdfWrapper {
         return getNumericArray(variable);
     }
 
-    private Array getNumericArray(Variable variable) {
+    protected Array getNumericArray(Variable variable) {
         try {
             Array value = variable.read();
             Number missingValue = null;
