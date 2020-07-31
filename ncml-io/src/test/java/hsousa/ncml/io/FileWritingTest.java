@@ -1,13 +1,16 @@
 package hsousa.ncml.io;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.Properties;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -18,7 +21,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import hsousa.ncml.io.read.NetcdfReader;
 import hsousa.ncml.io.write.NetcdfWriter;
-import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
 
 public class FileWritingTest extends IOTest {
@@ -26,7 +28,7 @@ public class FileWritingTest extends IOTest {
     private Throwable failure;
     
     @ParameterizedTest
-    @ValueSource(strings = { "ECMWF_ERA-40_subset", "mapped_properties" })
+    @ValueSource(strings = { "ECMWF_ERA-40_subset", "mapped_properties", "custom_properties" })
     public void testLifecycle(String referenceName) throws Throwable {
         // locate all files
         URL schemaURL = getClass().getResource(String.format("/samples/%s.xml", referenceName));
@@ -42,7 +44,15 @@ public class FileWritingTest extends IOTest {
         File classesDir = new File("target", referenceName + "-classes");
         Files.walkFileTree(classesDir.toPath(), DELETE_ALL);
         classesDir.mkdirs();
-        generateModel(schemaURL, sourcesDir, classesDir, rootClassName);
+        
+        Properties properties = new Properties();
+        InputStream propertiesIn = getClass().getResourceAsStream(String.format("/samples/%s_config.xml", referenceName));
+        if (propertiesIn != null) {
+            properties.loadFromXML(propertiesIn);
+            propertiesIn.close();
+        }
+        
+        generateModel(schemaURL, sourcesDir, classesDir, rootClassName, properties);
 
         Thread execThread = new Thread(() -> {
             try {

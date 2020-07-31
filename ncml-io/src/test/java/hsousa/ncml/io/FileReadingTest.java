@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.Properties;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -51,7 +52,7 @@ public class FileReadingTest extends IOTest {
 
         // generate and compile model
         File classesDir = new File("target", referenceName + "-classes");
-        generateModel(schemaURL, sourcesDir, classesDir, rootClassName);
+        generateModel(schemaURL, sourcesDir, classesDir, rootClassName, new Properties());
 
         Thread execThread = new Thread(() -> {
             try {
@@ -107,7 +108,7 @@ public class FileReadingTest extends IOTest {
         File classesDir = new File("target", referenceName + "-classes");
         classesDir.mkdirs();
         Files.walkFileTree(classesDir.toPath(), DELETE_ALL);
-        generateModel(schemaURL, sourcesDir, classesDir, rootClassName);
+        generateModel(schemaURL, sourcesDir, classesDir, rootClassName, new Properties());
 
         Thread execThread = new Thread(() -> {
             try {

@@ -12,10 +12,14 @@ public abstract class AbstractNode {
         this.properties = properties;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public String getFullName() {
         StringBuilder fullName = new StringBuilder();
         if (parent != null) {
-            fullName.append(parent.getFullName()).append('.');
+            fullName.append(parent.getFullName()).append('/');
         }
         fullName.append(getName());
         return fullName.toString();

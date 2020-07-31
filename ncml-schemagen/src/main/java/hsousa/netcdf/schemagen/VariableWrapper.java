@@ -21,10 +21,10 @@ public class VariableWrapper extends AbstractAttributeContainer {
         if (variable.getName().matches("[a-zA-Z_0-9]+:.*")) {
             // mapped group
             String baseName = variable.getName().substring(0, variable.getName().indexOf(':'));
-            this.name = substitute(parent.getFullName() + '.' + baseName, baseName);
+            this.name = substitute(parent.getFullName() + '/' + baseName, baseName);
             mapped = true;
         } else {
-            this.name = substitute(parent.getFullName() + '.' + variable.getName(), variable.getName());
+            this.name = substitute(parent.getFullName() + '/' + variable.getName(), variable.getName());
         }
     }
 
