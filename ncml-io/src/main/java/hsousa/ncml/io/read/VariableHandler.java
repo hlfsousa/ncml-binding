@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hsousa.ncml.annotation.CDLAttribute;
+import hsousa.ncml.io.AttributeConventions;
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 
 public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements InvocationHandler {
 
+    private static final AttributeConventions attributeConventions = new AttributeConventions();
     private final Map<Method, Object> invocationCache = new HashMap<>();
     private Type valueType;
 
@@ -73,7 +75,7 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
     private Object getVariableValue(Method method) throws IOException {
         if (node == null)
             return null;
-        Array arrayValue = node.read();
+        Array arrayValue = attributeConventions.readNumericArray(node);
         Class<?> expectedType;
         if (valueType instanceof ParameterizedType) {
             expectedType = (Class<?>) ((ParameterizedType) valueType).getActualTypeArguments()[0];
