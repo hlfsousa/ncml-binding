@@ -141,7 +141,6 @@ public class CodeGenerationTask {
 
     private static URL parseLocation(String location) throws MalformedURLException {
         File localFile = new File(location);
-        System.out.println(">>> " + localFile.getAbsolutePath());
         if (localFile.exists()) {
             return localFile.toURI().toURL();
         }

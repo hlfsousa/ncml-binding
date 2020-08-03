@@ -30,6 +30,8 @@ import hsousa.ncml.annotation.CDLDimensions;
 import hsousa.ncml.annotation.CDLGroup;
 import hsousa.ncml.annotation.CDLRoot;
 import hsousa.ncml.annotation.CDLVariable;
+import hsousa.ncml.io.AttributeConventions;
+import hsousa.ncml.io.AttributeConventions.ArrayScaling;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -52,6 +54,8 @@ import ucar.nc2.Variable;
 public class NetcdfWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfWriter.class);
+    
+    private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
     
     public NetcdfWriter() {
     }
@@ -308,19 +312,29 @@ public class NetcdfWriter {
         if (varValue == null) {
             return;
         }
-        DataType dataType;
-        if (varValue instanceof Array) {
-            dataType = ((Array)varValue).getDataType();
-        } else {
-            boolean unsigned = variableDecl.unsigned();
-            dataType = DataType.getType(javaType, unsigned);
-        }
+        DataType dataType = getDataType(variableDecl, varValue, javaType);
         String[] shape = variableDecl.shape();
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
         if (accessor.getReturnType().isInterface()) {
             createVariableStructure(writer, variable, varModel);
         }
+    }
+
+    private DataType getDataType(CDLVariable variableDecl, Object varValue, Class<?> javaType) {
+        DataType dataType = null;
+        if (variableDecl.type() != Object.class) {
+            dataType = DataType.getType(variableDecl.type(), variableDecl.unsigned());
+        } else if (varValue instanceof Array) {
+            /* if this is a scaled value, the type should be explicit. Otherwise we would have to
+             * look into the missing value attribute for the implicit type and... well, that's not
+             * done here. */
+            dataType = ((Array)varValue).getDataType();
+        } else {
+            boolean unsigned = variableDecl.unsigned();
+            dataType = DataType.getType(javaType, unsigned);
+        }
+        return dataType;
     }
 
     private void createVariableStructure(NetcdfFileWriter writer, Variable variable, Object model) {
@@ -412,14 +426,15 @@ public class NetcdfWriter {
             return;
         }
         LOGGER.debug("actual var name to be written is " + name);
+        final Variable variable = group.findVariable(name);
         Array ncArray;
         if (varValue instanceof Array) {
-            ncArray = (Array) varValue;
+            ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, (Array) varValue, ArrayScaling.TO_RAW);
         } else {
             ncArray = Array.factory(DataType.getType(varValue.getClass(), variableDecl.unsigned()), new int[] { 1 });
             ncArray.setObject(0, varValue);
         }
-        writer.write(group.findVariable(name), ncArray);
+        writer.write(variable, ncArray);
     }
 
     private void writeChildGroups(NetcdfFileWriter writer, Group group, Object model) {
