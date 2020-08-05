@@ -1,6 +1,9 @@
 package hsousa.netcdf.schemagen.task;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -18,8 +21,9 @@ import hsousa.netcdf.schemagen.NCMLCodeGenerator;
  */
 public class CodeGenerationTask {
 
-    private static final String USAGE_TEXT = "usage: java CodeGenerationTask header root_name [-o out_directory] templates\n"
+    private static final String USAGE_TEXT = "usage: java CodeGenerationTask header [-p properties] root_name [-o out_directory] templates\n"
             + "\theader: path or url to the header file\n"
+            + "\tproperties: configuration file (.xml or .properties) for customizations\n"
             + "\troot_name: canonical name of the type that should represent the generated classes"
             + "\tout_directory: optional location in the filesystem where code will be generated. Default to the current directory"
             + "\ttemplates: (template)*; an optional space-separated sequence of additional templates to use in generation\n"
@@ -29,6 +33,7 @@ public class CodeGenerationTask {
             + "followed by this suffix, which should include file extension.";
 
     private URL headerURL;
+    private File propertiesFile;
     private File sourcesDir;
     private String rootClassName;
 
@@ -51,6 +56,14 @@ public class CodeGenerationTask {
         this.headerURL = headerURL;
     }
 
+    public File getPropertiesFile() {
+        return propertiesFile;
+    }
+    
+    public void setPropertiesFile(File propertiesFile) {
+        this.propertiesFile = propertiesFile;
+    }
+    
     /**
      * Destination root for generating source code.
      * 
@@ -96,9 +109,8 @@ public class CodeGenerationTask {
     public void generateCode() throws Exception {
         String rootPackage = rootClassName.substring(0, rootClassName.lastIndexOf('.'));
         String rootGroupName = rootClassName.substring(rootPackage.length() + 1);
-
-        Properties properties = new Properties();
-        NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, properties);
+        
+        NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, readProperties());
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
         templates.put("/templates/NetcdfWrapper.java.vtl",
                 (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "Wrapper.java"));
@@ -107,6 +119,26 @@ public class CodeGenerationTask {
         generator.setModelPackage(rootPackage);
         generator.setRootGroupName(rootGroupName);
         generator.generateSources(sourcesDir);
+    }
+
+    private Properties readProperties() {
+        Properties properties = new Properties();
+        if (propertiesFile != null) {
+            if (propertiesFile.getName().endsWith(".xml")) {
+                try (FileInputStream in = new FileInputStream(propertiesFile)) {
+                    properties.loadFromXML(in);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(propertiesFile.getAbsolutePath(), e);
+                }
+            } else {
+                try (FileReader reader = new FileReader(propertiesFile)) {
+                    properties.load(reader);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(propertiesFile.getAbsolutePath(), e);
+                }
+            }
+        }
+        return properties;
     }
 
     private static void help() {
@@ -118,24 +150,34 @@ public class CodeGenerationTask {
             help();
             System.exit(1);
         }
-
+        int argIdx = 0;
         CodeGenerationTask task = new CodeGenerationTask();
-        task.setHeaderURL(parseLocation(args[0]));
-        task.setRootClassName(args[1]);
-        int templateIdx = 2;
-        if ("-o".equals(args[2])) {
-            task.setSourcesDir(new File(args[3]));
-            templateIdx = 4;
+        task.setHeaderURL(parseLocation(args[argIdx++]));
+        if ("-p".equals(args[argIdx])) {
+            ++argIdx;
+            File file = new File(args[argIdx++]);
+            if (!file.isFile()) {
+                throw new IllegalArgumentException("Properties file does not exist: " + file.getPath());
+            }
+            task.setPropertiesFile(file);
+        }
+        System.out.println("root type: " + args[argIdx]);
+        task.setRootClassName(args[argIdx++]);
+        if ("-o".equals(args[argIdx])) {
+            task.setSourcesDir(new File(args[++argIdx]));
+            argIdx++;
         } else {
             task.setSourcesDir(new File("."));
         }
-        for (int i = templateIdx; i < args.length; i++) {
-            final int separatorIndex = args[i].lastIndexOf('/');
-            String location = args[i].substring(0, separatorIndex);
-            String suffix = args[i].substring(separatorIndex + 1);
+        while (argIdx < args.length) {
+            String templateArg = args[argIdx++];
+            System.out.println(templateArg);
+            final int separatorIndex = templateArg.lastIndexOf('/');
+            String location = templateArg.substring(0, separatorIndex);
+            String suffix = templateArg.substring(separatorIndex + 1);
             task.addTemplate(location, suffix);
         }
-        
+
         task.generateCode();
     }
 
