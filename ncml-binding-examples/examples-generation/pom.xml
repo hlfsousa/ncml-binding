@@ -38,6 +38,8 @@
               <mainClass>hsousa.netcdf.schemagen.task.CodeGenerationTask</mainClass>
               <arguments>
                 <argument>${project.basedir}/../samples/cami_0000-09-01_64x128_L26_c030918.xml</argument>
+                <argument>-p</argument>
+                <argument>${project.basedir}/conf/customizations.properties</argument>
                 <argument>hsousa.netcdf.examples.generation.CommunityAtmosphericModel</argument>
                 <argument>-o</argument>
                 <argument>${project.basedir}/src/main/java</argument>

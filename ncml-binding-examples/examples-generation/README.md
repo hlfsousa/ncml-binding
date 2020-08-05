@@ -1,0 +1,4 @@
+# Data Model Generation
+This example shows how to generate the default data model from a header XML file. `pom.xml` contains the generation prerequisites: dependencies, exec plugin and configuration.
+
+The header file is at the parent project, but configuration is particular to this project. `conf/customizations.properties` contains property name substitutions. For instance, variable `lat` would result in accessor method `getLat()`, which is not as clear as `getLatitude()`. That sort of substituion can be made through the configuration file above. Changing the method names don't change the file, so the variable in the file, both when reading and writing, is still `lat`.
