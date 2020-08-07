@@ -24,9 +24,9 @@ function random(min, max) {
 
 function createModel(model) {
     model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
-    var group = new Packages.hsousa.ncml.io.test.MappedGroupVO();
+    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
     group.name = "g01";
-    group.groupItems = new Packages.hsousa.ncml.io.test.MappedGroupVO.GroupItemsVO();
+    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
         it.setIntNext(Math.round(random(0, 100)));
     });
@@ -102,7 +102,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
 }
 
 function editModel(netcdf) {
-    var group = new Packages.hsousa.ncml.io.test.MappedGroupVO();
+    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
     group.name = "g02";
     var IntArray = Java.type("int[]");
     var shape = new IntArray(1);
@@ -111,7 +111,7 @@ function editModel(netcdf) {
     for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
         it.setIntNext(Math.round(random(0, 100)));
     }
-    group.groupItems = new Packages.hsousa.ncml.io.test.MappedGroupVO.GroupItemsVO();
+    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = ncArray;
     netcdf.mappedGroup["g02"] = group;
 

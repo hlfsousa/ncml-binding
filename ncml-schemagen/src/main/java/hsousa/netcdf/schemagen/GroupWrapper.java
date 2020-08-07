@@ -22,10 +22,10 @@ public class GroupWrapper extends AbstractGroupWrapper {
         if (group.getName().matches("[a-zA-Z_0-9]+:.*")) {
             // mapped group
             String baseName = group.getName().substring(0, group.getName().indexOf(':'));
-            this.groupName = substitute(parent.getFullName() + '/' + baseName, baseName);
+            this.groupName = substitute("substitution", parent.getFullName() + '/' + baseName, baseName);
             mapped = true;
         } else {
-            this.groupName = substitute(parent.getFullName() + '/' + group.getName(), group.getName());
+            this.groupName = substitute("substitution", parent.getFullName() + '/' + group.getName(), group.getName());
         }
         this.packageName = packageName;
     }

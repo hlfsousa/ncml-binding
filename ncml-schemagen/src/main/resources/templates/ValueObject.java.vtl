@@ -1,18 +1,19 @@
 package ${group.packageName};
 
-#if ($customContent.imports)
-${customContent.imports}
-#else
 // imports >>
+#if ($customContent.imports)
+${customContent.imports}##
+#else
+// DEFAULT IMPORTS
 import java.util.*;
 import ucar.ma2.Array;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
 import ucar.nc2.Dimension;
-// << imports
 #end
+// << imports
 
-public class ${group.camelCase($group.name)}VO implements ${group.camelCase($group.name)} {
+public class ${group.typeName}VO implements ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
 #macro(findType $type)
   #set($unsigned = false)
@@ -72,8 +73,8 @@ ${indent}    }
 #end
 #macro(declareScalarVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
-  #set($className = $property + "VO")
-  #set($intfName = $property + "Variable")
+  #set($className = $varWrapper.typeName + "VO")
+  #set($intfName = $varWrapper.typeName + "Variable")
   #findType($varWrapper.variable.type)
     public static class ${className} implements ${intfName}<${typeName}> {
 
@@ -103,8 +104,8 @@ ${indent}    }
 #end
 #macro(declareArrayVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
-  #set($typeName = $property + "VO")
-  #set($intfName = $property + "Variable")
+  #set($typeName = $varWrapper.typeName + "VO")
+  #set($intfName = $varWrapper.typeName + "Variable")
     public static class ${typeName} implements ${intfName}<Array> {
 
         private Array value;
@@ -178,8 +179,8 @@ $!{customContent.additionalFields}##
     }
 
     #else
-      #set($typeName = $property + "VO")
-      #set($intfName = $property + "Variable")
+      #set($typeName = $varWrapper.typeName + "VO")
+      #set($intfName = $varWrapper.typeName + "Variable")
       #if(${varWrapper.dimensions.empty})
         #findType($varWrapper.variable.type)
       #else
@@ -217,7 +218,7 @@ $!{customContent.additionalFields}##
   #end
 #end
 #foreach($childGroup in $group.groups)
-  #set($typeName = $childGroup.camelCase($childGroup.name))
+  #set($typeName = $childGroup.typeName)
   #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
   #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
   #set($localVar = ${childGroup.dromedaryCase($childGroup.name)})

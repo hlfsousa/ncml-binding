@@ -16,7 +16,7 @@ import ucar.nc2.Variable;
 // << imports
 #end
 
-public class ${group.camelCase($group.name)}Wrapper extends NetcdfWrapper implements ${group.camelCase($group.name)} {
+public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
 #macro(findType $type)
   #set($unsigned = false)
@@ -80,8 +80,8 @@ ${indent}    }
 #end
 #macro(declareScalarVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
-  #set($className = $property + "Wrapper")
-  #set($intfName = $property + "Variable")
+  #set($className = $varWrapper.typeName + "Wrapper")
+  #set($intfName = $varWrapper.typeName + "Variable")
   #findType($varWrapper.variable.type)
     private class ${className} implements ${intfName}<${typeName}> {
 
@@ -132,8 +132,8 @@ ${indent}    }
 #end
 #macro(declareArrayVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
-  #set($typeName = $property + "Wrapper")
-  #set($intfName = $property + "Variable")
+  #set($typeName = $varWrapper.typeName + "Wrapper")
+  #set($intfName = $varWrapper.typeName + "Variable")
     private class ${typeName} implements ${intfName}<Array> {
 
         private final Variable variable;
@@ -182,7 +182,7 @@ ${indent}    }
   #end
 #end
 
-    public ${group.camelCase($group.name)}Wrapper(Group group) {
+    public ${group.typeName}Wrapper(Group group) {
         super(group);
     }
 
@@ -248,8 +248,8 @@ ${indent}    }
       #end
     #else
       #if(${varWrapper.dimensions.empty})
-        #set($className = $property + "Wrapper")
-        #set($intfName = $property + "Variable")
+        #set($className = $varWrapper.typeName + "Wrapper")
+        #set($intfName = $varWrapper.typeName + "Variable")
         #findType($varWrapper.variable.type)
         #if($varWrapper.mapped)
     public Map<String, ${intfName}<${typeName}>> get${property}() {
@@ -285,8 +285,8 @@ ${indent}    }
 
         #end
       #else
-        #set($typeName = $property + "Wrapper")
-        #set($intfName = $property + "Variable")
+        #set($typeName = $varWrapper.typeName + "Wrapper")
+        #set($intfName = $varWrapper.typeName + "Variable")
         #if($varWrapper.mapped)
     @SuppressWarnings("unchecked")
     public Map<String, ${intfName}<Array>> get${property}() {
@@ -325,7 +325,7 @@ ${indent}    }
     private Map<String, Object> groupCache = new HashMap<String,Object>();
     
   #foreach($childGroup in $group.groups)
-    #set($typeName = $childGroup.camelCase($childGroup.name))
+    #set($typeName = $childGroup.typeName)
     #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
     #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
     #if($childGroup.mapped)

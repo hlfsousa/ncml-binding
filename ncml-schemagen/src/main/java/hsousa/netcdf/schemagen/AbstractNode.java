@@ -25,8 +25,8 @@ public abstract class AbstractNode {
         return fullName.toString();
     }
 
-    protected String substitute(String name, String defaultValue) {
-        String key = "substitution." + name;
+    protected String substitute(String category, String name, String defaultValue) {
+        String key = String.format("%s.%s", category, name);
         return properties.getProperty(key, defaultValue);
     }
 

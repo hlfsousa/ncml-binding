@@ -86,11 +86,11 @@ public class NCMLCodeGenerator {
         velocity.init();
 
         templates.put(TEMPLATE_DATA_INTERFACE,
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + ".java"));
+                (group, destDir) -> new File(destDir, group.getTypeName() + ".java"));
         templates.put(TEMPLATE_NETCDF_WRAPPER,
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "Wrapper.java"));
+                (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         templates.put(TEMPLATE_VALUE_OBJECT,
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "VO.java"));
+                (group, destDir) -> new File(destDir, group.getTypeName() + "VO.java"));
     }
 
     /**
@@ -149,8 +149,6 @@ public class NCMLCodeGenerator {
             VelocityContext context = new VelocityContext();
             // TODO generator tag information
             context.put("group", group);
-            Map<String, String> customContent = new HashMap<>();
-            context.put("customContent", customContent);
             context.put("escapeString", (Function<String,String>) str -> str.replaceAll("[\"\\\\]", "\\\\$0").replace("\n", "\\n"));
 
             File packageDir = new File(destination, group.getPackageName().replace('.', File.separatorChar));
@@ -160,6 +158,8 @@ public class NCMLCodeGenerator {
                 String templatePath = entry.getKey();
                 LOG.debug("Generating code using template {} for group {}", templatePath, group.getName());
 
+                Map<String, String> customContent = new HashMap<>();
+                context.put("customContent", customContent);
                 File destFile = entry.getValue().apply(group, packageDir);
                 if (destFile.isFile()) {
                     readCustomContent(destFile, customContent);

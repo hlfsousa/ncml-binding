@@ -29,6 +29,7 @@ public class FileWritingTest extends IOTest {
     
     @ParameterizedTest
     @ValueSource(strings = { "ECMWF_ERA-40_subset", "mapped_properties", "custom_properties", "attribute_conventions" })
+    //@ValueSource(strings = { "custom_properties" })
     public void testLifecycle(String referenceName) throws Throwable {
         // locate all files
         URL schemaURL = getClass().getResource(String.format("/samples/%s.xml", referenceName));

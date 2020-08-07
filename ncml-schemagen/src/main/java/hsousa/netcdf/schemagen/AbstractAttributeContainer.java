@@ -9,8 +9,18 @@ import edu.ucar.unidata.netcdf.ncml.Dimension;
 
 public abstract class AbstractAttributeContainer extends AbstractNode {
 
+    protected String typeName;
+    
     public AbstractAttributeContainer(AbstractAttributeContainer parent, Properties properties) {
         super(parent, properties);
+    }
+    
+    public String getTypeName() {
+        if (typeName == null) {
+            typeName = camelCase(substitute(
+                    "type", (parent != null ? parent.getFullName() : "") + '/' + getName(), getName()));
+        }
+        return typeName;
     }
 
     public abstract String getPackageName();

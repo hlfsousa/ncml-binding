@@ -23,7 +23,7 @@ import ucar.ma2.Array;
         @CDLDimension(name = "${escapeString.apply($dimension.name)}"#if($dimLength > 0), length = ${dimLength}#end#if($dimension.isUnlimited), unlimited = true#end)#if($foreach.hasNext),#end
 #end
 })
-public interface ${group.camelCase($group.name)}  {
+public interface ${group.typeName}  {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
 #macro(findType $type)
   #set($unsigned = false)
@@ -64,7 +64,7 @@ public interface ${group.camelCase($group.name)}  {
 ## INNER INTERFACE (VARIABLES WITH ATTRIBUTES)
 #foreach($variable in $group.variables)
   #if(!$variable.dimensions.empty || !$variable.attributes.empty)
-    interface ${variable.camelCase($variable.name)}Variable<T> extends Variable<T> {
+    interface ${variable.typeName}Variable<T> extends Variable<T> {
 
     #foreach($attributeWrapper in $variable.attributes)
       #set($attribute = $attributeWrapper.attribute)
@@ -109,13 +109,13 @@ public interface ${group.camelCase($group.name)}  {
     @CDLVariable(name = "${escapeString.apply($variable.name)}", type = ${typeName}.class, unsigned = ${unsigned}#if($variable.shape), shape = { #foreach($dimension in $variable.shape.split(" "))"${dimension}"#if($foreach.hasNext), #end#end }#end)
   #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
     #if($varWrapper.mapped)
-    Map<String, ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${accessor}();
+    Map<String, ${varWrapper.typeName}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${accessor}();
 
-    void ${modifier}(Map<String, ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${varWrapper.dromedaryCase($varWrapper.name)});
+    void ${modifier}(Map<String, ${varWrapper.typeName}Variable<#if(${variable.shape})Array#else${typeName}#end>> ${varWrapper.dromedaryCase($varWrapper.name)});
     #else
-    ${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${accessor}();
+    ${varWrapper.typeName}Variable<#if(${variable.shape})Array#else${typeName}#end> ${accessor}();
 
-    void ${modifier}(${varWrapper.camelCase($varWrapper.name)}Variable<#if(${variable.shape})Array#else${typeName}#end> ${varWrapper.dromedaryCase($varWrapper.name)});
+    void ${modifier}(${varWrapper.typeName}Variable<#if(${variable.shape})Array#else${typeName}#end> ${varWrapper.dromedaryCase($varWrapper.name)});
     #end
   #else
     #if($varWrapper.mapped)
@@ -133,7 +133,7 @@ public interface ${group.camelCase($group.name)}  {
 #end
 ## GROUPS
 #foreach($childGroup in $group.groups)
-  #set($typeName = $childGroup.camelCase($childGroup.name))
+  #set($typeName = $childGroup.camelCase($childGroup.typeName))
   #set($accessor = "get" + $childGroup.camelCase($childGroup.name))
   #set($modifier = "set" + $childGroup.camelCase($childGroup.name))
     @CDLGroup(name = "${escapeString.apply($childGroup.nameTag)}")
