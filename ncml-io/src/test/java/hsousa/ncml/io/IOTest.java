@@ -60,7 +60,7 @@ public class IOTest {
         NCMLCodeGenerator generator = new NCMLCodeGenerator(schemaURL, properties);
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
         templates.put("/templates/NetcdfWrapper.java.vtl",
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "Wrapper.java"));
+                (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage);
         generator.setRootGroupName(rootGroupName);

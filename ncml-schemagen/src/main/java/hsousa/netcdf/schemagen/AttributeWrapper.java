@@ -12,7 +12,7 @@ public class AttributeWrapper extends AbstractNode {
     public AttributeWrapper(AbstractAttributeContainer parent, Properties properties, Attribute attribute) {
         super(parent, properties);
         this.attribute = attribute;
-        this.name = substitute(parent.getFullName() + "/@" + attribute.getName(), attribute.getName());
+        this.name = substitute("substitution", parent.getFullName() + "/@" + attribute.getName(), attribute.getName());
     }
 
     public String getName() {

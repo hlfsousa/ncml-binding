@@ -100,7 +100,7 @@ public class CodeGenerationTask {
      */
     public void addTemplate(String path, String suffix) {
         additionalTemplates.put(path,
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + suffix));
+                (group, destDir) -> new File(destDir, group.getTypeName() + suffix));
     }
 
     /**
@@ -113,7 +113,7 @@ public class CodeGenerationTask {
         NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, readProperties());
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
         templates.put("/templates/NetcdfWrapper.java.vtl",
-                (group, destDir) -> new File(destDir, group.camelCase(group.getName()) + "Wrapper.java"));
+                (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         templates.putAll(additionalTemplates);
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage);
@@ -161,7 +161,6 @@ public class CodeGenerationTask {
             }
             task.setPropertiesFile(file);
         }
-        System.out.println("root type: " + args[argIdx]);
         task.setRootClassName(args[argIdx++]);
         if ("-o".equals(args[argIdx])) {
             task.setSourcesDir(new File(args[++argIdx]));
@@ -171,7 +170,6 @@ public class CodeGenerationTask {
         }
         while (argIdx < args.length) {
             String templateArg = args[argIdx++];
-            System.out.println(templateArg);
             final int separatorIndex = templateArg.lastIndexOf('/');
             String location = templateArg.substring(0, separatorIndex);
             String suffix = templateArg.substring(separatorIndex + 1);
