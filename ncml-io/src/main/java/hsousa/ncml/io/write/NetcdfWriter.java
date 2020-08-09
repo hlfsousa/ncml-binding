@@ -1,6 +1,7 @@
 package hsousa.ncml.io.write;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.IOException;
@@ -190,14 +191,16 @@ public class NetcdfWriter {
         return hierarchy;
     }
 
-    private void createStructure(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
+    private void createStructure(NetcdfFileWriter writer, Group group, Object model,
+            Map<String, List<Dimension>> declaredDimensions) {
         createAttributes(writer, group, model);
         createLocalDimensions(writer, group, model, declaredDimensions);
         createVariables(writer, group, model);
         createGroups(writer, group, model, declaredDimensions);
     }
 
-    private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
+    private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model,
+            Map<String, List<Dimension>> declaredDimensions) {
         String fullName = group.getFullName() + "/";
         if (!fullName.startsWith("/")) {
             fullName = '/' + fullName;
@@ -256,12 +259,13 @@ public class NetcdfWriter {
                 Object varModel = accessor.invoke(model);
                 if (varModel instanceof Map) {
                     // variable is mapped, validate names
-                    Pattern nameRegex = Pattern.compile(variableDecl.name().substring(variableDecl.name().indexOf(':') + 1));
+                    Pattern nameRegex = Pattern.compile(
+                            variableDecl.name().substring(variableDecl.name().indexOf(':') + 1));
                     Map<String, Object> map = (Map<String, Object>) varModel;
                     for (Entry<String, Object> entry : map.entrySet()) {
                         if (!nameRegex.matcher(entry.getKey()).matches()) {
-                            throw new IllegalArgumentException(
-                                    "Variable name " + entry.getKey() + " does not match definition " + variableDecl.name());
+                            throw new IllegalArgumentException("Variable name " + entry.getKey()
+                                    + " does not match definition " + variableDecl.name());
                         }
                         createSingleVariable(writer, entry.getKey(), group, accessor, variableDecl, entry.getValue());
                     }
@@ -278,8 +282,9 @@ public class NetcdfWriter {
         });
     }
 
-    private void createSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor, CDLVariable variableDecl,
-            Object varModel) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private void createSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
+            CDLVariable variableDecl, Object varModel)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Object varValue;
         Class<?> javaType;
         Class<?> variableType = accessor.getReturnType();
@@ -314,6 +319,12 @@ public class NetcdfWriter {
         }
         DataType dataType = getDataType(variableDecl, varValue, javaType);
         String[] shape = variableDecl.shape();
+        if (varModel instanceof hsousa.ncml.declaration.Variable) {
+            List<Dimension> dimensions = ((hsousa.ncml.declaration.Variable<?>)varModel).getDimensions();
+            if (dimensions  != null) {
+                shape = dimensions.stream().map(d -> d.getShortName()).collect(toList()).toArray(new String[0]);
+            }
+        }
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
         if (accessor.getReturnType().isInterface()) {
@@ -342,7 +353,8 @@ public class NetcdfWriter {
         createAttributes(writer, model, attribute -> writer.addVariableAttribute(variable, attribute));
     }
 
-    private void createGroups(NetcdfFileWriter writer, Group group, Object model, Map<String, List<Dimension>> declaredDimensions) {
+    private void createGroups(NetcdfFileWriter writer, Group group, Object model,
+            Map<String, List<Dimension>> declaredDimensions) {
         forEachAccessor(model, accessor -> {
             try {
                 CDLGroup groupDecl = accessor.getAnnotation(CDLGroup.class);
@@ -381,7 +393,8 @@ public class NetcdfWriter {
                 return;
             }
             try {
-                LOGGER.debug("Evaluating variable bound to " + accessor.getDeclaringClass().getSimpleName() + '.' + accessor.getName());
+                LOGGER.debug("Evaluating variable bound to " + accessor.getDeclaringClass().getSimpleName() + '.'
+                        + accessor.getName());
                 Object varModel = accessor.invoke(model);
                 if (varModel instanceof Map) {
                     // names were validated before

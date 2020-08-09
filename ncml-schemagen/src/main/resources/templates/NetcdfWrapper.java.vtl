@@ -247,11 +247,14 @@ ${indent}    }
 
       #end
     #else
-      #if(${varWrapper.dimensions.empty})
-        #set($className = $varWrapper.typeName + "Wrapper")
-        #set($intfName = $varWrapper.typeName + "Variable")
+      #set($className = $varWrapper.typeName + "Wrapper")
+      #set($intfName = $varWrapper.typeName + "Variable")
+      #if($varWrapper.dimensions.empty)
         #findType($varWrapper.variable.type)
-        #if($varWrapper.mapped)
+      #else
+        #set($typeName = "Array")
+      #end
+      #if($varWrapper.mapped)
     public Map<String, ${intfName}<${typeName}>> get${property}() {
         return (Map<String, ${intfName}<${typeName}>>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
             Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
@@ -270,7 +273,7 @@ ${indent}    }
         throw new UnsupportedOperationException();
     }
 
-        #else
+      #else
     @SuppressWarnings("unchecked")
     public ${intfName}<${typeName}> get${property}() {
         return (${intfName}<${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
@@ -283,37 +286,6 @@ ${indent}    }
         throw new UnsupportedOperationException();
     }
 
-        #end
-      #else
-        #set($typeName = $varWrapper.typeName + "Wrapper")
-        #set($intfName = $varWrapper.typeName + "Variable")
-        #if($varWrapper.mapped)
-    @SuppressWarnings("unchecked")
-    public Map<String, ${intfName}<Array>> get${property}() {
-        return (Map<String, ${intfName}<Array>>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(varName))
-                        .map(${typeName}::new)
-                        .orElse(null));
-    }
-
-    public void set${property}(${intfName}<Array> ${varWrapper.dromedaryCase($varWrapper.name)}) {
-        throw new UnsupportedOperationException();
-    }
-
-        #else
-    @SuppressWarnings("unchecked")
-    public ${intfName}<Array> get${property}() {
-        return (${intfName}<Array>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(varName))
-                        .map(${typeName}::new)
-                        .orElse(null));
-    }
-
-    public void set${property}(${intfName}<Array> ${varWrapper.dromedaryCase($varWrapper.name)}) {
-        throw new UnsupportedOperationException();
-    }
-
-        #end
       #end
     #end
   #end
