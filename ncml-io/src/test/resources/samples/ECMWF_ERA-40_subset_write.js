@@ -8,13 +8,8 @@ function random(min, max) {
 }
 
 function createModel(model) {
-	print(model.class.classLoader);
 	if (!model.longitude) {
-		var LongitudeVO = Java.type("hsousa.ncml.io.test.TestNetcdfVO.LongitudeVO");
-		print(LongitudeVO);
-		print(LongitudeVO.classLoader);
-		var longitude = LongitudeVO.create();
-		print(longitude);
+		var longitude = new Packages.hsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
 		model.longitude = longitude;
 	}
 	assertNotNull(model.longitude, "empty/longitude"); // interface, let handler create

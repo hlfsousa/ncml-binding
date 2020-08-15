@@ -20,12 +20,17 @@ public class SchemaWrapper extends AbstractGroupWrapper {
         super(null, properties);
         this.schema = schema;
         this.packageName = packageName;
-        this.groupName = substitute(groupName, groupName);
+        this.groupName = substitute("substitution", "/", groupName);
     }
 
     @Override
     public String getName() {
         return groupName;
+    }
+    
+    @Override
+    public String getFullName() {
+        return "";
     }
 
     @Override

@@ -1,9 +1,18 @@
 load("nashorn:mozilla_compat.js");
 
+function assertCloseTo(actual, expected, tolerance, message) {
+	var msg = "Expected " + expected + " +/- " + tolerance + ", but got " + actual;
+	if (Math.abs(actual - expected) > tolerance) {
+		if (message)
+		    msg += ": " + message;
+		throw msg;
+	}
+}
+
 function assertEquals(actual, expected, message) {
     var msg = "Expected true, but got " + actual;
 	if (message)
-	    msg += ". " + message;
+	    msg += ": " + message;
 	if (expected != actual) {
 		throw msg;
 	}
@@ -12,14 +21,14 @@ function assertEquals(actual, expected, message) {
 function assertTrue(value, message) {
     var msg = "Expected true, but got " + value;
     if (value != true) {
-        throw message ? msg + " / " + message  : msg;
+        throw message ? msg + ": " + message  : msg;
     }
 }
 
 function assertNotNull(value, message) {
     var msg = "Expected something, but got nothing";
     if (value == undefined || value == null) {
-        throw message ? msg : msg + " / " + message;
+        throw message ? msg + ": " + message : msg;
     }
 }
 
@@ -55,3 +64,24 @@ function print() {
 function printf(format) {
     java.lang.System.out.printf(format, Array.prototype.slice.call(arguments));
 }
+
+function createNcArray(dataType, shape, assignmentFunction) {
+	var IntArray = Java.type("int[]");
+	var jShape = new IntArray(shape.length);
+	for (var i = 0; i < shape.length; i++) {
+		jShape[i] = shape[i];
+	}
+    var ncArray = Java.type("ucar.ma2.Array").factory(dataType, jShape);
+    for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
+        assignmentFunction(it);
+    }
+    return ncArray;
+}
+
+function random(min, max) {
+    var delta = max - min;
+    var base = Math.random() * delta;
+    return base + min;
+}
+
+var scalarIndex = Java.type("ucar.ma2.Index").scalarIndexImmutable;

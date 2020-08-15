@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE properties PUBLIC "properties" "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <entry key="substitution./groupMap">mappedGroup</entry>
+  <entry key="type./mappedGroup">MyGroup</entry>
+  <entry key="substitution./@customglobalattribute">myGlobalAttribute</entry>
+  <entry key="substitution./mappedGroup/items">groupItems</entry>
+  <entry key="type./mappedGroup/groupItems">Items</entry>
+  <entry key="substitution./mappedGroup/items/@my_attribute">myVariableAttribute</entry>
+  <entry key="substitution./temperatureMap">temperatures</entry>
+  <entry key="substitution./this_group_name_is_not_good_for_a_property">someGroup</entry>
+  <entry key="substitution./someGroup/AVCPNWIAAA">someProperty</entry>
+</properties>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd"
+    location="cami_0000-09-01_64x128_L26_c030918.nc">
+  <dimension name="lat" length="64" />
+  <dimension name="lon" length="128" />
+  <dimension name="lev" length="26" />
+  <dimension name="ilev" length="27" />
+  <dimension name="time" length="1" isUnlimited="true" />
+  <dimension name="chars" length="8" />
+  <attribute name="Conventions" value="CF-1.0" />
+  <attribute name="logname" value="olson" />
+  <attribute name="host" value="bb0001en" />
+  <attribute name="source" value="Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::CAM" />
+  <attribute name="case" value="cam2run" />
+  <attribute name="title" value="Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::atm ver atm, eul ver v013, case newICeul" />
+  <attribute name="history" value="&#xA;05/07/03 12:15:34 olson:chinookfe:interpic -t SEP1.T42L26.gaussian.template.nc /fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc cami_0000-09-01_64x128_L26_c030507.nc&#xA;definesurf -t /fs/cgd/csm/inputdata/atm/cam1/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc&#xA;definesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc&#xA;definesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo-usgs-10min.nc cami_0000-09-01_64x128_L26_c030507.nc&#xA;definesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc cami_0000-09-01_64x128_L26_c030507.nc&#xA;definesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc -l cami_0000-09-01_64x128_L26_c030624.nc.new" />
+  <attribute name="make_ross" value="true" />
+  <variable name="lat" shape="lat" type="double">
+    <attribute name="long_name" value="latitude" />
+    <attribute name="units" value="degrees_north" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="lon" shape="lon" type="double">
+    <attribute name="long_name" value="longitude" />
+    <attribute name="units" value="degrees_east" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="lev" shape="lev" type="double">
+    <attribute name="long_name" value="hybrid level at midpoints (1000*(A+B))" />
+    <attribute name="units" value="level" />
+    <attribute name="positive" value="down" />
+    <attribute name="standard_name" value="atmosphere_hybrid_sigma_pressure_coordinate" />
+    <attribute name="formula_terms" value="a: hyam b: hybm p0: P0 ps: PS" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="ilev" shape="ilev" type="double">
+    <attribute name="long_name" value="hybrid level at interfaces (1000*(A+B))" />
+    <attribute name="units" value="level" />
+    <attribute name="positive" value="down" />
+    <attribute name="standard_name" value="atmosphere_hybrid_sigma_pressure_coordinate" />
+    <attribute name="formula_terms" value="a: hyai b: hybi p0: P0 ps: PS" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="time" shape="time" type="double">
+    <attribute name="long_name" value="time" />
+    <attribute name="units" value="days since 0000-08-29 00:00:00" />
+    <attribute name="calendar" value="noleap" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="hyai" shape="ilev" type="double">
+    <attribute name="long_name" value="hybrid A coefficient at layer interfaces" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="hybi" shape="ilev" type="double">
+    <attribute name="long_name" value="hybrid B coefficient at layer interfaces" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="hyam" shape="lev" type="double">
+    <attribute name="long_name" value="hybrid A coefficient at layer midpoints" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="hybm" shape="lev" type="double">
+    <attribute name="long_name" value="hybrid B coefficient at layer midpoints" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="gw" shape="lat" type="double">
+    <attribute name="long_name" value="gauss weights" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+  <variable name="P0" type="double">
+    <attribute name="long_name" value="reference pressure" />
+    <attribute name="units" value="Pa" />
+  </variable>
+  <variable name="date_written" shape="time chars" type="char" />
+  <variable name="time_written" shape="time chars" type="char" />
+  <variable name="ntrm" type="int">
+    <attribute name="long_name" value="spectral truncation parameter M" />
+  </variable>
+  <variable name="ntrn" type="int">
+    <attribute name="long_name" value="spectral truncation parameter N" />
+  </variable>
+  <variable name="ntrk" type="int">
+    <attribute name="long_name" value="spectral truncation parameter K" />
+  </variable>
+  <variable name="ndbase" type="int">
+    <attribute name="long_name" value="base day" />
+  </variable>
+  <variable name="nsbase" type="int">
+    <attribute name="long_name" value="seconds of base day" />
+  </variable>
+  <variable name="nbdate" type="int">
+    <attribute name="long_name" value="base date (YYYYMMDD)" />
+  </variable>
+  <variable name="nbsec" type="int">
+    <attribute name="long_name" value="seconds of base date" />
+  </variable>
+  <variable name="mdt" type="int">
+    <attribute name="long_name" value="timestep" />
+    <attribute name="units" value="s" />
+  </variable>
+  <variable name="ndcur" shape="time" type="int">
+    <attribute name="long_name" value="current day (from base day)" />
+  </variable>
+  <variable name="nscur" shape="time" type="int">
+    <attribute name="long_name" value="current seconds of current day" />
+  </variable>
+  <variable name="date" shape="time" type="int">
+    <attribute name="long_name" value="current date (YYYYMMDD)" />
+  </variable>
+  <variable name="datesec" shape="time" type="int">
+    <attribute name="long_name" value="current seconds of current date" />
+  </variable>
+  <variable name="nsteph" shape="time" type="int">
+    <attribute name="long_name" value="current timestep" />
+  </variable>
+  <variable name="U" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Zonal wind" />
+    <attribute name="units" value="m/s" />
+  </variable>
+  <variable name="V" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Meridional wind" />
+    <attribute name="units" value="m/s" />
+  </variable>
+  <variable name="T" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="Q" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Specific humidity" />
+    <attribute name="units" value="kg/kg" />
+  </variable>
+  <variable name="PS" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Surface pressure" />
+    <attribute name="units" value="Pa" />
+  </variable>
+  <variable name="PHIS" shape="time lat lon" type="double">
+    <attribute name="long_name" value="surface geopotential" />
+    <attribute name="units" value="M2/S2" />
+    <attribute name="_FillValue" type="double" value="1.e+36" />
+    <attribute name="from_hires" value="true" />
+  </variable>
+  <variable name="SGH" shape="time lat lon" type="double">
+    <attribute name="long_name" value="orography standard deviation" />
+    <attribute name="units" value="M" />
+    <attribute name="_FillValue" type="double" value="1.e+36" />
+    <attribute name="from_hires" value="true" />
+  </variable>
+  <variable name="LANDM" shape="time lat lon" type="double">
+    <attribute name="long_name" value="land ocean transition mask: ocean (0), continent (1), transition (0-1)" />
+    <attribute name="units" value="none" />
+    <attribute name="_FillValue" type="double" value="1.e+36" />
+    <attribute name="from_hires" value="true" />
+  </variable>
+  <variable name="PBLH" shape="time lat lon" type="double">
+    <attribute name="long_name" value="PBL height" />
+    <attribute name="units" value="m" />
+  </variable>
+  <variable name="TPERT" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Perturbation temperature (eddies in PBL)" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="QPERT" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Perturbation specific humidity (eddies in PBL)" />
+    <attribute name="units" value="kg/kg" />
+  </variable>
+  <variable name="CLOUD" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Cloud fraction" />
+    <attribute name="units" value="fraction" />
+  </variable>
+  <variable name="QCWAT" shape="time lat lev lon" type="double" />
+  <variable name="TCWAT" shape="time lat lev lon" type="double" />
+  <variable name="LCWAT" shape="time lat lev lon" type="double" />
+  <variable name="TSICERAD" shape="time lat lon" type="double" />
+  <variable name="TS" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Surface temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="TSICE" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Ice temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="TS1" shape="time lat lon" type="double">
+    <attribute name="long_name" value="TS1      subsoil temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="TS2" shape="time lat lon" type="double">
+    <attribute name="long_name" value="TS2      subsoil temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="TS3" shape="time lat lon" type="double">
+    <attribute name="long_name" value="TS3      subsoil temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="TS4" shape="time lat lon" type="double">
+    <attribute name="long_name" value="TS4      subsoil temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="SNOWHICE" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Water equivalent snow depth" />
+    <attribute name="units" value="m" />
+  </variable>
+  <variable name="LANDFRAC" shape="time lat lon" type="double">
+    <attribute name="long_name" value="gridbox land fraction" />
+    <attribute name="units" value="FRAC" />
+    <attribute name="_FillValue" type="double" value="1.e+36" />
+    <attribute name="from_hires" value="true" />
+  </variable>
+  <variable name="TBOT" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Lowest model level temperature" />
+    <attribute name="units" value="K" />
+  </variable>
+  <variable name="ICEFRAC" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Fraction of sfc area covered by sea-ice" />
+    <attribute name="units" value="fraction" />
+  </variable>
+  <variable name="SICTHK" shape="time lat lon" type="double">
+    <attribute name="long_name" value="Sea ice thickness" />
+    <attribute name="units" value="m" />
+  </variable>
+  <variable name="TSOCN" shape="time lat lon" type="double" />
+  <variable name="CLDLIQ" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Grid box averaged liquid condensate amount" />
+    <attribute name="units" value="kg/kg" />
+  </variable>
+  <variable name="CLDICE" shape="time lat lev lon" type="double">
+    <attribute name="long_name" value="Grid box averaged ice condensate amount" />
+    <attribute name="units" value="kg/kg" />
+  </variable>
+  <variable name="LANDM_COSLAT" shape="time lat lon" type="double">
+    <attribute name="long_name" value="land ocean transition mask: ocean (0), continent (1), transition (0-1)" />
+    <attribute name="units" value="none" />
+    <attribute name="_FillValue" type="double" value="1.e+36" />
+    <attribute name="from_hires" value="true" />
+  </variable>
+</netcdf>

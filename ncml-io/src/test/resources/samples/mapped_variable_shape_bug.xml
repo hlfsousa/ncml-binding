@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
+  <dimension name="lev" length="26" />
+  <dimension name="ilev" length="27" />
+  <variable name="hybridLevel:lev|ilev" shape="lev" type="double">
+    <!-- name="lev" shape="lev", or name="ilev" shape="ilev" -->
+    <attribute name="long_name" value="hybrid level at interfaces/midpoints (1000*(A+B))" />
+    <attribute name="units" value="level" />
+    <attribute name="positive" value="down" />
+    <attribute name="standard_name" value="atmosphere_hybrid_sigma_pressure_coordinate" />
+    <attribute name="formula_terms" />
+    <attribute name="_FillValue" type="double" value="9.99999961690316e+35" />
+  </variable>
+</netcdf>                      

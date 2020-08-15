@@ -13,11 +13,27 @@ public class VariableWrapper extends AbstractAttributeContainer {
 
     private final Variable variable;
     private final String name;
+    private boolean mapped = false;
 
     public VariableWrapper(AbstractAttributeContainer parent, Properties properties, Variable variable) {
         super(parent, properties);
         this.variable = variable;
-        this.name = substitute(parent.getFullName() + "/" + variable.getName(), variable.getName());
+        if (variable.getName().matches("[a-zA-Z_0-9]+:.*")) {
+            // mapped group
+            String baseName = variable.getName().substring(0, variable.getName().indexOf(':'));
+            this.name = substitute("substitution", parent.getFullName() + '/' + baseName, baseName);
+            mapped = true;
+        } else {
+            this.name = substitute("substitution", parent.getFullName() + '/' + variable.getName(), variable.getName());
+        }
+    }
+
+    public String getMapExpression() {
+        return variable.getName().substring(variable.getName().indexOf(':') + 1);
+    }
+
+    public boolean isMapped() {
+        return mapped;
     }
 
     public Variable getVariable() {
