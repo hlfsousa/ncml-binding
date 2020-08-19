@@ -116,6 +116,7 @@ public class AttributeConventions {
      * attributes do not indicate scaling, no transformation is performed.
      *
      * @param variable variable whose value to retrieve
+     * @param value the value to be transformed (optional if reading the variable)
      * @param scaling type of scaling to perform if necessary
      * @return array value after scaling
      */
