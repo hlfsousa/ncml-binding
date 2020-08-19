@@ -1,17 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>hsousa.netcdf</groupId>
+  <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
   <version>0.1.0</version>
   <packaging>pom</packaging>
+
+  <name>NcML Binding</name>
+  <url>https://github.com/hlfsousa/ncml-binding</url>
+  <description>
+    Provides an infrastructure to map NetCDF files to Java Objects, similar to what JAX-B does for XML
+  </description>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License v2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Henrique Sousa</name>
+      <email>henrique.lf.sousa@gmail.com</email>
+      <url>https://github.com/hlfsousa</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/hlfsousa/ncml-binding.git</connection>
+    <developerConnection>scm:git:ssh://github.com:hlfsousa/ncml-binding.git</developerConnection>
+    <url>http://github.com/hlfsousa/ncml-binding/tree/master</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <repositories>
     <repository>
@@ -84,6 +124,49 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <modules>
