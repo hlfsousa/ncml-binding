@@ -45,10 +45,9 @@ import ucar.nc2.NetcdfFileWriter.Version;
 import ucar.nc2.Variable;
 
 /**
+ * Writes annotated models to a given location.
  * 
  * @author Henrique Sousa
- *
- * @param <T> They
  */
 // NetcdfFileWriter is deprecated but there is no practical substitution as of 5.3.2
 @SuppressWarnings("deprecation")

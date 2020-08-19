@@ -38,10 +38,10 @@ import edu.ucar.unidata.netcdf.ncml.Netcdf;
  * to its final location; the templates support adding code after the generation that will be preserved in subsequent
  * generations. To do so, add a block to the template that follows the following (set {@code block_name} to an arbitrary
  * word:
- * <p>
- * {@code}// block_name >><br/>
- * #if($customContent.block_name)${customContent.block_name}#end<br/>
- * // << block_name
+ * <p style="font-family: monospace">
+ * // block_name &gt;&gt;<br>
+ * #if($customContent.block_name)${customContent.block_name}#end<br>
+ * // &lt;&lt; block_name
  * </p>
  * <p>This is going to be read by the generation process and any code added between these comments is going to be
  * preserved.</p>
