@@ -1,7 +1,5 @@
 package hsousa.netcdf.schemagen.improvements;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,35 +15,28 @@ public abstract class HeaderTransformer {
     
     public Netcdf modify(Netcdf schema) {
         List<Object> childElements = schema.getEnumTypedefOrGroupOrDimension();
-        //filterGroups(childElements);
-        filterVariables(childElements);
-        
+        filterElements(Variable.class, childElements, getVariableFilters());
+        filterElements(Group.class, childElements, getGroupFilters());
         return schema;
     }
-
-    private void filterVariables(List<Object> childElements) {
+    
+    @SuppressWarnings("unchecked")
+    private <T> void filterElements(Class<T> type, List<Object> childElements, List<ElementFilter<T>> filterList) {
         List<Object> otherElements = new ArrayList<>();
-        List<Variable> variableList = new ArrayList<>();
+        List<T> selectedElements = new ArrayList<>();
         for (Object element : childElements) {
-            if (element instanceof Variable) {
-                variableList.add((Variable) element);
+            if (type.isInstance(element)) {
+                selectedElements.add((T) element);
             } else {
                 otherElements.add(element);
             }
         }
-        for (ElementFilter<Variable> filter : getVariableFilters()) {
-            variableList = filter.apply(variableList);
+        for (ElementFilter<T> filter : filterList) {
+            selectedElements = filter.apply(selectedElements);
         }
         childElements.clear();
         childElements.addAll(otherElements);
-        childElements.addAll(variableList);
+        childElements.addAll(selectedElements);
     }
 
-    private <T> List<T> listElements(List<Object> elementList, Class<T> type) {
-        return elementList.stream()
-                .filter(element -> type.isInstance(element))
-                .map(element -> (T) element)
-                .collect(toList());
-    }
-    
 }

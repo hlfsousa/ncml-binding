@@ -1,12 +1,12 @@
 package hsousa.netcdf.schemagen.improvements;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Variable;
 import hsousa.netcdf.schemagen.improvements.filtering.ElementFilter;
+import hsousa.netcdf.schemagen.improvements.filtering.GroupArchetypeFilter;
 import hsousa.netcdf.schemagen.improvements.filtering.VariableAttributeFilter;
 
 public class DefaultHeaderTransformer extends HeaderTransformer {
@@ -15,10 +15,11 @@ public class DefaultHeaderTransformer extends HeaderTransformer {
             .withCommonValue("units")
             .withNameBasedOn("long_name")
             .withSequentialMatching(true);
+    private static final ElementFilter<Group> GROUP_MAP = new GroupArchetypeFilter();
 
     @Override
     protected List<ElementFilter<Group>> getGroupFilters() {
-        return Collections.emptyList();
+        return Arrays.asList(GROUP_MAP);
     }
 
     @Override

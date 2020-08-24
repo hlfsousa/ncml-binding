@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
+                      https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd"
+  location="test_hgroups.nc">
+
+  <dimension name="recNum" length="74" />
+  <variable name="UTC_time" shape="recNum" type="string">
+    <attribute name="name" value="time" />
+    <attribute name="unit" value="none" />
+  </variable>
+
+  <group name="mozaic_flight_2012030403540535_ascent">
+    <variable name="air_press" shape="recNum" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="recNum" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="recNum" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="recNum" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+    <attribute name="airport_dep" value="TLV" />
+    <attribute name="flight" value="2012030403540535" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="FRA" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-04 03:54:05" />
+    <attribute name="aircraft" value="3" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="ascent" />
+    <attribute name="time_arr" value="2012-03-04 08:01:44" />
+  </group>
+
+  <group name="mozaic_flight_2012030321335035_descent">
+    <dimension name="air_press" length="76" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+
+    <attribute name="airport_dep" value="FRA" />
+    <attribute name="flight" value="2012030321335035" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="TLV" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-03 09:33:50" />
+    <attribute name="aircraft" value="3" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="descent" />
+    <attribute name="time_arr" value="2012-03-04 01:05:08" />
+  </group>
+
+  <group name="mozaic_flight_2012030403540535_descent">
+    <dimension name="air_press" length="78" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+
+    <attribute name="airport_dep" value="TLV" />
+    <attribute name="flight" value="2012030403540535" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="FRA" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-04 03:54:05" />
+    <attribute name="aircraft" value="3" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="descent" />
+    <attribute name="time_arr" value="2012-03-04 08:01:44" />
+  </group>
+
+  <group name="mozaic_flight_2012030412545335_ascent">
+    <dimension name="air_press" length="60" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+
+    <attribute name="airport_dep" value="FRA" />
+    <attribute name="flight" value="2012030412545335" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="NGO" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-04 12:54:53" />
+    <attribute name="aircraft" value="3" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="ascent" />
+    <attribute name="time_arr" value="2012-03-05 12:21:37" />
+  </group>
+
+  <group name="mozaic_flight_2012030419144751_ascent">
+    <dimension name="air_press" length="60" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+
+    <attribute name="airport_dep" value="FRA" />
+    <attribute name="flight" value="2012030419144751" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="WDH" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-04 07:14:47" />
+    <attribute name="aircraft" value="2" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="ascent" />
+    <attribute name="time_arr" value="2012-03-05 04:49:45" />
+  </group>
+
+  <group name="mozaic_flight_2012030319051051_descent">
+    <dimension name="air_press" length="78" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+
+    <attribute name="airport_dep" value="WDH" />
+    <attribute name="flight" value="2012030319051051" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="FRA" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-03 07:05:10" />
+    <attribute name="aircraft" value="2" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="descent" />
+    <attribute name="time_arr" value="2012-03-04 04:46:40" />
+  </group>
+
+  <group name="mozaic_flight_2012030421382353_ascent">
+    <dimension name="air_press" length="75" />
+    <variable name="air_press" shape="air_press" type="double">
+      <attribute name="name" value="air_pressure" />
+      <attribute name="unit" value="Pa" />
+    </variable>
+    <variable name="CO" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_carbon_monoxide_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="O3" shape="air_press" type="double">
+      <attribute name="name" value="mole_fraction_of_ozone_in_air" />
+      <attribute name="unit" value="ppb" />
+    </variable>
+    <variable name="altitude" shape="air_press" type="double">
+      <attribute name="name" value="barometric_altitude" />
+      <attribute name="unit" value="m" />
+    </variable>
+    <variable name="UTC_time" shape="air_press" type="string">
+      <attribute name="name" value="time" />
+      <attribute name="unit" value="none" />
+    </variable>
+    <variable name="lat" type="double">
+      <attribute name="standard_name" value="latitude" />
+      <attribute name="units" value="degree_north" />
+    </variable>
+    <variable name="lon" type="double">
+      <attribute name="standard_name" value="longitude" />
+      <attribute name="units" value="degree_east" />
+    </variable>
+    <attribute name="airport_dep" value="FRA" />
+    <attribute name="flight" value="2012030421382353" />
+    <attribute name="level" value="calibrated" />
+    <attribute name="airport_arr" value="TLV" />
+    <attribute name="mission" value="mozaic" />
+    <attribute name="time_dep" value="2012-03-04 09:38:23" />
+    <attribute name="aircraft" value="4" />
+    <attribute name="link" value="http://www.iagos.fr/extract" />
+    <attribute name="phase" value="ascent" />
+    <attribute name="time_arr" value="2012-03-05 01:13:34" />
+  </group>
+</netcdf>

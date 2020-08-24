@@ -1,21 +1,26 @@
 package hsousa.netcdf.schemagen.improvements.filtering;
 
+import static hsousa.netcdf.schemagen.improvements.filtering.NameUtils.findCommonPrefix;
+import static hsousa.netcdf.schemagen.improvements.filtering.NameUtils.findCommonSuffix;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.ucar.unidata.netcdf.ncml.Attribute;
 import edu.ucar.unidata.netcdf.ncml.Variable;
 
 public class VariableAttributeFilter implements ElementFilter<Variable> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VariableAttributeFilter.class);
 
     private List<String> commonValues = new ArrayList<>();
     private String archetypeNameAttribute;
@@ -23,16 +28,16 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
     
     @Override
     public List<Variable> apply(List<Variable> variableList) {
-        System.out.println("filtering " + variableList.size() + " variables");
+        LOGGER.debug("filtering {} variables", variableList.size());
         List<Variable> archetypes = new ArrayList<>();
         for (int i = 0; i < variableList.size(); i++) {
             Variable baseVariable = variableList.get(i);
-            System.out.println("looking into " + baseVariable.getName());
+            LOGGER.debug("looking into variable {}", baseVariable.getName());
             List<Variable> matchingVariables = new ArrayList<>();
             for (ListIterator<Variable> matchIterator = variableList.listIterator(i + 1); matchIterator.hasNext(); ) {
                 Variable possibleMatch = matchIterator.next();
                 if (attributesMatch(baseVariable, possibleMatch)) {
-                    System.out.println("match found: " + possibleMatch.getName());
+                    LOGGER.debug("match found: {}", possibleMatch.getName());
                     matchIterator.remove(); // consume variable into archetype
                     matchingVariables.add(possibleMatch);
                 } else if (sequentialMatching) {
@@ -99,10 +104,11 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
 
     private Variable createArchetype(List<Variable> matchingVariables) {
         Variable archetype = matchingVariables.get(0);
-        System.out.println("creating archetype based on " + archetype.getName());
+        LOGGER.debug("creating archetype based on {}", archetype.getName());
+        // FIXME attribute types might be implicit, so they will be unknown when cleared
         //setAttributeTypes(matchingVariables);
         setMappedName(archetype, matchingVariables);
-        emptyUnequalAttributes(archetype, matchingVariables);
+        clearUnequalAttributes(archetype, matchingVariables);
         return archetype;
     }
 
@@ -136,36 +142,10 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
             archetypeName = regex.replace("|", "_or_");
         }
         archetype.setName(archetypeName.replace(' ', '_') + ":" + regex);
-        System.out.println("archetype name is " + archetype.getName());
+        LOGGER.debug("archetype name is {}", archetype.getName());
     }
     
-    private String reverse(String str) {
-        StringBuilder reversed = new StringBuilder(str.length());
-        for (int i = str.length() - 1; i >= 0; i--) {
-            reversed.append(str.charAt(i));
-        }
-        return reversed.toString();
-    }
-
-    private String findCommonSuffix(List<String> values) {
-        List<String> reversed = values.stream().map(this::reverse).collect(toList());
-        String reversedSuffix = findCommonPrefix(reversed);
-        return reverse(reversedSuffix);
-    }
-
-    private String findCommonPrefix(List<String> values) {
-        Collections.sort(values);
-        String first = values.get(0);
-        String last = values.get(values.size() - 1);
-        int limit = Math.min(first.length(), last.length());
-        int end = 0;
-        while (end < limit && first.charAt(end) == last.charAt(end)) {
-            ++end;
-        }
-        return first.substring(0, end).trim();
-    }
-    
-    private void emptyUnequalAttributes(Variable archetype, List<Variable> matchingVariables) {
+    private void clearUnequalAttributes(Variable archetype, List<Variable> matchingVariables) {
         for (Attribute attribute : archetype.getAttribute()) {
             if (attribute.getValue() != null) {
                 for (Variable otherVariable : matchingVariables) {
@@ -174,7 +154,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
                             .findAny().get();
                     if (!attribute.getValue().equals(matchingAttribute.getValue())) {
                         attribute.setValue(null);
-                        System.out.println("attribute cleared: " + attribute.getName());
+                        LOGGER.debug("attribute cleared: {}", attribute.getName());
                         break;
                     }
                 }
