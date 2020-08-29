@@ -1,10 +1,12 @@
 package hsousa.netcdf.schemagen.improvements;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static hsousa.ncml.schema.NcmlSchemaUtil.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +38,17 @@ public class HeaderTransformerTest {
         URL schemaURL = new File(headerLocation).toURI().toURL();
         JAXBContext context = JAXBContext.newInstance(Netcdf.class);
         schema = (Netcdf) context.createUnmarshaller().unmarshal(schemaURL.openStream());
+    }
+    
+    private void writeTransformedHeaderToFile(Netcdf transformedHeader) {
+        try {
+            File tmpFile = File.createTempFile("HeaderTransformerTest", ".xml");
+            tmpFile.deleteOnExit();
+            JAXBContext context = JAXBContext.newInstance(Netcdf.class);
+            context.createMarshaller().marshal(transformedHeader, tmpFile);
+        } catch (IOException | JAXBException e) {
+            fail("Unable to create temporary file", e);
+        }
     }
     
     @Test
@@ -60,6 +74,7 @@ public class HeaderTransformerTest {
         };
 
         Netcdf transformed = transformer.modify(schema);
+        writeTransformedHeaderToFile(transformed);
         Map<String, Group> groups = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Group.class,
                 group -> group.getName().contains(":") ? group.getName().substring(0, group.getName().indexOf(':'))
                         : group.getName());
@@ -95,6 +110,7 @@ public class HeaderTransformerTest {
         transformer = new DefaultHeaderTransformer();
 
         Netcdf transformed = transformer.modify(schema);
+        writeTransformedHeaderToFile(transformed);
         Map<String, Variable> variables = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Variable.class,
                 var -> var.getName());
         
