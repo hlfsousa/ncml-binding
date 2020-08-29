@@ -30,6 +30,10 @@ public abstract class HeaderTransformer {
             } else {
                 otherElements.add(element);
             }
+            // recurse to groups first
+            if (element instanceof Group) {
+                filterElements(type, ((Group) element).getEnumTypedefOrDimensionOrVariable(), filterList);
+            }
         }
         for (ElementFilter<T> filter : filterList) {
             selectedElements = filter.apply(selectedElements);

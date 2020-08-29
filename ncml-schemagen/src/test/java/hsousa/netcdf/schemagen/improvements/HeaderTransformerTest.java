@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,22 +22,43 @@ import edu.ucar.unidata.netcdf.ncml.Dimension;
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Netcdf;
 import edu.ucar.unidata.netcdf.ncml.Variable;
+import hsousa.netcdf.schemagen.improvements.filtering.ElementFilter;
+import hsousa.netcdf.schemagen.improvements.filtering.GroupArchetypeFilter;
+import hsousa.netcdf.schemagen.improvements.filtering.VariableAttributeFilter;
 
 public class HeaderTransformerTest {
 
     private Netcdf schema;
     private HeaderTransformer transformer;
 
-    public void setupTransformer(String headerLocation) throws Exception {
+    public void readNcmlHeader(String headerLocation) throws Exception {
         URL schemaURL = new File(headerLocation).toURI().toURL();
         JAXBContext context = JAXBContext.newInstance(Netcdf.class);
         schema = (Netcdf) context.createUnmarshaller().unmarshal(schemaURL.openStream());
-        transformer = new DefaultHeaderTransformer();
     }
     
     @Test
     public void testGroupMergingByCommonDefinition() throws Exception {
-        setupTransformer("../ncml-binding-examples/samples/test_hgroups.xml");
+        readNcmlHeader("../ncml-binding-examples/samples/test_hgroups.xml");
+        // variables in test_hgroups.xml use "name" instead of "long_name", so the default transformation does not apply
+        transformer = new HeaderTransformer() {
+            private final ElementFilter<Variable> variableFilter = new VariableAttributeFilter()
+                    .withCommonValue("unit")
+                    .withNameBasedOn("name")
+                    .withSequentialMatching(true);
+            private final ElementFilter<Group> groupFilter = new GroupArchetypeFilter();
+
+            @Override
+            protected List<ElementFilter<Group>> getGroupFilters() {
+                return Arrays.asList(groupFilter);
+            }
+
+            @Override
+            protected List<ElementFilter<Variable>> getVariableFilters() {
+                return Arrays.asList(variableFilter);
+            }
+        };
+
         Netcdf transformed = transformer.modify(schema);
         Map<String, Group> groups = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Group.class,
                 group -> group.getName().contains(":") ? group.getName().substring(0, group.getName().indexOf(':'))
@@ -58,7 +80,7 @@ public class HeaderTransformerTest {
             Map<String, Variable> variables = mapChildren(mozaicFlight.getEnumTypedefOrDimensionOrVariable(), Variable.class,
                     var -> var.getName());
             assertThat(variables.keySet(),
-                    is(new HashSet<>(Arrays.asList("air_press", "CO", "O3", "altitude", "UTC_time", "lat", "lon"))));
+                    is(new HashSet<>(Arrays.asList("air_press", "mole_fraction_of_:CO|O3", "altitude", "UTC_time", "lat", "lon"))));
 
             Map<String, Attribute> attributes = mapChildren(mozaicFlight.getEnumTypedefOrDimensionOrVariable(), Attribute.class,
                     att -> att.getName());
@@ -69,7 +91,9 @@ public class HeaderTransformerTest {
     
     @Test
     public void testVariableMergingByUnitLongName() throws Exception {
-        setupTransformer("../ncml-binding-examples/samples/cami_0000-09-01_64x128_L26_c030918.xml");
+        readNcmlHeader("../ncml-binding-examples/samples/cami_0000-09-01_64x128_L26_c030918.xml");
+        transformer = new DefaultHeaderTransformer();
+
         Netcdf transformed = transformer.modify(schema);
         Map<String, Variable> variables = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Variable.class,
                 var -> var.getName());
