@@ -27,7 +27,7 @@ public class VariableWrapper extends AbstractAttributeContainer {
             this.name = substitute("substitution", parent.getFullName() + '/' + variable.getName(), variable.getName());
         }
     }
-
+    
     public String getMapExpression() {
         return variable.getName().substring(variable.getName().indexOf(':') + 1);
     }
@@ -89,6 +89,18 @@ public class VariableWrapper extends AbstractAttributeContainer {
         // dimension is not declared; this cannot happen with ncdump -h -x
         throw new IllegalArgumentException("Not a valid dimension in schema: " + name);
     }
+    
+    public String getShapeBrackets() {
+        if (variable.getShape() == null) {
+            return "";
+        }
+        int rank = variable.getShape().split("\\s++").length;
+        StringBuilder str = new StringBuilder(rank * 2);
+        for (int i = 0; i < rank; i++) {
+            str.append("[]");
+        }
+        return str.toString();
+    }
 
     @Override
     protected List<Attribute> getAttributesImpl() {
@@ -98,6 +110,14 @@ public class VariableWrapper extends AbstractAttributeContainer {
     @Override
     public String getName() {
         return name;
+    }
+    
+    public String getScaledType() {
+        final String scaleFactorAttributeName = properties.getProperty("attribute_conventions.scale_factor_attribute", "scale_factor");
+        return getAttributes().stream()
+                .filter(attributeWrapper -> attributeWrapper.getName().equals(scaleFactorAttributeName))
+                .findAny().map(attributeWrapper -> attributeWrapper.getAttribute().getType())
+                .orElse(getVariable().getType());
     }
 
 }

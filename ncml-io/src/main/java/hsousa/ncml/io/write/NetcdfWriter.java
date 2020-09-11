@@ -33,6 +33,7 @@ import hsousa.ncml.annotation.CDLRoot;
 import hsousa.ncml.annotation.CDLVariable;
 import hsousa.ncml.io.AttributeConventions;
 import hsousa.ncml.io.AttributeConventions.ArrayScaling;
+import hsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -56,6 +57,8 @@ public class NetcdfWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfWriter.class);
     
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
+
+    private ConvertUtils convertUtils = ConvertUtils.getInstance();
     
     public NetcdfWriter() {
     }
@@ -439,13 +442,18 @@ public class NetcdfWriter {
         }
         LOGGER.debug("actual var name to be written is " + name);
         final Variable variable = group.findVariable(name);
+        
         Array ncArray;
         if (varValue instanceof Array) {
-            ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, (Array) varValue, ArrayScaling.TO_RAW);
+            ncArray = (Array)varValue;
         } else {
-            ncArray = Array.factory(DataType.getType(varValue.getClass(), variableDecl.unsigned()), new int[] { 1 });
-            ncArray.setObject(0, varValue);
+            ncArray = convertUtils.toArray(varValue, variableDecl);
         }
+        
+        if (ncArray != null) {
+            ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
+        }
+        
         writer.write(variable, ncArray);
     }
 

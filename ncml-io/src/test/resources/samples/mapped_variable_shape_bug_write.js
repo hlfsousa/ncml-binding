@@ -1,5 +1,6 @@
 importPackage(Packages.hsousa.ncml.io.test);
-importPackage(Packages.ucar.ma2);
+
+var DoubleArray = Java.type("double[]");
 
 function createModel(model) {
 	model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
@@ -14,9 +15,13 @@ function createModel(model) {
 	lev.fillValue = 9.99999961690316e+35;
 	lev.dimensions = new java.util.ArrayList();
 	lev.dimensions.add(new Packages.ucar.nc2.Dimension("lev", levLength, true, false, false));
-	lev.value = createNcArray(Java.type("ucar.ma2.DataType").DOUBLE, [levLength], function(it) {
-        it.setDoubleNext(random(0, 10000));
-    });
+	lev.value = function() {
+	    var value = new DoubleArray(levLength);
+        for (var i = 0; i < 10; i++) {
+            value[i] = random(0, 10000);
+        }
+        return value;
+    }();
 	model.hybridLevel["lev"] = lev;
 	
 	var ilevLength = 27;
@@ -28,11 +33,15 @@ function createModel(model) {
 	ilev.fillValue = 9.99999961690316e+35;
 	ilev.dimensions = new java.util.ArrayList();
 	ilev.dimensions.add(new Packages.ucar.nc2.Dimension("ilev", ilevLength, true, false, false));
-	ilev.value = createNcArray(Java.type("ucar.ma2.DataType").DOUBLE, [ilevLength], function(it) {
-        it.setDoubleNext(random(0, 10000));
-    });
+	ilev.value = function() {
+	    var value = new DoubleArray(ilevLength);
+        for (var i = 0; i < 10; i++) {
+            value[i] = random(0, 10000);
+        }
+        return value;
+    }();
 	model.hybridLevel["ilev"] = ilev;
-	
+
     return model;
 }
 

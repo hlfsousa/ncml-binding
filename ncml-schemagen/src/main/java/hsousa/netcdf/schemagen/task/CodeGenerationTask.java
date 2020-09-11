@@ -112,7 +112,7 @@ public class CodeGenerationTask {
         
         NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, readProperties());
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
-        templates.put("/templates/NetcdfWrapper.java.vtl",
+        templates.put("/templates/plain_java/NetcdfWrapper.java.vtl",
                 (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         templates.putAll(additionalTemplates);
         generator.setTemplates(templates);

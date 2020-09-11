@@ -25,7 +25,6 @@ import hsousa.ncml.annotation.CDLDimensions;
 import hsousa.ncml.annotation.CDLGroup;
 import hsousa.ncml.annotation.CDLRoot;
 import hsousa.ncml.annotation.CDLVariable;
-import ucar.ma2.Array;
 
 /**
  * Generates code from a schema and verifies its correctness.
@@ -97,11 +96,11 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 assertThat(latitude.getReturnType(), is(classLoader.loadClass(
                         seaSurfaceSalinity.getName() + "$LatitudeVariable")));
                 assertThat((Class<?>) ((ParameterizedType) latitude.getGenericReturnType()).getActualTypeArguments()[0],
-                        is(Array.class));
+                        is(float[].class));
                 CDLVariable varAnnotation = latitude.getAnnotation(CDLVariable.class);
                 assertThat(varAnnotation, is(notNullValue()));
                 assertThat(varAnnotation.name(), is("Latitude"));
-                assertThat(varAnnotation.type(), is(Float.class));
+                assertThat(varAnnotation.type(), is(float.class));
                 assertThat(varAnnotation.shape(), is(arrayWithSize(1)));
                 assertThat(varAnnotation.shape(), is(arrayContaining("Latitude")));
             }
@@ -138,7 +137,7 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 CDLVariable varAnnotation = latitude.getAnnotation(CDLVariable.class);
                 assertThat(varAnnotation, is(notNullValue()));
                 assertThat(varAnnotation.name(), is("revision_date"));
-                assertThat(varAnnotation.type(), is(Long.class));
+                assertThat(varAnnotation.type(), is(long.class));
                 assertThat(varAnnotation.shape(), is(arrayWithSize(1)));
                 assertThat(varAnnotation.shape(), is(arrayContaining("revision_count")));
             }

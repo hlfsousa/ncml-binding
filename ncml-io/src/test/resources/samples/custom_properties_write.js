@@ -1,28 +1,30 @@
 importPackage(Packages.hsousa.ncml.io.test);
-importPackage(Packages.ucar.ma2);
+
+var IntArray = Java.type("int[]");
+var FloatArray = Java.type("float[]");
 
 function createModel(model) {
     model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
     var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
     group.name = "g01";
     group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
-    group.groupItems.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
-        it.setIntNext(Math.round(random(0, 100)));
-    });
+    group.groupItems.value = function(){
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
     model.mappedGroup = new java.util.LinkedHashMap();
     model.mappedGroup.put("g01", group);
 
     var maxTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
-    maxTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(0, 35));
-    }).getObject(scalarIndex));
+    maxTemp.value = random(0, 35);
     maxTemp.myVariableAttribute = "custom attribute - max temperature";
     var minTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     minTemp.setLongName("minimum temperature");
-    minTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(0, 35));
-    }).getObject(scalarIndex));
+    minTemp.value = random(0, 35);
     minTemp.myVariableAttribute = "custom attribute - min temperature";
     var temperatures = new java.util.LinkedHashMap();
     temperatures.put("temp_max", maxTemp);
@@ -31,9 +33,13 @@ function createModel(model) {
 
     var someGroup = new Packages.hsousa.ncml.io.test.SomeGroupVO();
     someGroup.someProperty = new Packages.hsousa.ncml.io.test.SomeGroupVO.SomePropertyVO();
-    someGroup.someProperty.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
-        it.setIntNext(Math.round(random(0, 100)));
-    });
+    someGroup.someProperty.value = function(){
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
     someGroup.someProperty.longName = "Property name was substituted :)";
     model.someGroup = someGroup;
     model.myGlobalAttribute = "global attribute customization ok";
@@ -66,7 +72,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(actualVar, "/temperatures[" + key + "]")
         var expectedVar = expectedVarMap[key]
         assertEquals(actualVar.longName, expectedVar.longName, "/temperatures[" + key + "].longName");
-        assertTrue(arrayEquals(actualVar.value.storage, expectedVar.value.storage), "/temperatures[" + key + "].value")
+        assertTrue(arrayEquals(actualVar.value, expectedVar.value), "/temperatures[" + key + "].value")
         assertEquals(actualVar.customVariableProperty, expectedVar.customVariableProperty);
     }
 
@@ -84,21 +90,19 @@ function editModel(netcdf) {
     var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
     group.name = "g02";
     var IntArray = Java.type("int[]");
-    var shape = new IntArray(1);
-    shape[0] = 10;
-    var ncArray = Java.type("ucar.ma2.Array").factory(Java.type("ucar.ma2.DataType").INT, shape);
-    for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
-        it.setIntNext(Math.round(random(0, 100)));
-    }
     group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
-    group.groupItems.value = ncArray;
+    group.groupItems.value = function(){
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
     netcdf.mappedGroup["g02"] = group;
 
     var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     avgTemp.longName = "average temperature";
-    avgTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(10, 20));
-    }).getObject(scalarIndex));
+    avgTemp.value = random(10, 20);
     netcdf.temperatures["temp_average"] = avgTemp;
 
     return netcdf;

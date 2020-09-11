@@ -23,6 +23,7 @@ var expectedLonBnds = [
   [ 332, 334 ], [ 334, 336 ], [ 336, 338 ], [ 338, 340 ], [ 340, 342 ], [ 342, 344 ], [ 344, 346 ], [ 346, 348 ],
   [ 348, 350 ], [ 350, 352 ], [ 352, 354 ], [ 354, 356 ], [ 356, 358 ], [ 358, 360 ]
 ];
-assertTrue(arrayEquals(netcdf.lonBnds.value.copyToNDJavaArray(), expectedLonBnds), "/lon_bnds value");
+assertNotNull(netcdf.lonBnds, "/lon_bnds");
+assertTrue(arrayEquals(netcdf.lonBnds.value, expectedLonBnds), "/lon_bnds value");
 assertEquals(netcdf.time.units, "days since 2001-1-1", "/time/@units");
 assertEquals(netcdf.tos.axis, null, "/tos/@axis (should not exist)");

@@ -10,12 +10,15 @@ import java.util.Map;
 
 import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.io.AttributeConventions;
+import hsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 
 public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements InvocationHandler {
 
     private static final AttributeConventions attributeConventions = new AttributeConventions();
+
+    private final ConvertUtils convertUtils = ConvertUtils.getInstance();
     private final Map<Method, Object> invocationCache = new HashMap<>();
     private Type valueType;
 
@@ -86,8 +89,7 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
             return arrayValue;
         }
         if (!node.isScalar()) {
-            // TODO converter registration
-            throw new IllegalStateException("I can't convert Array to something else yet");
+            return convertUtils.toJavaObject(arrayValue, expectedType);
         }
         return arrayValue.getObject(0);
     }

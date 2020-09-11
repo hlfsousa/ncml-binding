@@ -95,10 +95,10 @@ public class AttributeConventions {
 
     }
 
-    private static final AttributeConventionsAttributes defaultConvention = new DefaultAttributeConventionsAttributes();
+    private static final AttributeConventionsAttributes DEFAULT_CONVENTION = new DefaultAttributeConventionsAttributes();
 
     private static AttributeConventionsAttributes getDefaultConvention() {
-        return defaultConvention;
+        return DEFAULT_CONVENTION;
     }
 
     private final AttributeConventionsAttributes convention;
