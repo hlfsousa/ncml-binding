@@ -200,7 +200,6 @@ public class GroupArchetypeFilter implements ElementFilter<Group> {
 
     private void clearDimensions(Group archetype, List<Group> otherGroups) {
         // clear dimensions with different lengths
-        // TODO Auto-generated method stub
         List<Dimension> archetypeDimensions = archetype.getEnumTypedefOrDimensionOrVariable().stream()
                 .filter(element -> element instanceof Dimension).map(element -> (Dimension) element)
                 .collect(toList());

@@ -83,13 +83,29 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
   #end
   #set($arrayAttribute = !$attributeWrapper.attribute.separator.empty)
   #findType($attributeWrapper.attribute.type $arrayAttribute)
+  #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    @Override
 ${indent}    public ${typeName} get${property}() {
 ${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute("${attributeWrapper.attribute.name}"))
-  #if($typeName == "String")
-${indent}                .map(${localVar} -> ${localVar}.getStringValue())
+  #if($typeName.endsWith("[]"))
+    #if($typeName.startsWith("String"))
+${indent}                .map(${localVar} -> {
+${indent}                    Array ncArray = ${localVar}.getValues();
+${indent}                    String[] strArray = new String[ncArray.getShape()[0]];
+${indent}                    int idx = 0;
+${indent}                    for (IndexIterator it = ncArray.getIndexIterator(); it.hasNext(); idx++) {
+${indent}                        strArray[idx] = (String)it.getObjectNext();
+${indent}                    }
+${indent}                    return strArray;
+    #else
+${indent}                .map(${localVar} -> (${typeName})${localVar}.getValues().copyTo1DJavaArray())
+    #end
   #else
+    #if($typeName.startsWith("String"))
+${indent}                .map(${localVar} -> ${localVar}.getStringValue())
+    #else
 ${indent}                .map(${localVar} -> (${typeName})${localVar}.getNumericValue())
+    #end
   #end
 ${indent}                .orElse(null);
 ${indent}    }

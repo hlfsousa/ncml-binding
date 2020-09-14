@@ -78,6 +78,7 @@ public class ${group.typeName}VO implements ${group.typeName} {
   #end
   #set($arrayAttribute = !$attributeWrapper.attribute.separator.empty)
   #findType($attributeWrapper.attribute.type $arrayAttribute)
+  #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    private ${typeName} ${localVar};
 
 ${indent}    @Override

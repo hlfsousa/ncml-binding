@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import hsousa.ncml.annotation.CDLAttribute;
+import hsousa.ncml.io.converters.ArrayNumberConverter;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -159,7 +160,7 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
             throw new UnsupportedOperationException("enum attribute not implemented yet");
         }
         if (method.getReturnType().isArray()) {
-            throw new UnsupportedOperationException("array attribute not implemented yet");
+            return new ArrayNumberConverter().toJavaObject(attribute.getValues(), method.getReturnType());
         }
         if (method.getReturnType().isInterface()) {
             throw new UnsupportedOperationException("composite attribute (structure, opaque) not implemented yet");

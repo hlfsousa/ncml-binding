@@ -97,9 +97,9 @@ public interface ${group.typeName}  {
       #set($arrayAttribute = !$attribute.separator.empty)
       #findType($attribute.type $arrayAttribute)
         @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
-        ${typeName} ${accessor}();
+        ${typeName}${attributeWrapper.shapeBrackets} ${accessor}();
 
-        void ${modifier}(${typeName} ${localVar});
+        void ${modifier}(${typeName}${attributeWrapper.shapeBrackets} ${localVar});
 
     #end
     }
@@ -118,9 +118,9 @@ public interface ${group.typeName}  {
   #set($arrayAttribute = !$attribute.separator.empty)
   #findType($attribute.type $arrayAttribute)
     @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
-    ${typeName} ${accessor}();
+    ${typeName}${attributeWrapper.shapeBrackets} ${accessor}();
 
-    void ${modifier}(${typeName} ${localVar});
+    void ${modifier}(${typeName}${attributeWrapper.shapeBrackets} ${localVar});
 
 #end
 ## VARIABLES

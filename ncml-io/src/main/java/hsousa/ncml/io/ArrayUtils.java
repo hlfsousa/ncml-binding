@@ -25,7 +25,7 @@ public class ArrayUtils {
         }
         return shape;
     }
-    
+
     private static int[] addRank(int[] shape, int length) {
         int[] newShape = Arrays.copyOf(shape, shape.length + 1);
         newShape[shape.length] = length;
@@ -39,5 +39,5 @@ public class ArrayUtils {
         }
         return result;
     }
-    
+
 }

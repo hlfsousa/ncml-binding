@@ -239,6 +239,10 @@ public class NetcdfWriter {
                     if (!dataType.isEmpty()) {
                         attributeBuilder.setDataType(map(dataType));
                     }
+                    if (value != null && value.getClass().isArray()) {
+                        // String arrays are not supported as attributes
+                        attributeBuilder.setValues(Array.makeFromJavaArray(value));
+                    }
                 }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to retrieve attribute value from accessor " + accessor, e);
