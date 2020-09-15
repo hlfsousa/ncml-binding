@@ -19,6 +19,7 @@
     <dimension name="revision_count" isUnlimited="true" />
     <attribute name="authors" type="string" />
     <variable name="revision_date" type="long" shape="revision_count" />
+    <attribute name="version" type="int" />
   </group>
   
 </netcdf>

@@ -130,6 +130,9 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 CDLAttribute attAnnotation = authors.getAnnotation(CDLAttribute.class);
                 assertThat(attAnnotation.name(), is("authors"));
                 assertThat(attAnnotation.dataType(), is("string"));
+                
+                Method version = metadata.getMethod("getVersion");
+                assertThat(version.getReturnType(), is(Integer.class));
             }
             { // variables
                 Class<?> revisionDateType = classLoader
