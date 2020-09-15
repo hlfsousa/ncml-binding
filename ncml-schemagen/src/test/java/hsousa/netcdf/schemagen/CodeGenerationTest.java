@@ -130,11 +130,18 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 CDLAttribute attAnnotation = authors.getAnnotation(CDLAttribute.class);
                 assertThat(attAnnotation.name(), is("authors"));
                 assertThat(attAnnotation.dataType(), is("string"));
+                
+                Method version = metadata.getMethod("getVersion");
+                assertThat(version.getReturnType(), is(Integer.class));
             }
             { // variables
-                Method latitude = metadata.getMethod("getRevisionDate");
-                // TBC assertThat(latitude.getType(), is(Array.class));
-                CDLVariable varAnnotation = latitude.getAnnotation(CDLVariable.class);
+                Class<?> revisionDateType = classLoader
+                        .loadClass("hsousa.netcdf.schemagen.salinity.v2.Metadata$RevisionDateVariable");
+                Method revisionDate = metadata.getMethod("getRevisionDate");
+                assertThat(revisionDate.getReturnType(), is(revisionDateType));
+                assertThat(((ParameterizedType) revisionDate.getGenericReturnType()).getActualTypeArguments()[0],
+                        is(long[].class));
+                CDLVariable varAnnotation = revisionDate.getAnnotation(CDLVariable.class);
                 assertThat(varAnnotation, is(notNullValue()));
                 assertThat(varAnnotation.name(), is("revision_date"));
                 assertThat(varAnnotation.type(), is(long.class));

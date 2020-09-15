@@ -76,8 +76,9 @@ public class ${group.typeName}VO implements ${group.typeName} {
   #if($reservedWords.contains($localVar))
     #set($localVar = "_" + $localVar)
   #end
-  #set($arrayAttribute = !$attributeWrapper.attribute.separator.empty)
+  #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
   #findType($attributeWrapper.attribute.type $arrayAttribute)
+  #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    private ${typeName} ${localVar};
 
 ${indent}    @Override
