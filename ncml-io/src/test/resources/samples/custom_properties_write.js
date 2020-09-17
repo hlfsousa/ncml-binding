@@ -2,19 +2,21 @@ importPackage(Packages.hsousa.ncml.io.test);
 
 var IntArray = Java.type("int[]");
 var FloatArray = Java.type("float[]");
+var StringArray = Java.type("java.lang.String[]");
 
 function createModel(model) {
     model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
     var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
     group.name = "g01";
     group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
-    group.groupItems.value = function(){
+    group.groupItems.value = function() {
 	    var value = new IntArray(10);
         for (var i = 0; i < 10; i++) {
 	        value[i] = Math.round(random(0, 100));
         }
         return value;
     }();
+
     model.mappedGroup = new java.util.LinkedHashMap();
     model.mappedGroup.put("g01", group);
 
@@ -43,6 +45,17 @@ function createModel(model) {
     someGroup.someProperty.longName = "Property name was substituted :)";
     model.someGroup = someGroup;
     model.myGlobalAttribute = "global attribute customization ok";
+
+    model.someString = "this is a string";
+
+    model.stringArray = new Packages.hsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
+    model.stringArray.value = function() {
+	    var value = new StringArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = "str_" + i;
+        }
+        return value;
+    }();
 
     return model;
 }
@@ -84,6 +97,12 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(netcdf.unwrap().findAttribute("customglobalattribute"), "unwrapped global attribute");
     }
 
+    assertEquals(netcdf.someString, model.someString, "/someString");
+    var expectedStringArray = model.stringArray;
+    var actualStringArray = netcdf.stringArray;
+    assertNotNull(actualStringArray, "/stringArray");
+    assertNotNull(actualStringArray.value, "/stringArray.value");
+    assertTrue(arrayEquals(expectedStringArray.value, actualStringArray.value), "/stringArray.value");
 }
 
 function editModel(netcdf) {
