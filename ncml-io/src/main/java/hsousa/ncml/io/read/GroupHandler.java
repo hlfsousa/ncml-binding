@@ -16,6 +16,8 @@ import com.google.re2j.Pattern;
 import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLGroup;
 import hsousa.ncml.annotation.CDLVariable;
+import hsousa.ncml.io.AttributeConventions;
+import hsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
 import ucar.nc2.CDMNode;
 import ucar.nc2.Group;
@@ -24,11 +26,15 @@ import ucar.nc2.Variable;
 public class GroupHandler extends AbstractCDMNodeHandler<Group> implements InvocationHandler {
 
     private final Map<Method, Object> invocationCache = new HashMap<>();
+    private final AttributeConventions attributeConventions;
+    private final ConvertUtils convertUtils;
 
     public GroupHandler(Group group, boolean readOnly) {
         super(group, readOnly);
+        attributeConventions = new AttributeConventions();
+        convertUtils = ConvertUtils.getInstance();
     }
-    
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (!isFromInterface(proxy, method)) {
@@ -88,10 +94,19 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
             return null;
         }
         if (Array.class.isAssignableFrom(method.getReturnType())) {
-            return variable == null ? null : variable.read();
+            /*
+             * this is no longer used for generated classes, but I'm keeping for backwards
+             * compatibility and in case someone writes an interface manually that returns
+             * Array instead of an interface
+             */
+            return variable == null ? null : attributeConventions.readNumericArray(variable);
+        } else if (method.getReturnType().isInterface()) {
+            return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
+                    new VariableHandler(variable, method.getGenericReturnType(), readOnly));
+        } else {
+            return convertUtils.toJavaObject(
+                    variable == null ? null : attributeConventions.readNumericArray(variable), method.getReturnType());
         }
-        return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
-                new VariableHandler(variable, method.getGenericReturnType(), readOnly));
     }
 
     private Object getGroup(Method method) {
@@ -127,7 +142,7 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
         }
         return map;
     }
-    
+
     private boolean isMapped(String propertyName) {
         return propertyName.matches("[a-zA-Z_][a-zA-Z_0-9]*:.*");
     }
