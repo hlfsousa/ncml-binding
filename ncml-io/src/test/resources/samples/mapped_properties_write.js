@@ -32,6 +32,11 @@ function createModel(model) {
     temperatureMap.put("temp_max", maxTemp);
     temperatureMap.put("temp_min", minTemp);
     model.temperatureMap = temperatureMap;
+
+    model.intMap = new java.util.LinkedHashMap();
+    model.intMap.put("int_A", 1);
+    model.intMap.put("int_B", 2);
+
     return model;
 }
 
@@ -39,7 +44,7 @@ function verifyCreatedFile(netcdf, model) {
     var expectedGroupMap = model.groupMap;
     var actualGroupMap = netcdf.groupMap;
     assertNotNull(actualGroupMap, "/groupMap");
-    for (key in expectedGroupMap) {
+    for (var key in expectedGroupMap) {
         var groupObj = actualGroupMap[key];
         assertNotNull(groupObj, "/groupMap[" + key + "]");
         assertEquals(groupObj.name, key, "/groupMap[" + key + "]/name");
@@ -50,13 +55,21 @@ function verifyCreatedFile(netcdf, model) {
     var expectedVarMap = model.temperatureMap;
     var actualVarMap = netcdf.temperatureMap;
     assertNotNull(actualVarMap, "/temperatureMap");
-    for (key in expectedVarMap) {
+    for (var key in expectedVarMap) {
         var actualVar = actualVarMap[key];
         assertNotNull(actualVar, "/temperatureMap[" + key + "]")
         var expectedVar = expectedVarMap[key]
         assertEquals(actualVar.longName, expectedVar.longName, "/temperatureMap[" + key + "].longName");
         assertTrue(arrayEquals(actualVar.value, expectedVar.value), "/temperatureMap[" + key + "].value")
     }
+
+    var expectedIntMap = model.intMap;
+    var actualIntMap = netcdf.intMap;
+    for (var key in expectedIntMap) {
+	    assertNotNull(actualIntMap[key]);
+        assertEquals(actualIntMap[key], expectedIntMap[key], key);
+	}
+
 }
 
 function editModel(netcdf) {

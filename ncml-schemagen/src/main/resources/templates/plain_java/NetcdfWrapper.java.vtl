@@ -242,7 +242,7 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public Map<String, ${typeName}> get${property}() {
         return (Map<String, ${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
-            Pattern regex = varName.substring(varName.indexOf(':') + 1);
+            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
             Map<String, ${typeName}> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -257,7 +257,7 @@ ${indent}    }
                             throw new IllegalStateException("Unable to read variable " + variable.getShortName(), e);
                         }
                     }
-                    value.put(variable.getName(), ncArray);
+                    value.put(variable.getName(), convertUtils.toJavaObject(ncArray, ${typeName}.class));
                 }
             }
             return value;
