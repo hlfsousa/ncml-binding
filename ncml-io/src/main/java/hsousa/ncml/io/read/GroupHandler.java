@@ -1,9 +1,11 @@
 package hsousa.ncml.io.read;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -83,11 +85,25 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
         String varName = getActualName(method, variableAnnotation.name());
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (isMapped(varName)) {
-            ParameterizedType valueType = (ParameterizedType) ((ParameterizedType) method.getGenericReturnType())
+            Type valueType = ((ParameterizedType) method.getGenericReturnType())
                     .getActualTypeArguments()[1];
-            Class<?>[] interfaces = new Class<?>[] { (Class<?>)valueType.getRawType() };
-            return getMapped(node.getVariables(), varName, variable -> Proxy.newProxyInstance(classLoader,
-                    interfaces, new VariableHandler(variable, valueType, readOnly)));
+            if (valueType instanceof ParameterizedType) {
+                // this is a Variable
+                ParameterizedType variableType = (ParameterizedType) valueType;
+                Class<?>[] interfaces = new Class<?>[] { (Class<?>) variableType.getRawType() };
+                return getMapped(node.getVariables(), varName, variable -> Proxy.newProxyInstance(classLoader,
+                        interfaces, new VariableHandler(variable, variableType, readOnly)));
+            } else {
+                // scalar value
+                return getMapped(node.getVariables(), varName, variable -> {
+                    try {
+                        return variable == null ? null
+                                : convertUtils.toJavaObject(variable.read(), (Class<?>) valueType);
+                    } catch (IOException e) {
+                        throw new IllegalStateException("Unable to read variable " + variable.getFullName());
+                    }
+                });
+            }
         }
         Variable variable = node == null ? null : node.findVariable(varName);
         if (readOnly && variable == null) {
