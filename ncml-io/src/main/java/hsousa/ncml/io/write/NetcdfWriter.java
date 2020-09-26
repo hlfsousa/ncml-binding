@@ -59,8 +59,24 @@ public class NetcdfWriter {
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
+
+    private boolean defaultAttributeValueUsed;
+    private boolean closeAfterCreation;
     
     public NetcdfWriter() {
+        this(true);
+    }
+    
+    public NetcdfWriter(boolean closeAfterCreation) {
+        this.closeAfterCreation = closeAfterCreation;
+    }
+    
+    public void setDefaultAttributeValueUsed(boolean defaultAttributeValueUsed) {
+        this.defaultAttributeValueUsed = defaultAttributeValueUsed;
+    }
+    
+    public boolean isDefaultAttributeValueUsed() {
+        return defaultAttributeValueUsed;
     }
 
     public NetcdfFile write(Object model, File location) throws IOException {
@@ -86,7 +102,11 @@ public class NetcdfWriter {
         LOGGER.debug("Writing content");
         writeContent(writer, rootGroup, model);
         LOGGER.debug("All done");
-        return writer.getNetcdfFile();
+        NetcdfFile netcdfFile = writer.getNetcdfFile();
+        if (closeAfterCreation) {
+            netcdfFile.close();
+        }
+        return netcdfFile;
     }
     
     private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, String localPath) {
@@ -230,6 +250,9 @@ public class NetcdfWriter {
             Attribute.Builder attributeBuilder = Attribute.builder(name);
             try {
                 Object value = accessor.invoke(model);
+                if (value == null && defaultAttributeValueUsed) {
+                    value = attributeDecl.defaultValue();
+                }
                 if (value instanceof String) {
                     attributeBuilder.setStringValue((String) value);
                 } else if (value instanceof Number) {

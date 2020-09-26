@@ -156,7 +156,7 @@ public class NetcdfWriterTest {
         root.setRootVariable(rootVariable);
         
         // write file
-        NetcdfWriter writer = new NetcdfWriter();
+        NetcdfWriter writer = new NetcdfWriter(true);
         File outFile = new File("target/dimensionTest.nc");
         NetcdfFile netcdf = writer.write(root, outFile);
         Dimension actualGlobalDim = netcdf.getRootGroup().findDimension(globalDimension.getShortName());

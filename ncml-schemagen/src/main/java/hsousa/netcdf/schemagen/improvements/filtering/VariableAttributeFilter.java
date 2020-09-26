@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
     private static final Logger LOGGER = LoggerFactory.getLogger(VariableAttributeFilter.class);
 
     private List<String> commonValues = new ArrayList<>();
+    private List<String> absentValues = new ArrayList<>();
     private String archetypeNameAttribute;
     private boolean sequentialMatching;
     
@@ -36,7 +39,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
             List<Variable> matchingVariables = new ArrayList<>();
             for (ListIterator<Variable> matchIterator = variableList.listIterator(i + 1); matchIterator.hasNext(); ) {
                 Variable possibleMatch = matchIterator.next();
-                if (attributesMatch(baseVariable, possibleMatch)) {
+                if (attributesMatch(baseVariable, possibleMatch) && canCreateArchetypeName(baseVariable, possibleMatch, matchingVariables)) {
                     LOGGER.debug("match found: {}", possibleMatch.getName());
                     matchIterator.remove(); // consume variable into archetype
                     matchingVariables.add(possibleMatch);
@@ -54,10 +57,39 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return archetypes;
     }
 
+    private boolean canCreateArchetypeName(Variable baseVariable, Variable possibleMatch,
+            List<Variable> matchingVariables) {
+        if (archetypeNameAttribute != null) {
+            Function<Variable, String> extractName = variable -> variable.getAttribute().stream()
+                .filter(attribute -> attribute.getName().equals(archetypeNameAttribute))
+                .findAny().map(attribute -> attribute.getValue()).orElse(null);
+            
+            List<String> names = new ArrayList<>(matchingVariables.size() + 2);
+            names.add(extractName.apply(baseVariable));
+            names.add(extractName.apply(possibleMatch));
+            matchingVariables.stream().map(extractName).forEach(names::add);
+            String prefix = findCommonPrefix(names);
+            String suffix = findCommonSuffix(names);
+            return !prefix.isEmpty() || !suffix.isEmpty();
+        }
+        return true;
+    }
+
     private boolean attributesMatch(Variable baseVariable, Variable possibleMatch) {
         return haveSameRank(baseVariable, possibleMatch)
                 && declareSameAttributes(baseVariable, possibleMatch)
-                && commonAttributeValuesMatch(baseVariable, possibleMatch);
+                && commonAttributeValuesMatch(baseVariable, possibleMatch)
+                && absentAttributesNotFound(baseVariable, possibleMatch);
+    }
+
+    private boolean absentAttributesNotFound(Variable baseVariable, Variable possibleMatch) {
+        return absentValues.isEmpty() ||
+                !(baseVariable.getAttribute().stream()
+                        .filter(attribute -> absentValues.contains(attribute.getName()))
+                        .findAny().isPresent()
+                  || !possibleMatch.getAttribute().stream()
+                        .filter(attribute -> absentValues.contains(attribute.getName()))
+                        .findAny().isPresent());
     }
 
     private boolean haveSameRank(Variable baseVariable, Variable possibleMatch) {
@@ -80,8 +112,8 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
                 .filter(attribute -> commonValues.contains(attribute.getName()))
                 .collect(toMap(attribute -> attribute.getName(), attribute -> attribute.getValue()));
         
-        boolean hasArchetypeNameAttribute = archetypeNameAttribute == null;
-        if (!hasArchetypeNameAttribute) {
+        boolean hasArchetypeNameAttribute = archetypeNameAttribute != null;
+        if (hasArchetypeNameAttribute) {
             hasArchetypeNameAttribute = baseVariable.getAttribute().stream()
                     .filter(att -> att.getName().equals(archetypeNameAttribute)).findAny().isPresent();
             hasArchetypeNameAttribute &= possibleMatch.getAttribute().stream()
@@ -174,6 +206,11 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
 
     public VariableAttributeFilter withSequentialMatching(boolean sequentialMatching) {
         this.sequentialMatching = sequentialMatching;
+        return this;
+    }
+
+    public VariableAttributeFilter withAbsentValue(String absentAttributeName) {
+        this.absentValues.add(absentAttributeName);
         return this;
     }
 

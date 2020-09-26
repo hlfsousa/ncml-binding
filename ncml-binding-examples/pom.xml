@@ -11,5 +11,6 @@
   
   <modules>
     <module>examples-generation</module>
+    <module>ncml-bindind-example-readwrite</module>
   </modules>
 </project>

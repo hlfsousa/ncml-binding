@@ -31,11 +31,12 @@ The default code generation will provide you with some pieces of data:
 Additional templates can be provided in order to generate more classes or any other type of file from the NcML header. Then you can read your file with two simple lines:
 
 ```java
-NetcdfFile netcdf = NetcdfFiles.open("/path/to/my_file.nc"); // read-only
-MyFile myFile = new MyFileWrapper(netcdf.getRootGroup());
+NetcdfReader<MyFile> reader = new NetcdfReader<>(MyFile.class);
+MyFile myFile = reader.read(new File("/path/to/my_file.nc"), true); // read-only
 // done! Now you can read any property, e.g.:
 String someAttribute = myFile.getSomeAttribute();
-ucar.ma2.Array someVariableValue = myFile.getSomeVariable().getValue(); // variable attributes are also available
+SomeVariable<double[]> someVariable = myFile.getSomeVariable();
+double[] value = someVariable.getValue(); // variable attributes are also available
 ```
 
-Further information is provided in the detailed documentation (TBD). Issues can be submitted through the GitHub project at https://github.com/hlfsousa/ncml-binding. Thank you!
+Further information is provided in the wiki and example projects. Issues can be submitted through the GitHub project at https://github.com/hlfsousa/ncml-binding. Thank you!
