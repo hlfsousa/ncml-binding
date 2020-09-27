@@ -1,5 +1,6 @@
 package hsousa.ncml.io.converters;
 
+import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLVariable;
 import hsousa.ncml.io.ArrayUtils;
 import hsousa.ncml.io.Converter;
@@ -11,6 +12,15 @@ public class ArrayStringConverter implements Converter<Object> {
 
     @Override
     public Array toArray(Object value, CDLVariable variableDecl) {
+        return toArray(value);
+    }
+
+    @Override
+    public Array toArray(Object value, CDLAttribute attributeDecl) {
+        return toArray(value);
+    }
+
+    private Array toArray(Object value) {
         Array array = Array.factory(DataType.STRING, ArrayUtils.shapeOf(value));
         IndexIterator indexIterator = array.getIndexIterator();
         while (indexIterator.hasNext()) {

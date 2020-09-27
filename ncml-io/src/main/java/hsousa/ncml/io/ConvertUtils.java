@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLVariable;
 import hsousa.ncml.io.converters.ArrayNumberConverter;
 import hsousa.ncml.io.converters.ArrayStringConverter;
@@ -41,6 +42,19 @@ public class ConvertUtils {
         registry.computeIfAbsent(type, key -> new ArrayList<>()).add(converter);
     }
     
+    public Array toArray(Object value, CDLAttribute attributeDecl) {
+        for (Entry<Class<?>, List<Converter>> entry : registry.entrySet()) {
+            if (entry.getKey().isInstance(value)) {
+                for (Converter converter : entry.getValue()) {
+                    if (converter.isApplicable(value)) {
+                        return converter.toArray(value, attributeDecl);
+                    }
+                }
+            }
+        }
+        throw new IllegalArgumentException("Unable to convert " + value + " to Array, no converter registered");
+    }
+
     public Array toArray(Object value, CDLVariable variableDecl) {
         for (Entry<Class<?>, List<Converter>> entry : registry.entrySet()) {
             if (entry.getKey().isInstance(value)) {

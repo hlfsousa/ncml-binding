@@ -40,6 +40,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+
+    <version.netcdf-java>5.3.3</version.netcdf-java>    
+    <version.slf4j>1.7.28</version.slf4j>
+    <version.beanutils>1.9.4</version.beanutils>
+
+    <version.junit>5.5.1</version.junit>
+    <version.hamcrest>2.2</version.hamcrest>
+    <version.mockito>3.3.3</version.mockito>
   </properties>
 
   <distributionManagement>
@@ -87,7 +95,7 @@
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>netcdf-java-bom</artifactId>
-        <version>5.3.3</version>
+        <version>${version.netcdf-java}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -95,26 +103,31 @@
         <!-- edu.ucar libraries depend on SLF4J API, and we need to bind it to something -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.7.28</version>
+        <version>${version.slf4j}</version>
         <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${version.beanutils}</version>
       </dependency>
 
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.5.1</version>
+        <version>${version.junit}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest</artifactId>
-        <version>2.2</version>
+        <version>${version.hamcrest}</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-junit-jupiter</artifactId>
-        <version>3.3.3</version>
+        <version>${version.mockito}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
