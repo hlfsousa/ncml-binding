@@ -50,12 +50,12 @@
             </goals>
             <inherited>false</inherited>
             <configuration>
-              <mainClass>hsousa.netcdf.schemagen.task.CodeGenerationTask</mainClass>
+              <mainClass>io.github.hlfsousa.ncml.schemagen.task.CodeGenerationTask</mainClass>
               <arguments>
                 <argument>${project.basedir}/src/main/resources/cami_archetype.xml</argument>
                 <argument>-p</argument>
                 <argument>${project.basedir}/src/main/resources/cami_archetype.properties</argument>
-                <argument>hsousa.netcdf.examples.generation.CommunityAtmosphericModel</argument>
+                <argument>io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel</argument>
                 <argument>-o</argument>
                 <argument>${project.basedir}/src/main/java</argument>
               </arguments>

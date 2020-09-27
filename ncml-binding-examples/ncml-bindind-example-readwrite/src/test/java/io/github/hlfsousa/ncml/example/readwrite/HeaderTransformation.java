@@ -21,10 +21,10 @@ import javax.xml.bind.Marshaller;
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Netcdf;
 import edu.ucar.unidata.netcdf.ncml.Variable;
-import hsousa.netcdf.schemagen.improvements.HeaderTransformer;
-import hsousa.netcdf.schemagen.improvements.filtering.ElementFilter;
-import hsousa.netcdf.schemagen.improvements.filtering.GroupArchetypeFilter;
-import hsousa.netcdf.schemagen.improvements.filtering.VariableAttributeFilter;
+import io.github.hlfsousa.ncml.schemagen.improvements.HeaderTransformer;
+import io.github.hlfsousa.ncml.schemagen.improvements.filtering.ElementFilter;
+import io.github.hlfsousa.ncml.schemagen.improvements.filtering.GroupArchetypeFilter;
+import io.github.hlfsousa.ncml.schemagen.improvements.filtering.VariableAttributeFilter;
 
 /**
  * This class executes the transformation configured for the CAMI header. All actual transformations are at

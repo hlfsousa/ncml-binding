@@ -1,12 +1,12 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 
 var IntArray = Java.type("int[]");
 var FloatArray = Java.type("float[]");
 var DoubleArray = Java.type("double[]");
 
 function createModel(model) {
-    model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
-    model.temperature = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureVO();
+    model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
+    model.temperature = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureVO();
 	model.temperature.scaleFactor = 0.25;
 	model.temperature.addOffset = 15;
 	model.temperature.dimensions = [ new Packages.ucar.nc2.Dimension("number_of_items", 20) ];
@@ -34,7 +34,7 @@ function verifyCreatedFile(netcdf, model) {
 }
 
 function editModel(netcdf) {
-    netcdf.temperature = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureVO();
+    netcdf.temperature = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureVO();
 	netcdf.temperature.scaleFactor = 0.25;
 	netcdf.temperature.addOffset = 15;
 	netcdf.temperature.dimensions = [ new Packages.ucar.nc2.Dimension("number_of_items", 15) ];

@@ -1,13 +1,13 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 
 var DoubleArray = Java.type("double[]");
 
 function createModel(model) {
-	model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
+	model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
 	model.hybridLevel = new java.util.LinkedHashMap();
 	
 	var levLength = 26;
-	var lev = new Packages.hsousa.ncml.io.test.TestNetcdfVO.HybridLevelVO();
+	var lev = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.HybridLevelVO();
 	lev.longName = "hybrid level at midpoints (1000*(A+B))";
 	lev.units = "level";
 	lev.standardName = "atmosphere_hybrid_sigma_pressure_coordinate";
@@ -25,7 +25,7 @@ function createModel(model) {
 	model.hybridLevel["lev"] = lev;
 	
 	var ilevLength = 27;
-	var ilev = new Packages.hsousa.ncml.io.test.TestNetcdfVO.HybridLevelVO();
+	var ilev = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.HybridLevelVO();
 	ilev.longName = "hybrid level at interfaces (1000*(A+B))";
 	ilev.units = "level";
 	ilev.standardName = "atmosphere_hybrid_sigma_pressure_coordinate";
