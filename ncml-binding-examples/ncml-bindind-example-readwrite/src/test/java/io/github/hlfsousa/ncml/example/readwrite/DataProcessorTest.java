@@ -9,9 +9,9 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Test;
 
-import hsousa.ncml.io.read.NetcdfReader;
-import hsousa.netcdf.examples.generation.CommunityAtmosphericModel;
-import hsousa.netcdf.examples.generation.processing.DataProcessor;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel;
+import io.github.hlfsousa.ncml.examples.generation.processing.DataProcessor;
+import io.github.hlfsousa.ncml.io.read.NetcdfReader;
 
 /**
  * This test shows how creating a model also facilitates testing.

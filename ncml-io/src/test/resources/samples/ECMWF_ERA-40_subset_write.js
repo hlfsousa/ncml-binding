@@ -1,4 +1,4 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
 
 var FloatArray = Java.type("float[]");
@@ -12,7 +12,7 @@ function random(min, max) {
 
 function createModel(model) {
 	if (!model.longitude) {
-		var longitude = new Packages.hsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
+		var longitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
 		model.longitude = longitude;
 	}
 	assertNotNull(model.longitude, "empty/longitude"); // interface, let handler create

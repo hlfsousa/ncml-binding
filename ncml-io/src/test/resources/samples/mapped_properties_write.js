@@ -1,13 +1,13 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
 
 var IntArray = Java.type("int[]");
 
 function createModel(model) {
-    model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
-    var group = new Packages.hsousa.ncml.io.test.GroupMapVO();
+    model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO();
     group.name = "g01";
-    group.items = new Packages.hsousa.ncml.io.test.GroupMapVO.ItemsVO();
+    group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
 
     group.items.value = function() {
 	    var value = new IntArray(10);
@@ -20,11 +20,11 @@ function createModel(model) {
     model.groupMap = new java.util.LinkedHashMap();
     model.groupMap.put("g01", group);
 
-    var maxTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
+    var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
     maxTemp.longName = "maximum temperature";
     maxTemp.value = random(0, 35);
 	
-    var minTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
+    var minTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
     minTemp.longName = "minimum temperature";
     minTemp.value = random(0, 35);
 
@@ -73,11 +73,11 @@ function verifyCreatedFile(netcdf, model) {
 }
 
 function editModel(netcdf) {
-    var group = new Packages.hsousa.ncml.io.test.GroupMapVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO();
     group.name = "g02";
     var shape = new IntArray(1);
     shape[0] = 10;
-    group.items = new Packages.hsousa.ncml.io.test.GroupMapVO.ItemsVO();
+    group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
     group.items.value = function(){
 	    var value = new IntArray(shape[0]);
         for (var i = 0; i < shape[0]; i++) {
@@ -87,7 +87,7 @@ function editModel(netcdf) {
     }();
     netcdf.groupMap["g02"] = group;
 
-    var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
+    var avgTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
     avgTemp.longName = "average temperature";
     avgTemp.value = random(10, 20);
     netcdf.temperatureMap["temp_average"] = avgTemp;

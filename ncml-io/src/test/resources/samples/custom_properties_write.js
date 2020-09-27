@@ -1,14 +1,14 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 
 var IntArray = Java.type("int[]");
 var FloatArray = Java.type("float[]");
 var StringArray = Java.type("java.lang.String[]");
 
 function createModel(model) {
-    model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
-    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
+    model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
     group.name = "g01";
-    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
+    group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function() {
 	    var value = new IntArray(10);
         for (var i = 0; i < 10; i++) {
@@ -21,10 +21,10 @@ function createModel(model) {
     model.mappedGroup = new java.util.LinkedHashMap();
     model.mappedGroup.put("g01", group);
 
-    var maxTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
     maxTemp.value = random(0, 35);
-    var minTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    var minTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     minTemp.setLongName("minimum temperature");
     minTemp.value = random(0, 35);
     var temperatures = new java.util.LinkedHashMap();
@@ -32,8 +32,8 @@ function createModel(model) {
     temperatures.put("temp_min", minTemp);
     model.temperatures = temperatures;
 
-    var someGroup = new Packages.hsousa.ncml.io.test.SomeGroupVO();
-    someGroup.someProperty = new Packages.hsousa.ncml.io.test.SomeGroupVO.SomePropertyVO();
+    var someGroup = new Packages.io.github.hlfsousa.ncml.io.test.SomeGroupVO();
+    someGroup.someProperty = new Packages.io.github.hlfsousa.ncml.io.test.SomeGroupVO.SomePropertyVO();
     someGroup.someProperty.value = function(){
 	    var value = new IntArray(10);
         for (var i = 0; i < 10; i++) {
@@ -47,7 +47,7 @@ function createModel(model) {
 
     model.someString = "this is a string";
 
-    model.stringArray = new Packages.hsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
+    model.stringArray = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
     model.stringArray.value = function() {
 	    var value = new StringArray(10);
         for (var i = 0; i < 10; i++) {
@@ -105,10 +105,10 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
 }
 
 function editModel(netcdf) {
-    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
     group.name = "g02";
     var IntArray = Java.type("int[]");
-    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
+    group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function(){
 	    var value = new IntArray(10);
         for (var i = 0; i < 10; i++) {
@@ -119,7 +119,7 @@ function editModel(netcdf) {
     group.groupItems.myVariableAttribute = "custom attribute - g02";
     netcdf.mappedGroup["g02"] = group;
 
-    var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    var avgTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     avgTemp.longName = "average temperature";
     avgTemp.value = random(10, 20);
     netcdf.temperatures["temp_average"] = avgTemp;
