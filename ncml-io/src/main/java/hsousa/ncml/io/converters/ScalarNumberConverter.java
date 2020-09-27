@@ -1,5 +1,6 @@
 package hsousa.ncml.io.converters;
 
+import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLVariable;
 import hsousa.ncml.io.Converter;
 import ucar.ma2.Array;
@@ -10,7 +11,16 @@ public class ScalarNumberConverter implements Converter<Number> {
 
     @Override
     public Array toArray(Number value, CDLVariable variableDecl) {
-        DataType dataType = DataType.getType(value.getClass(), variableDecl.unsigned());
+        return toArray(value, variableDecl.unsigned());
+    }
+    
+    @Override
+    public Array toArray(Number value, CDLAttribute attributeDecl) {
+        return toArray(value, attributeDecl.unsigned());
+    }
+
+    private Array toArray(Number value, boolean unsigned) {
+        DataType dataType = DataType.getType(value.getClass(), unsigned);
         Array scalarArray = Array.factory(dataType, new int[0]);
         scalarArray.setObject(Index.scalarIndexImmutable, value);
         return scalarArray;

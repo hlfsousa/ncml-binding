@@ -16,6 +16,7 @@ function createModel(model) {
         }
         return value;
     }();
+    group.groupItems.setMyVariableAttribute("custom attribute - g01");
 
     model.mappedGroup = new java.util.LinkedHashMap();
     model.mappedGroup.put("g01", group);
@@ -23,11 +24,9 @@ function createModel(model) {
     var maxTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
     maxTemp.value = random(0, 35);
-    maxTemp.myVariableAttribute = "custom attribute - max temperature";
     var minTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     minTemp.setLongName("minimum temperature");
     minTemp.value = random(0, 35);
-    minTemp.myVariableAttribute = "custom attribute - min temperature";
     var temperatures = new java.util.LinkedHashMap();
     temperatures.put("temp_max", maxTemp);
     temperatures.put("temp_min", minTemp);
@@ -73,7 +72,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         if (lowLevelCheck) {
             assertEquals(groupObj.unwrap().shortName, key, "unwrapped group name");
             assertNotNull(groupObj.unwrap().findVariable("items").findAttribute("my_attribute"),
-                    "unwraped variable attribute my_attribute");
+                    "unwraped variable attribute my_attribute at /mappedGroup[" + key + "]/items");
         }
     }
     
@@ -117,6 +116,7 @@ function editModel(netcdf) {
         }
         return value;
     }();
+    group.groupItems.myVariableAttribute = "custom attribute - g02";
     netcdf.mappedGroup["g02"] = group;
 
     var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();

@@ -23,7 +23,7 @@ import ucar.ma2.Array;
         @CDLDimension(name = "${escapeString.apply($dimension.name)}"#if($dimLength > 0), length = ${dimLength}#end#if($dimension.isUnlimited), unlimited = true#end)#if($foreach.hasNext),#end
 #end
 })
-public interface ${group.typeName}  {
+public interface ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
 #macro(findType $type $isArray)
   #set($unsigned = false)

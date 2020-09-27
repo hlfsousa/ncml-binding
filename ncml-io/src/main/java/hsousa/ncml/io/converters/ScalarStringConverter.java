@@ -1,5 +1,6 @@
 package hsousa.ncml.io.converters;
 
+import hsousa.ncml.annotation.CDLAttribute;
 import hsousa.ncml.annotation.CDLVariable;
 import hsousa.ncml.io.Converter;
 import ucar.ma2.Array;
@@ -10,6 +11,15 @@ public class ScalarStringConverter implements Converter<String> {
 
     @Override
     public Array toArray(String value, CDLVariable variableDecl) {
+        return toArray(value);
+    }
+
+    @Override
+    public Array toArray(String value, CDLAttribute attributeDecl) {
+        return toArray(value);
+    }
+
+    private Array toArray(String value) {
         DataType dataType = DataType.STRING;
         Array scalarArray = Array.factory(dataType, new int[0]);
         scalarArray.setObject(Index.scalarIndexImmutable, value);

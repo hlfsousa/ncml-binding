@@ -2,6 +2,7 @@ package hsousa.ncml.io.write;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.beanutils.ConvertUtils.convert;
 
 import java.io.File;
 import java.io.IOException;
@@ -248,25 +249,25 @@ public class NetcdfWriter {
                 name = getDefaultName(accessor);
             }
             Attribute.Builder attributeBuilder = Attribute.builder(name);
+            if (attributeDecl.dataType() != null && !attributeDecl.dataType().isEmpty()) {
+                DataType dataType = DataType.getType(attributeDecl.dataType());
+                if (attributeDecl.unsigned()) {
+                    dataType = DataType.getType(dataType.getPrimitiveClassType(), true);
+                }
+                attributeBuilder.setDataType(dataType);
+            }
             try {
                 Object value = accessor.invoke(model);
                 if (value == null && defaultAttributeValueUsed) {
                     value = attributeDecl.defaultValue();
-                }
-                if (value instanceof String) {
-                    attributeBuilder.setStringValue((String) value);
-                } else if (value instanceof Number) {
-                    attributeBuilder.setNumericValue((Number) value, attributeDecl.unsigned());
-                } else {
-                    String dataType = attributeDecl.dataType();
-                    if (!dataType.isEmpty()) {
-                        attributeBuilder.setDataType(map(dataType));
-                    }
-                    if (value != null && value.getClass().isArray()) {
-                        // String arrays are not supported as attributes
-                        attributeBuilder.setValues(Array.makeFromJavaArray(value));
+                    if (!accessor.getReturnType().isInstance(value)) {
+                        value = convert(value, accessor.getReturnType());
                     }
                 }
+                if (value == null) {
+                    return;
+                }
+                attributeBuilder.setValues(convertUtils.toArray(value, attributeDecl));
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to retrieve attribute value from accessor " + accessor, e);
             }
