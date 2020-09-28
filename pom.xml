@@ -32,7 +32,7 @@
 
   <scm>
     <connection>scm:git:git://github.com/hlfsousa/ncml-binding.git</connection>
-    <developerConnection>scm:git:ssh://github.com:hlfsousa/ncml-binding.git</developerConnection>
+    <developerConnection>scm:git:ssh://github.com/hlfsousa/ncml-binding.git</developerConnection>
     <url>http://github.com/hlfsousa/ncml-binding/tree/master</url>
   </scm>
 
