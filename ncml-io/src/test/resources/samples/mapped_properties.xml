@@ -14,5 +14,7 @@
     <attribute name="long_name" type="string" />
     <attribute name="units" type="string" value="Celsius degrees" />
   </variable>
+  
+  <variable name="intMap:int_.*" type="int" />
 
 </netcdf>

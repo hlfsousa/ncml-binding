@@ -1,5 +1,8 @@
-importPackage(Packages.hsousa.ncml.io.test);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
+
+var FloatArray = Java.type("float[]");
+var IntArray = Java.type("int[]");
 
 function random(min, max) {
 	var delta = max - min;
@@ -9,18 +12,17 @@ function random(min, max) {
 
 function createModel(model) {
 	if (!model.longitude) {
-		var longitude = new Packages.hsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
+		var longitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
 		model.longitude = longitude;
 	}
 	assertNotNull(model.longitude, "empty/longitude"); // interface, let handler create
-	var IntArray = Java.type("int[]");
 	var shape = new IntArray(1);
 	shape[0] = 144;
-	var ncArray = Java.type("ucar.ma2.Array").factory(Java.type("ucar.ma2.DataType").FLOAT, shape);
-    for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
-		it.setFloatNext(random(0, 360));
-    }
-	model.longitude.value = ncArray;
+	var longitude = new FloatArray(144);
+	for (var i = 0; i < shape[0]; i++) {
+		longitude[i] = random(0, 360);
+	}
+	model.longitude.value = longitude;
 	return model;
 }
 
@@ -31,8 +33,7 @@ function verifyCreatedFile(netcdf, model) {
 	assertNotNull(actualLongitude, "/longitude");
 	var expectedLonValue = expectedLongitude.value;
 	var actualLonValue = actualLongitude.value;
-	assertTrue(arrayEquals(expectedLonValue.shape, actualLonValue.shape), "/longitude/value (shape)")
-	assertTrue(arrayEquals(expectedLonValue.storage, actualLonValue.storage), "/longitude/value (storage)");
+	assertTrue(arrayEquals(expectedLonValue, actualLonValue), "/longitude/value")
 }
 
 function editModel(netcdf) {
@@ -40,11 +41,11 @@ function editModel(netcdf) {
 	var IntArray = Java.type("int[]");
 	var shape = new IntArray(1);
 	shape[0] = 73;
-	var ncArray = Java.type("ucar.ma2.Array").factory(Java.type("ucar.ma2.DataType").FLOAT, shape);
-    for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
-		it.setFloatNext(random(0, 360));
+	var latitude = new FloatArray(shape[0]);
+    for (var i = 0; i < shape[0]; i++) {
+		latitude[i] = random(0, 360);
     }
-	netcdf.latitude.value = ncArray;
+	netcdf.latitude.value = latitude;
 	return netcdf;
 }
 
@@ -60,6 +61,5 @@ function verifyEditedFile(netcdf, model) {
 	assertNotNull(actualLatitude, "/latitude");
 	var expectedLonValue = expectedLatitude.value;
 	var actualLonValue = actualLatitude.value;
-	assertTrue(arrayEquals(expectedLonValue.shape, actualLonValue.shape), "/latitude/value (shape)")
-	assertTrue(arrayEquals(expectedLonValue.storage, actualLonValue.storage), "/latitude/value (storage)");
+	assertTrue(arrayEquals(expectedLonValue, actualLonValue), "/latitude/value (shape)")
 }

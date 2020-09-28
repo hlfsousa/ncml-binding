@@ -1,42 +1,60 @@
-importPackage(Packages.hsousa.ncml.io.test);
-importPackage(Packages.ucar.ma2);
+importPackage(Packages.io.github.hlfsousa.ncml.io.test);
+
+var IntArray = Java.type("int[]");
+var FloatArray = Java.type("float[]");
+var StringArray = Java.type("java.lang.String[]");
 
 function createModel(model) {
-    model = new Packages.hsousa.ncml.io.test.TestNetcdfVO();
-    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
+    model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
     group.name = "g01";
-    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
-    group.groupItems.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
-        it.setIntNext(Math.round(random(0, 100)));
-    });
+    group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
+    group.groupItems.value = function() {
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
+    group.groupItems.setMyVariableAttribute("custom attribute - g01");
+
     model.mappedGroup = new java.util.LinkedHashMap();
     model.mappedGroup.put("g01", group);
 
-    var maxTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
-    maxTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(0, 35));
-    }).getObject(scalarIndex));
-    maxTemp.myVariableAttribute = "custom attribute - max temperature";
-    var minTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    maxTemp.value = random(0, 35);
+    var minTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     minTemp.setLongName("minimum temperature");
-    minTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(0, 35));
-    }).getObject(scalarIndex));
-    minTemp.myVariableAttribute = "custom attribute - min temperature";
+    minTemp.value = random(0, 35);
     var temperatures = new java.util.LinkedHashMap();
     temperatures.put("temp_max", maxTemp);
     temperatures.put("temp_min", minTemp);
     model.temperatures = temperatures;
 
-    var someGroup = new Packages.hsousa.ncml.io.test.SomeGroupVO();
-    someGroup.someProperty = new Packages.hsousa.ncml.io.test.SomeGroupVO.SomePropertyVO();
-    someGroup.someProperty.value = createNcArray(Java.type("ucar.ma2.DataType").INT, [10], function(it) {
-        it.setIntNext(Math.round(random(0, 100)));
-    });
+    var someGroup = new Packages.io.github.hlfsousa.ncml.io.test.SomeGroupVO();
+    someGroup.someProperty = new Packages.io.github.hlfsousa.ncml.io.test.SomeGroupVO.SomePropertyVO();
+    someGroup.someProperty.value = function(){
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
     someGroup.someProperty.longName = "Property name was substituted :)";
     model.someGroup = someGroup;
     model.myGlobalAttribute = "global attribute customization ok";
+
+    model.someString = "this is a string";
+
+    model.stringArray = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
+    model.stringArray.value = function() {
+	    var value = new StringArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = "str_" + i;
+        }
+        return value;
+    }();
 
     return model;
 }
@@ -54,7 +72,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         if (lowLevelCheck) {
             assertEquals(groupObj.unwrap().shortName, key, "unwrapped group name");
             assertNotNull(groupObj.unwrap().findVariable("items").findAttribute("my_attribute"),
-                    "unwraped variable attribute my_attribute");
+                    "unwraped variable attribute my_attribute at /mappedGroup[" + key + "]/items");
         }
     }
     
@@ -66,7 +84,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(actualVar, "/temperatures[" + key + "]")
         var expectedVar = expectedVarMap[key]
         assertEquals(actualVar.longName, expectedVar.longName, "/temperatures[" + key + "].longName");
-        assertTrue(arrayEquals(actualVar.value.storage, expectedVar.value.storage), "/temperatures[" + key + "].value")
+        assertTrue(arrayEquals(actualVar.value, expectedVar.value), "/temperatures[" + key + "].value")
         assertEquals(actualVar.customVariableProperty, expectedVar.customVariableProperty);
     }
 
@@ -78,27 +96,32 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(netcdf.unwrap().findAttribute("customglobalattribute"), "unwrapped global attribute");
     }
 
+    assertEquals(netcdf.someString, model.someString, "/someString");
+    var expectedStringArray = model.stringArray;
+    var actualStringArray = netcdf.stringArray;
+    assertNotNull(actualStringArray, "/stringArray");
+    assertNotNull(actualStringArray.value, "/stringArray.value");
+    assertTrue(arrayEquals(expectedStringArray.value, actualStringArray.value), "/stringArray.value");
 }
 
 function editModel(netcdf) {
-    var group = new Packages.hsousa.ncml.io.test.MyGroupVO();
+    var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
     group.name = "g02";
     var IntArray = Java.type("int[]");
-    var shape = new IntArray(1);
-    shape[0] = 10;
-    var ncArray = Java.type("ucar.ma2.Array").factory(Java.type("ucar.ma2.DataType").INT, shape);
-    for (var it = ncArray.getIndexIterator(); it.hasNext(); ) {
-        it.setIntNext(Math.round(random(0, 100)));
-    }
-    group.groupItems = new Packages.hsousa.ncml.io.test.MyGroupVO.ItemsVO();
-    group.groupItems.value = ncArray;
+    group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
+    group.groupItems.value = function(){
+	    var value = new IntArray(10);
+        for (var i = 0; i < 10; i++) {
+	        value[i] = Math.round(random(0, 100));
+        }
+        return value;
+    }();
+    group.groupItems.myVariableAttribute = "custom attribute - g02";
     netcdf.mappedGroup["g02"] = group;
 
-    var avgTemp = new Packages.hsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
+    var avgTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     avgTemp.longName = "average temperature";
-    avgTemp.setValue(createNcArray(Java.type("ucar.ma2.DataType").FLOAT, [], function(it) {
-        it.setDoubleNext(random(10, 20));
-    }).getObject(scalarIndex));
+    avgTemp.value = random(10, 20);
     netcdf.temperatures["temp_average"] = avgTemp;
 
     return netcdf;

@@ -1,13 +1,15 @@
 assertNotNull(netcdf, "no input provided");
-assertTrue(netcdf.getHistory() == "2004-09-15 17:04:29 GMT by mars2netcdf-0.92", "/@history");
-assertTrue(netcdf.getConventions() == "CF-1.0", "/@Conventions");
-assertNotNull(netcdf.getLongitude(), "/longitude");
-assertTrue(netcdf.getLongitude().getLongName() == "longitude", "/longitude/@long_name");
-assertTrue(netcdf.getLongitude().getUnits() == "degrees_east", "/longitude/@units");
-assertTrue(netcdf.getLongitude().getValue() != null, "/longitude (value)");
-assertTrue(arrayEquals(netcdf.getLongitude().getValue().getShape(), [ 144 ]), "/longitude (shape)");
-assertTrue(arrayEquals(netcdf.getTime().getValue().getShape(), [ 62 ]), "/time (shape)");
-assertTrue(arrayEquals(netcdf.getTime().getValue().copyToNDJavaArray(),
+assertTrue(netcdf.history == "2004-09-15 17:04:29 GMT by mars2netcdf-0.92", "/@history");
+assertTrue(netcdf.conventions == "CF-1.0", "/@Conventions");
+assertNotNull(netcdf.longitude, "/longitude");
+assertTrue(netcdf.longitude.longName == "longitude", "/longitude/@long_name");
+assertTrue(netcdf.longitude.units == "degrees_east", "/longitude/@units");
+assertTrue(netcdf.longitude.value != null, "/longitude (value)");
+assertEquals(netcdf.longitude.dimensions.size(), 1, "/longitude (shape)");
+assertEquals(netcdf.longitude.dimensions[0].length, 144, "/longitude (shape[0] length)");
+assertNotNull(netcdf.time, "/time");
+//assertTrue(arrayEquals(netcdf.getTime().getValue().getShape(), [ 62 ]), "/time (shape)");
+assertTrue(arrayEquals(netcdf.time.value,
    [898476, 898482, 898500, 898506, 898524, 898530, 898548, 898554, 
     898572, 898578, 898596, 898602, 898620, 898626, 898644, 898650, 898668, 
     898674, 898692, 898698, 898716, 898722, 898740, 898746, 898764, 898770, 

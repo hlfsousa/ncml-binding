@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>hsousa.netcdf</groupId>
+    <groupId>io.github.hlfsousa</groupId>
     <artifactId>ncml-binding-examples</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <artifactId>examples-generation</artifactId>
   <dependencies>
@@ -35,12 +34,12 @@
             </goals>
             <inherited>false</inherited>
             <configuration>
-              <mainClass>hsousa.netcdf.schemagen.task.CodeGenerationTask</mainClass>
+              <mainClass>io.github.hlfsousa.ncml.schemagen.task.CodeGenerationTask</mainClass>
               <arguments>
                 <argument>${project.basedir}/../samples/cami_0000-09-01_64x128_L26_c030918.xml</argument>
                 <argument>-p</argument>
                 <argument>${project.basedir}/conf/customizations.properties</argument>
-                <argument>hsousa.netcdf.examples.generation.CommunityAtmosphericModel</argument>
+                <argument>io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel</argument>
                 <argument>-o</argument>
                 <argument>${project.basedir}/src/main/java</argument>
               </arguments>
