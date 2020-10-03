@@ -18,6 +18,12 @@ import java.util.regex.Pattern;
 
 import io.github.hlfsousa.ncml.declaration.Variable;
 
+/**
+ * Copies the content of a model (which can be in a file) to a value object. 
+ * @author Henrique Sousa
+ *
+ * @param <T> The interface that this instance is able to copy.
+ */
 public class DataCopier<T> {
 
     private Function<Class<?>, Class<?>> valueObjectTypeLocator;
@@ -39,9 +45,7 @@ public class DataCopier<T> {
     /**
      * Creates an in-memory copy of an object that implements a data interface.
      * 
-     * @param <T>           the data interface type
-     * @param data          data to copy (in any type of representation)
-     * @param dataInterface the interface that is being copied (annotated NetCDF headere representation)
+     * @param data data to copy (in any type of representation)
      * @return in-memory copy
      */
     public T copy(T data) {
