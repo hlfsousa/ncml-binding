@@ -110,6 +110,7 @@ public class NetcdfWriter {
         return netcdfFile;
     }
     
+    @SuppressWarnings("unchecked")
     private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, String localPath) {
         for (Class<?> type : getFullHierarchy(model)) {
             List<CDLDimension> dimensionsList = new ArrayList<>();
@@ -275,10 +276,7 @@ public class NetcdfWriter {
         });
     }
 
-    private DataType map(String dataType) {
-        return dataType == null ? DataType.STRING : DataType.valueOf(dataType.toUpperCase());
-    }
-    
+    @SuppressWarnings("unchecked")
     private void createVariables(NetcdfFileWriter writer, Group group, Object model) {
         forEachAccessor(model, accessor -> {
             CDLVariable variableDecl = accessor.getAnnotation(CDLVariable.class);
@@ -383,6 +381,7 @@ public class NetcdfWriter {
         createAttributes(writer, model, attribute -> writer.addVariableAttribute(variable, attribute));
     }
 
+    @SuppressWarnings("unchecked")
     private void createGroups(NetcdfFileWriter writer, Group group, Object model,
             Map<String, List<Dimension>> declaredDimensions) {
         forEachAccessor(model, accessor -> {
@@ -416,6 +415,7 @@ public class NetcdfWriter {
         writeChildGroups(writer, group, model);
     }
     
+    @SuppressWarnings("unchecked")
     private void writeVariables(NetcdfFileWriter writer, Group group, Object model) {
         forEachAccessor(model, accessor -> {
             CDLVariable variableDecl = accessor.getAnnotation(CDLVariable.class);
@@ -485,6 +485,7 @@ public class NetcdfWriter {
         writer.write(variable, ncArray);
     }
 
+    @SuppressWarnings("unchecked")
     private void writeChildGroups(NetcdfFileWriter writer, Group group, Object model) {
         forEachAccessor(model, accessor -> {
             try {

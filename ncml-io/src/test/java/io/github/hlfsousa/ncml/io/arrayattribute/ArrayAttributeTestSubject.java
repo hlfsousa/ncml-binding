@@ -1,11 +1,8 @@
 package io.github.hlfsousa.ncml.io.arrayattribute;
 
-import java.util.*;
-
-import io.github.hlfsousa.ncml.annotation.*;
-import io.github.hlfsousa.ncml.declaration.*;
-import ucar.ma2.Array;
-// << imports
+import io.github.hlfsousa.ncml.annotation.CDLAttribute;
+import io.github.hlfsousa.ncml.annotation.CDLDimensions;
+import io.github.hlfsousa.ncml.annotation.CDLRoot;
 
 @CDLRoot
 @CDLDimensions({

@@ -11,9 +11,9 @@ import io.github.hlfsousa.ncml.annotation.CDLRoot;
 public interface TestFile {
 
     @CDLAttribute(name = "description")
-    public String getDescription();
+    String getDescription();
 
     @CDLGroup(name = "child_group")
-    public ChildGroup getChildGroup();
+    ChildGroup getChildGroup();
 
 }
