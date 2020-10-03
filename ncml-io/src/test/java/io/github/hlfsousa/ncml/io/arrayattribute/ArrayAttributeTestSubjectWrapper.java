@@ -1,18 +1,9 @@
 package io.github.hlfsousa.ncml.io.arrayattribute;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.Optional;
 
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
-
-import java.util.regex.Matcher;
-import ucar.ma2.*;
-import ucar.nc2.Dimension;
 import ucar.nc2.Group;
-import ucar.nc2.Variable;
-// << imports
 
 public class ArrayAttributeTestSubjectWrapper extends NetcdfWrapper implements ArrayAttributeTestSubject {
 

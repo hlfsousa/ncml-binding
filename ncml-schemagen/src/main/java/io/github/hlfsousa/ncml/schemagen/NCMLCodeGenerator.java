@@ -161,6 +161,7 @@ public class NCMLCodeGenerator {
 
                 Map<String, String> customContent = new HashMap<>();
                 context.put("customContent", customContent);
+                context.put("configuration", properties);
                 File destFile = entry.getValue().apply(group, packageDir);
                 if (destFile.isFile()) {
                     readCustomContent(destFile, customContent);

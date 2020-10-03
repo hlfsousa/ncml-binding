@@ -4,6 +4,7 @@ import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.DataType;
 
 /**
  * Converts <strong>primitive</strong> arrays.
@@ -42,7 +43,7 @@ public class ArrayNumberConverter implements Converter<Object> {
 
     @Override
     public boolean isApplicable(Array array) {
-        return array.getRank() > 0 && array.getDataType().isNumeric();
+        return array.getRank() > 0 && array.getDataType().isNumeric() || array.getDataType() == DataType.CHAR;
     }
 
 }
