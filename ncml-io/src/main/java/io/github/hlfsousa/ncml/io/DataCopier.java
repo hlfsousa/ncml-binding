@@ -7,6 +7,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -92,16 +93,14 @@ public class DataCopier<T> {
                 throw new IllegalStateException(
                         "Unable to read attribute " + propertyDescriptor.getName() + " from " + data, e);
             }
-            if (propertyValue == null) {
+            if (propertyValue == null
+                    || (propertyValue instanceof Collection && ((Collection<?>) propertyValue).isEmpty())) {
                 continue;
             }
             if (propertyDescriptor.getPropertyType().isInterface()) {
                 Object propertyCopy;
                 if (propertyDescriptor.getPropertyType() == List.class) {
                     List<?> valueList = (List<?>) propertyValue;
-                    if (valueList.isEmpty()) {
-                        continue;
-                    }
                     Type valueType = ((ParameterizedType) propertyDescriptor.getReadMethod().getGenericReturnType())
                             .getActualTypeArguments()[0];
                     Class<?> valueClass;
