@@ -9,9 +9,11 @@ function createModel(model) {
     group.name = "g01";
     group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
 
+    var numberOfItems = 20; // dimension number_of_items, declared length is 10
+
     group.items.value = function() {
-	    var value = new IntArray(10);
-        for (var i = 0; i < 10; i++) {
+	    var value = new IntArray(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
             value[i] = Math.round(random(0, 100));
         }
         return value;
@@ -75,12 +77,11 @@ function verifyCreatedFile(netcdf, model) {
 function editModel(netcdf) {
     var group = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO();
     group.name = "g02";
-    var shape = new IntArray(1);
-    shape[0] = 10;
+    var numberOfItems = 20;
     group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
     group.items.value = function(){
-	    var value = new IntArray(shape[0]);
-        for (var i = 0; i < shape[0]; i++) {
+	    var value = new IntArray(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
 	        value[i] = Math.round(random(0, 100));
         }
         return value;

@@ -115,12 +115,12 @@ public class NetcdfWriter {
         for (Class<?> type : getFullHierarchy(model)) {
             List<CDLDimension> dimensionsList = new ArrayList<>();
             Optional.ofNullable(type.getAnnotation(CDLDimensions.class))
-            .ifPresent(dims -> dimensionsList.addAll(Arrays.asList(dims.value())));
+                    .ifPresent(dims -> dimensionsList.addAll(Arrays.asList(dims.value())));
             Optional.ofNullable(type.getAnnotation(CDLDimension.class)).ifPresent(dimensionsList::add);
             for (CDLDimension localDimension : dimensionsList) {
                 declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>())
-                .add(new Dimension(localDimension.name(), localDimension.length(), true,
-                        localDimension.unlimited(), localDimension.variableLength()));
+                        .add(new Dimension(localDimension.name(), localDimension.length(), true,
+                                localDimension.unlimited(), localDimension.variableLength()));
             }
         }
         
@@ -155,22 +155,75 @@ public class NetcdfWriter {
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                     throw new IllegalStateException(e);
                 }
-                if (!(value instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
+                if (value instanceof Map) {
+                    Map<String, ?> valueMap = (Map<String, ?>) value;
+                    for (Entry<String, ?> varEntry : valueMap.entrySet()) {
+                        Object entryValue = varEntry.getValue();
+                        if (!(entryValue instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
+                            return;
+                        }
+                        collectVariableDimensions(declaredDimensions, localPath, variableAnnotation, entryValue);
+                    }
+                    return;
+                }
+                else if (!(value instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
                     return;
                 }
                 
-                io.github.hlfsousa.ncml.declaration.Variable<?> variable = (io.github.hlfsousa.ncml.declaration.Variable<?>) value;
-                if (variable != null && variable.getDimensions() != null) {
-                    for (Dimension dimension : variable.getDimensions()) {
-                        updateDimension(declaredDimensions, localPath, dimension);
-                    }
-                }
+                collectVariableDimensions(declaredDimensions, localPath, variableAnnotation, value);
                 return;
             }
         });
         
     }
 
+    private void collectVariableDimensions(Map<String, List<Dimension>> declaredDimensions, String localPath,
+            CDLVariable variableAnnotation, Object value) {
+        io.github.hlfsousa.ncml.declaration.Variable<?> variable = (io.github.hlfsousa.ncml.declaration.Variable<?>) value;
+        if (variable.getDimensions() != null) {
+            for (Dimension dimension : variable.getDimensions()) {
+                updateDimension(declaredDimensions, localPath, dimension);
+            }
+        } else if (variableAnnotation.shape().length > 0) {
+            Object varValue = variable.getValue();
+            if (varValue != null) {
+                if (varValue.getClass().isArray()) {
+                    for (int i = 0; i < variableAnnotation.shape().length; i++) {
+                        String name = variableAnnotation.shape()[i];
+                        int length = java.lang.reflect.Array.getLength(varValue);
+                        if (name.matches("\\d+") && !name.equals(String.valueOf(length))) {
+                            throw new IllegalStateException("Immutable dimension at " + localPath);
+                        }
+                        Dimension declared = findDimension(name, declaredDimensions, localPath);
+                        if (declared.isVariableLength()) {
+                            continue; // variable length must be -1
+                        }
+                        updateDimension(declaredDimensions, localPath, new Dimension(name, length,
+                                declared.isShared(), declared.isUnlimited(), declared.isVariableLength()));
+                        varValue = java.lang.reflect.Array.get(varValue, 0);
+                    }
+                } else if (varValue instanceof Array) {
+                    
+                }
+            }
+        }
+    }
+
+    private Dimension findDimension(String name, Map<String, List<Dimension>> declaredDimensions, String localPath) {
+        String scope = localPath;
+        while (!scope.equals("")) {
+            List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
+            boolean found = false;
+            for (Dimension existing : dimensionsInScope) {
+                if (existing.getShortName().equals(name)) {
+                    return existing;
+                }
+            }
+            scope = scope.replaceAll("[^/]*+/$", "");
+        }
+        return null;
+    }
+    
     private void updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
             Dimension dimension) {
         String scope = localPath;
