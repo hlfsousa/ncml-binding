@@ -57,6 +57,7 @@ public class NCMLCodeGenerator {
     public static final String TEMPLATE_VALUE_OBJECT = "/templates/plain_java/ValueObject.java.vtl";
     public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/plain_java/NetcdfWrapper.java.vtl";
     public static final String TEMPLATE_DATA_INTERFACE = "/templates/plain_java/DataInterface.java.vtl";
+    public static final String TEMPLATE_INITIALIZER = "/templates/plain_java/Initializer.java.vtl";
     
     private static final Logger LOG = LoggerFactory.getLogger(NCMLCodeGenerator.class);
 
@@ -92,6 +93,8 @@ public class NCMLCodeGenerator {
                 (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         templates.put(TEMPLATE_VALUE_OBJECT,
                 (group, destDir) -> new File(destDir, group.getTypeName() + "VO.java"));
+        templates.put(TEMPLATE_INITIALIZER,
+                (group, destDir) -> new File(destDir, group.getTypeName() + "Initializer.java"));
     }
 
     /**

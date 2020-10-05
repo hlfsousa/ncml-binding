@@ -5,6 +5,8 @@
                       https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
   <dimension name="number_of_items" length="10" />
   
+  <attribute name="title" type="string" value="Mapped Properties Test" />
+
   <group name="groupMap:g\d+">
     <attribute name="name" type="string" />
     <variable name="items" shape="number_of_items" type="int" />

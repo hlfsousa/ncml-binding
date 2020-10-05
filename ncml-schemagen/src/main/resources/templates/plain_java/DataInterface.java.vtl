@@ -59,11 +59,19 @@ public interface ${group.typeName} {
     #set($unsigned = $type.charAt(0) == 'u')
     #set($primitive = true)
   #elseif($type == "float")
-    #set($typeName = "Float")
-    #set($primitive = true)
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "float")
+    #else
+      #set($typeName = "Float")
+    #end
   #elseif($type == "double")
-    #set($typeName = "Double")
-    #set($primitive = true)
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "double")
+    #else
+      #set($typeName = "Double")
+    #end
   #elseif($type == "Structure")
     #set($typeName = "Object") // TODO locate type
   #elseif($type == "Sequence")

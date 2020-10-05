@@ -109,7 +109,7 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void testMetadata() throws Exception {
         try (URLClassLoader classLoader = new URLClassLoader(new URL[] { classesDir.toURI().toURL() })) {
             Class<?> metadata = classLoader
