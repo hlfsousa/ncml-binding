@@ -10,7 +10,7 @@ function assertCloseTo(actual, expected, tolerance, message) {
 }
 
 function assertEquals(actual, expected, message) {
-    var msg = "Expected true, but got " + actual;
+    var msg = "Expected " + expected + ", but got " + actual;
 	if (message)
 	    msg += ": " + message;
 	if (expected != actual) {

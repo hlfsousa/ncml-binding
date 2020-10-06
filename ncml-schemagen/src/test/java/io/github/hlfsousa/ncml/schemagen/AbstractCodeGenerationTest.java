@@ -59,6 +59,7 @@ public class AbstractCodeGenerationTest {
                 properties);
         HashMap<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
         templates.remove(NCMLCodeGenerator.TEMPLATE_NETCDF_WRAPPER);
+        templates.remove(NCMLCodeGenerator.TEMPLATE_INITIALIZER);
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage); // TODO required? move to constructor or snake config
         generator.setRootGroupName(rootGroupName); // TODO required? move to constructor or snake config

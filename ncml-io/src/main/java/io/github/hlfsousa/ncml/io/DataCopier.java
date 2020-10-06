@@ -43,6 +43,18 @@ public class DataCopier<T> {
         this.dataInterface = dataInterface;
     }
 
+    @SuppressWarnings("unchecked")
+    public T copy(T data, T copy) {
+        if (valueObjectTypeLocator == null) {
+            valueObjectTypeLocator = new DefaultValueObjectTypeLocator();
+        }
+        copy = (T) doCopy(data, copy, dataInterface);
+        if (valueObjectTypeLocator instanceof DefaultValueObjectTypeLocator) {
+            ((DefaultValueObjectTypeLocator) valueObjectTypeLocator).clearCache(); // pull up as dispose()?
+        }
+        return copy;
+    }
+
     /**
      * Creates an in-memory copy of an object that implements a data interface.
      * 
@@ -50,28 +62,21 @@ public class DataCopier<T> {
      * @return in-memory copy
      */
     public T copy(T data) {
-        if (valueObjectTypeLocator == null) {
-            valueObjectTypeLocator = new DefaultValueObjectTypeLocator();
-        }
-        @SuppressWarnings("unchecked")
-        T copy = (T) doCopy(data, dataInterface);
-        if (valueObjectTypeLocator instanceof DefaultValueObjectTypeLocator) {
-            ((DefaultValueObjectTypeLocator) valueObjectTypeLocator).clearCache(); // pull up as dispose()?
-        }
-        return copy;
+        return copy(data, null);
     }
 
-    private Object doCopy(Object data, Class<?> dataInterface) {
+    private Object doCopy(Object data, Object valueObject, Class<?> dataInterface) {
         Class<?> valueObjectType = locateValueObjectFor(dataInterface);
-        Object valueObject;
         try {
-            valueObject = valueObjectType.newInstance();
+            if (valueObject == null) {
+                valueObject = valueObjectType.newInstance();
+            }
             copyProperties(data, valueObject, dataInterface);
             if (Variable.class.isAssignableFrom(dataInterface)) {
                 copyProperties(data, valueObject, Variable.class);
             }
         } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Unable to instantiate " + valueObjectType, e);
+            throw new IllegalStateException("Unable to instantiate/copy " + valueObjectType + " to " + valueObject, e);
         }
         return valueObject;
     }
@@ -98,7 +103,13 @@ public class DataCopier<T> {
                 continue;
             }
             if (propertyDescriptor.getPropertyType().isInterface()) {
-                Object propertyCopy;
+                Object propertyCopy = null;
+                try {
+                    propertyCopy = propertyDescriptor.getReadMethod().invoke(valueObject);
+                } catch (Exception e) {
+                    throw new IllegalStateException(
+                            "Unable to retrieve the current value of property " + propertyDescriptor.getName());
+                }
                 if (propertyDescriptor.getPropertyType() == List.class) {
                     List<?> valueList = (List<?>) propertyValue;
                     Type valueType = ((ParameterizedType) propertyDescriptor.getReadMethod().getGenericReturnType())
@@ -109,10 +120,11 @@ public class DataCopier<T> {
                     } else {
                         valueClass = (Class<?>) ((ParameterizedType) valueType).getRawType();
                     }
-                    List<Object> copyList = new ArrayList<>(valueList.size());
+                    List<Object> copyList = propertyCopy == null ? new ArrayList<>(valueList.size())
+                            : (List<Object>) propertyCopy;
                     for (Object valueItem : valueList) {
                         if (valueClass.isInterface()) {
-                            copyList.add(doCopy(valueItem, valueClass));
+                            copyList.add(doCopy(valueItem, null, valueClass));
                         } else {
                             // Dimension falls here
                             copyList.add(valueItem);
@@ -124,14 +136,16 @@ public class DataCopier<T> {
                     Class<?> valueType = (Class<?>) ((ParameterizedType) ((ParameterizedType) propertyDescriptor
                             .getReadMethod().getGenericReturnType()).getActualTypeArguments()[1]).getRawType();
                     Map<String, ?> propertyMap = (Map<String, ?>) propertyValue;
-                    Map<String, Object> copyMap = new LinkedHashMap<>();
+                    Map<String, Object> copyMap = propertyCopy == null ? new LinkedHashMap<>()
+                            : (Map<String, Object>) propertyCopy;
                     for (Entry<String, ?> valueEntry : propertyMap.entrySet()) {
-                        Object valueCopy = doCopy(valueEntry.getValue(), valueType);
+                        Object valueCopy = copyMap.get(valueEntry.getKey());
+                        valueCopy = doCopy(valueEntry.getValue(), valueCopy, valueType);
                         copyMap.put(valueEntry.getKey(), valueCopy);
                     }
                     propertyCopy = copyMap;
                 } else {
-                    propertyCopy = doCopy(propertyValue, propertyDescriptor.getPropertyType());
+                    propertyCopy = doCopy(propertyValue, propertyCopy, propertyDescriptor.getPropertyType());
                 }
                 try {
                     propertyDescriptor.getWriteMethod().invoke(valueObject, propertyCopy);
