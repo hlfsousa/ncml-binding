@@ -12,6 +12,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class GroupArchetypeFilter implements ElementFilter<Group> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupArchetypeFilter.class);
 
     @Override
-    public List<Group> apply(List<Group> groupList) {
+    public List<Group> apply(List<Group> groupList, Properties properties) {
         LOGGER.debug("filtering {} groups", groupList.size());
         List<Group> archetypes = new ArrayList<>();
         for (int i = 0; i < groupList.size(); i++) {

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -29,7 +30,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
     private boolean sequentialMatching;
     
     @Override
-    public List<Variable> apply(List<Variable> variableList) {
+    public List<Variable> apply(List<Variable> variableList, Properties properties) {
         LOGGER.debug("filtering {} variables", variableList.size());
         List<Variable> archetypes = new ArrayList<>();
         for (int i = 0; i < variableList.size(); i++) {
