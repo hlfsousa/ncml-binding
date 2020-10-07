@@ -2,6 +2,7 @@ package io.github.hlfsousa.ncml.schemagen.improvements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Netcdf;
@@ -13,15 +14,16 @@ public abstract class HeaderTransformer {
     protected abstract List<ElementFilter<Group>> getGroupFilters();
     protected abstract List<ElementFilter<Variable>> getVariableFilters();
     
-    public Netcdf modify(Netcdf schema) {
+    public Netcdf modify(Netcdf schema, Properties properties) {
         List<Object> childElements = schema.getEnumTypedefOrGroupOrDimension();
-        filterElements(Variable.class, childElements, getVariableFilters());
-        filterElements(Group.class, childElements, getGroupFilters());
+        filterElements(properties, Variable.class, childElements, getVariableFilters());
+        filterElements(properties, Group.class, childElements, getGroupFilters());
         return schema;
     }
     
     @SuppressWarnings("unchecked")
-    private <T> void filterElements(Class<T> type, List<Object> childElements, List<ElementFilter<T>> filterList) {
+    private <T> void filterElements(Properties properties, Class<T> type, List<Object> childElements,
+            List<ElementFilter<T>> filterList) {
         List<Object> otherElements = new ArrayList<>();
         List<T> selectedElements = new ArrayList<>();
         for (Object element : childElements) {
@@ -32,11 +34,11 @@ public abstract class HeaderTransformer {
             }
             // recurse to groups first
             if (element instanceof Group) {
-                filterElements(type, ((Group) element).getEnumTypedefOrDimensionOrVariable(), filterList);
+                filterElements(properties, type, ((Group) element).getEnumTypedefOrDimensionOrVariable(), filterList);
             }
         }
         for (ElementFilter<T> filter : filterList) {
-            selectedElements = filter.apply(selectedElements);
+            selectedElements = filter.apply(selectedElements, properties);
         }
         childElements.clear();
         childElements.addAll(otherElements);

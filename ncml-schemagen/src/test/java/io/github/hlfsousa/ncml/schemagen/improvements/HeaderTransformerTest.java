@@ -75,7 +75,7 @@ public class HeaderTransformerTest {
             }
         };
 
-        Netcdf transformed = transformer.modify(schema);
+        Netcdf transformed = transformer.modify(schema, null);
         writeTransformedHeaderToFile(transformed);
         Map<String, Group> groups = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Group.class,
                 group -> group.getName().contains(":") ? group.getName().substring(0, group.getName().indexOf(':'))
@@ -111,7 +111,7 @@ public class HeaderTransformerTest {
         readNcmlHeader("../ncml-binding-examples/samples/cami_0000-09-01_64x128_L26_c030918.xml");
         transformer = new DefaultHeaderTransformer();
 
-        Netcdf transformed = transformer.modify(schema);
+        Netcdf transformed = transformer.modify(schema, null);
         writeTransformedHeaderToFile(transformed);
         Map<String, Variable> variables = mapChildren(transformed.getEnumTypedefOrGroupOrDimension(), Variable.class,
                 var -> var.getName());
