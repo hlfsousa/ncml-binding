@@ -74,7 +74,7 @@ public class DataProcessorTest {
         NetcdfReader<CommunityAtmosphericModel> reader = new NetcdfReader<>(CommunityAtmosphericModel.class);
         CommunityAtmosphericModel cami = reader.read(dstFile, true);
         assertThat(cami.getTitle(), is("NcML mapping to Java model example"));
-        assertThat(cami.getHistory(), is("DataProcessor.startFromScratch(); DataProcessor.process()"));
+        assertThat(cami.getHistory(), is("DataProcessor.startFromScratch()\nDataProcessor.process()"));
         // test the rest of the content as you wish
     }
 

@@ -16,6 +16,12 @@ import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel.Lat
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel.LongitudeVariable;
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel.ReferencePressureVariable;
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel.TimeVariable;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer.HybridLevelInitializer;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer.LatitudeInitializer;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer.LongitudeInitializer;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer.ReferencePressureInitializer;
+import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelInitializer.TimeInitializer;
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelVO.HybridLevelVO;
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelVO.LatitudeVO;
 import io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModelVO.LongitudeVO;
@@ -49,8 +55,8 @@ public class DataProcessor {
         cami.setLongitude(createLongitude());
 
         cami.setHybridLevel(new HashMap<>());
-        cami.getHybridLevel().put("lev", createHybridLevel(26, "hybrid level at midpoints (1000*(A+B))"));
-        cami.getHybridLevel().put("ilev", createHybridLevel(27, "hybrid level at interfaces (1000*(A+B))"));
+        cami.getHybridLevel().put("lev", createHybridLevel(26, "lev"));
+        cami.getHybridLevel().put("ilev", createHybridLevel(27, "ilev"));
 
         cami.setTime(createTime());
 
@@ -71,7 +77,7 @@ public class DataProcessor {
         CommunityAtmosphericModel cami = reader.read(src, false);
         String history = cami.getHistory();
         String entry = "DataProcessor.process()";
-        cami.setHistory(history == null ? entry : (history + "; " + entry));
+        cami.setHistory(history == null ? entry : (history + "\n" + entry));
         // other changes (stored in memory)
         save(cami, dest);
     }
@@ -93,6 +99,7 @@ public class DataProcessor {
     private ReferencePressureVariable<Double> createReferencePressure() {
         ReferencePressureVO refPressure = new ReferencePressureVO();
         refPressure.setValue(20d);
+        ReferencePressureInitializer.initialize(refPressure);
         return refPressure;
     }
 
@@ -107,6 +114,7 @@ public class DataProcessor {
             value[i] = value[i - 1] + interval;
         }
         time.setValue(value);
+        TimeInitializer.initialize(time);
         return time;
     }
 
@@ -117,16 +125,18 @@ public class DataProcessor {
      * @param longName value of attribute long_name
      * @return
      */
-    private HybridLevelVariable<double[]> createHybridLevel(int length, String longName) {
+    private HybridLevelVariable<double[]> createHybridLevel(int length, String name) {
         Random rng = new Random();
         HybridLevelVO hybridLevel = new HybridLevelVO();
-        // dimension name is set automagically, as are all attributes but long_name
+        // we only care about value, the rest is in the initializer
+        // this section is where actual code would deal with what matters: the value of the variable
         double[] value = new double[length];
         double range = 100;
         for (int i = 0; i < length; i++) {
             value[i] = Math.abs(rng.nextDouble()) * range;
         }
-        hybridLevel.setLongName(longName);
+        // long_name, units, positive, standard_name, formula_terms, _FillValue and shape
+        HybridLevelInitializer.initialize(name, hybridLevel);
         return hybridLevel;
     }
 
@@ -139,39 +149,31 @@ public class DataProcessor {
      * @return initialized latitude variable
      */
     private LatitudeVariable<double[]> createLatitude() {
+        // mandatory code: set variable value
         LatitudeVO latitude = new LatitudeVO();
-
-        /*
-         * if attribute default value is declared in annotation, we can use that -- see
-         * NetcdfWriter#isDefaultAttributeValueUsed()
-         */
-
-        // we absolutely need to set the variable value, though
         double[] latitudeValue = new double[LAT_SLICES];
         for (int slice = 0; slice < LAT_SLICES; slice++) {
             latitudeValue[slice] = -180 + (360d / LAT_SLICES) * slice;
         }
         latitude.setValue(latitudeValue);
+        // set attributes
+        LatitudeInitializer.initialize(latitude);
         return latitude;
     }
 
     private LongitudeVariable<double[]> createLongitude() {
         LongitudeVO longitude = new LongitudeVO();
-
         double[] longitudeValue = new double[LON_SLICES];
         for (int slice = 0; slice < LON_SLICES; slice++) {
             longitudeValue[slice] = (360d / LON_SLICES) * slice;
         }
         longitude.setValue(longitudeValue);
+        LongitudeInitializer.initialize(longitude);
         return longitude;
     }
 
     /**
-     * The current templates and code generation features do not generate a kickstarter for the files. Any default
-     * information present in the header file must be written to the model either manually (hard-coded or otherwise), or
-     * a template file (e.g. ncgen using the header file) read into a {@link CommunityAtmosphericModelWrapper} and then
-     * copied, perhaps through Beanutils, to a {@link CommunityAtmosphericModelVO} instance. This method takes the
-     * hard-coded approach for simplicity.
+     * This method uses the initializer feature to set default information.
      * 
      * @return a newly initialized modifiable model
      */
@@ -181,7 +183,8 @@ public class DataProcessor {
         cami.setCase("cam2run");
         cami.setTitle("NcML mapping to Java model example");
         cami.setHistory("DataProcessor.startFromScratch()");
-        cami.setMakeRoss("true");
+        // nothing that was set is overwritten
+        CommunityAtmosphericModelInitializer.initialize(cami);
         return cami;
     }
 
