@@ -46,5 +46,22 @@ NetcdfWriter writer = new NetcdfWriter(true);
 NetcdfFile netcdf = writer.write(cami, new File("/path/to/file.nc"));
 ```
 
+### File data from scratch
+It is often the case that some of the data in the file will always be the same. Attribute conventions (`scale_factor`, `add_offset`) and other variable attributes, global attributes and others may be obviously derived from the header that was received above. In the process of improving the data model though, some of that data may have been discarded. All of this is also taken care of.
+
+You will notice that one of the generated classes is `CommunityAtmosphericModelInitializer`. Every group and variable gets one initializer class, which does the above. The code initially generated is able to assign default values. It can be modified and customized to assign more values or have different initializations (for mapped variables, for instance). And if
+a value has already been assigned to the variable, its dimensions are initialized too. So a variable can be created as simply as this:
+
+```java
+// create the variable as value object
+ReferencePressureVO refPressure = new ReferencePressureVO();
+// set its value (the same goes for arrays)
+refPressure.setValue(20d);
+// initialize remaining attributes and dimensions
+ReferencePressureInitializer.initialize(refPressure);
+```
+
+See `DataProcessor` for more examples, including mapped variables and custom initializers.
+
 ## Freedom of choice
 Additional details can be seen in the code. As part of the repository, this project can be built from source. The generated files are not included in the source code to better illustrate the process. Run the build, open the sources in your IDE, check the test class for how to use a writer and write your own customizations. Compare with the effort of writing a file directly and provide feedback at GitHub. There are new features coming up, and what users say will have a lot of weight in upcoming decisions.
