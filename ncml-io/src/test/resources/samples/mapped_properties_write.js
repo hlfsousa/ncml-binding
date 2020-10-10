@@ -5,13 +5,19 @@ var IntArray = Java.type("int[]");
 
 function createModel(model) {
     model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
+
+    Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfInitializer.initialize(model);
+    assertEquals(model.title, "Mapped Properties Test");
+
     var group = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO();
     group.name = "g01";
     group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
 
+    var numberOfItems = 20; // dimension number_of_items, declared length is 10
+
     group.items.value = function() {
-	    var value = new IntArray(10);
-        for (var i = 0; i < 10; i++) {
+	    var value = new IntArray(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
             value[i] = Math.round(random(0, 100));
         }
         return value;
@@ -22,6 +28,8 @@ function createModel(model) {
 
     var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
     maxTemp.longName = "maximum temperature";
+    Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfInitializer.TemperatureMapInitializer.initialize(maxTemp);
+    assertEquals(maxTemp.units, "Celsius degrees");
     maxTemp.value = random(0, 35);
 	
     var minTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperatureMapVO();
@@ -44,6 +52,9 @@ function verifyCreatedFile(netcdf, model) {
     var expectedGroupMap = model.groupMap;
     var actualGroupMap = netcdf.groupMap;
     assertNotNull(actualGroupMap, "/groupMap");
+
+    assertEquals(netcdf.title, model.title, "/@title");
+
     for (var key in expectedGroupMap) {
         var groupObj = actualGroupMap[key];
         assertNotNull(groupObj, "/groupMap[" + key + "]");
@@ -60,7 +71,8 @@ function verifyCreatedFile(netcdf, model) {
         assertNotNull(actualVar, "/temperatureMap[" + key + "]")
         var expectedVar = expectedVarMap[key]
         assertEquals(actualVar.longName, expectedVar.longName, "/temperatureMap[" + key + "].longName");
-        assertTrue(arrayEquals(actualVar.value, expectedVar.value), "/temperatureMap[" + key + "].value")
+        assertTrue(arrayEquals(actualVar.value, expectedVar.value), "/temperatureMap[" + key + "].value");
+        assertEquals(actualVar.units, expectedVar.units, "temperatureMap[" + key + "].units");
     }
 
     var expectedIntMap = model.intMap;
@@ -75,12 +87,11 @@ function verifyCreatedFile(netcdf, model) {
 function editModel(netcdf) {
     var group = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO();
     group.name = "g02";
-    var shape = new IntArray(1);
-    shape[0] = 10;
+    var numberOfItems = 20;
     group.items = new Packages.io.github.hlfsousa.ncml.io.test.GroupMapVO.ItemsVO();
     group.items.value = function(){
-	    var value = new IntArray(shape[0]);
-        for (var i = 0; i < shape[0]; i++) {
+	    var value = new IntArray(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
 	        value[i] = Math.round(random(0, 100));
         }
         return value;

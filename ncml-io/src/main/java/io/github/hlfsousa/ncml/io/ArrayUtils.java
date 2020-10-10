@@ -39,5 +39,20 @@ public class ArrayUtils {
         }
         return result;
     }
+    
+    public static int getLength(Object array, int rank) {
+        if (array.getClass().isArray()) {
+            if (rank == 0) {
+                return Array.getLength(array);
+            } else {
+                array = Array.get(array, 0);
+                return getLength(array, rank - 1);
+            }
+        } else if (array instanceof ucar.ma2.Array) {
+            return ((ucar.ma2.Array) array).getShape()[rank];
+        } else {
+            throw new IllegalArgumentException("array is neither ucar.ma2.Array nor Java array: " + array);
+        }
+    }
 
 }

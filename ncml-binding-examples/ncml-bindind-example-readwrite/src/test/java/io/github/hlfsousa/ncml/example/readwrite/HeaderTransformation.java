@@ -59,7 +59,8 @@ public class HeaderTransformation {
     private void improveHeader() throws JAXBException, IOException {
         URL schemaURL = new File(CAMI_PATH).toURI().toURL();
         Netcdf originalHeader = (Netcdf) jaxbContext.createUnmarshaller().unmarshal(schemaURL.openStream());
-        Netcdf transformedHeader = transformer.modify(originalHeader);
+        Properties generationProperties = new Properties();
+        Netcdf transformedHeader = transformer.modify(originalHeader, generationProperties);
         File destFile = new File(DEST_PATH);
         destFile.getParentFile().mkdirs();
         Marshaller marshaller = jaxbContext.createMarshaller();
@@ -67,7 +68,7 @@ public class HeaderTransformation {
         marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, NCML_SCHEMA_LOCATION);
         marshaller.marshal(transformedHeader, destFile);
         File propertiesFile = new File(PROPERTIES_PATH);
-        transformer.getGenerationProperties().store(new FileWriter(propertiesFile), null);
+        generationProperties.store(new FileWriter(propertiesFile), null);
     }
 
 }
@@ -104,7 +105,7 @@ class CamiHeaderTransformer extends HeaderTransformer {
         private final Pattern nameTooShort = Pattern.compile("\\w{1,10}");
 
         @Override
-        public List<Variable> apply(List<Variable> variableList) {
+        public List<Variable> apply(List<Variable> variableList, Properties properties) {
             for (Variable variable : variableList) {
                 String longName = variable.getAttribute().stream()
                         .filter(attribute -> attribute.getName().equals("long_name")).findAny()
@@ -113,7 +114,7 @@ class CamiHeaderTransformer extends HeaderTransformer {
                     continue;
                 }
                 if (nameTooShort.matcher(variable.getName()).matches()) {
-                    generationProperties.setProperty("substitution./" + variable.getName(), makeName(longName));
+                    properties.setProperty("substitution./" + variable.getName(), makeName(longName));
                 }
             }
             return variableList;
@@ -131,12 +132,6 @@ class CamiHeaderTransformer extends HeaderTransformer {
      * this filter is not used.
      */
     protected final ElementFilter<Group> groupFilter = new GroupArchetypeFilter();
-
-    protected Properties generationProperties = new Properties();
-
-    public Properties getGenerationProperties() {
-        return generationProperties;
-    }
 
     @Override
     protected List<ElementFilter<Group>> getGroupFilters() {
@@ -173,8 +168,8 @@ class CamiHeaderTransformer extends HeaderTransformer {
      * </ul>
      */
     @Override
-    public Netcdf modify(Netcdf schema) {
-        Netcdf archetype = super.modify(schema);
+    public Netcdf modify(Netcdf schema, Properties properties) {
+        Netcdf archetype = super.modify(schema, properties);
 
         Map<String, String> groupVariableSubstitution = new HashMap<>();
         groupVariableSubstitution.put("hybrid_level_at", "hybrid_level");

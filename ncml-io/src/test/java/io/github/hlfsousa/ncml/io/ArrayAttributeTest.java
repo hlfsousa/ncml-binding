@@ -1,19 +1,16 @@
 package io.github.hlfsousa.ncml.io;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.Arrays;
 
-import javax.xml.bind.JAXBContext;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import edu.ucar.unidata.netcdf.ncml.Netcdf;
 import io.github.hlfsousa.ncml.io.arrayattribute.ArrayAttributeTestSubject;
 import io.github.hlfsousa.ncml.io.arrayattribute.ArrayAttributeTestSubjectVO;
 import io.github.hlfsousa.ncml.io.arrayattribute.ArrayAttributeTestSubjectWrapper;

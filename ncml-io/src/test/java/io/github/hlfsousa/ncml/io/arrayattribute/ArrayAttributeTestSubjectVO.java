@@ -1,13 +1,5 @@
 package io.github.hlfsousa.ncml.io.arrayattribute;
 
-// imports >>
-// DEFAULT IMPORTS
-import java.util.*;
-import ucar.nc2.Group;
-import ucar.nc2.Variable;
-import ucar.nc2.Dimension;
-// << imports
-
 public class ArrayAttributeTestSubjectVO implements ArrayAttributeTestSubject {
     // additionalFields >>
     // << additionalFields

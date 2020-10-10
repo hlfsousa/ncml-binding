@@ -46,5 +46,9 @@ public abstract class AbstractNode {
         String camelCase = camelCase(str);
         return Character.toLowerCase(camelCase.charAt(0)) + camelCase.substring(1);
     }
+    
+    public String escapeLineBreaks(String str) {
+        return str.replace("\n", "\\n");
+    }
 
 }
