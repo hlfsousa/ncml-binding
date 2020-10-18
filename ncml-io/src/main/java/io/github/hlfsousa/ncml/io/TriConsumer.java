@@ -1,7 +1,5 @@
 package io.github.hlfsousa.ncml.io;
 
-import java.util.function.Consumer;
-
 /**
  * Represents an operation that accepts three input arguments and returns no result.
  *
@@ -15,8 +13,9 @@ public interface TriConsumer<A, B, C> {
     /**
      * Performs this operation on the given arguments.
      *
-     * @param t the first input argument
-     * @param u the second input argument
+     * @param a the first input argument
+     * @param b the second input argument
+     * @param c the third input argument
      */
     void accept(A a, B b, C c);
 
