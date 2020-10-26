@@ -12,5 +12,6 @@
   <modules>
     <module>examples-generation</module>
     <module>ncml-bindind-example-readwrite</module>
+    <module>ncml-binding-example-ucararray</module>
   </modules>
 </project>
