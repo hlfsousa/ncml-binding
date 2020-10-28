@@ -42,6 +42,10 @@ public class DataCopier<T> {
     public DataCopier(Class<T> dataInterface) {
         this.dataInterface = dataInterface;
     }
+    
+    public void setValueObjectTypeLocator(Function<Class<?>, Class<?>> valueObjectTypeLocator) {
+        this.valueObjectTypeLocator = valueObjectTypeLocator;
+    }
 
     @SuppressWarnings("unchecked")
     public T copy(T data, T copy) {
@@ -168,7 +172,7 @@ public class DataCopier<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <V> Class<? extends V> locateValueObjectFor(Class<V> dataInterface) {
+    protected <V> Class<? extends V> locateValueObjectFor(Class<V> dataInterface) {
         return (Class<? extends V>) valueObjectTypeLocator.apply(dataInterface);
     }
 
