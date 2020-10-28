@@ -87,7 +87,7 @@ public class ${group.typeName}VO implements ${group.typeName} {
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
   #findType($attributeWrapper.attribute.type $arrayAttribute)
-  #if($attributeWraper.shapeBrackets.empty)
+  #if(!$arrayAttribute)
     #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
   #else
     #set($typeName = "Array")

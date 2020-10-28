@@ -135,9 +135,13 @@ public class ${group.typeName}Initializer {
     #set($voName = $varWrapper.typeName + "VO")
     #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
     #findType($varWrapper.scaledType $arrayVariable)
+    #set($valueType = $typeName + $varWrapper.shapeBrackets)
+    #if($arrayVariable)
+      #set($valueType = "Array")
+    #end
     public static class ${className} {
         
-        private static final Map<String, Consumer<${intfName}<Array>>> INITIALIZERS = new HashMap<>(); // $arrayVariable
+        private static final Map<String, Consumer<${intfName}<${valueType}>>> INITIALIZERS = new HashMap<>();
 
         static {
             INITIALIZERS.put(null, model -> {
@@ -191,11 +195,11 @@ public class ${group.typeName}Initializer {
         }
     #findType($varWrapper.scaledType $arrayVariable)## might have been ovewritten
 
-        public static ${intfName}<Array> initialize(${intfName}<Array> value) {
+        public static ${intfName}<${valueType}> initialize(${intfName}<${valueType}> value) {
             return initialize(null, value);
         }
 
-        public static ${intfName}<Array> initialize(String key, ${intfName}<Array> value) {
+        public static ${intfName}<${valueType}> initialize(String key, ${intfName}<${valueType}> value) {
             if (value == null) {
                 value = new ${voName}();
             }

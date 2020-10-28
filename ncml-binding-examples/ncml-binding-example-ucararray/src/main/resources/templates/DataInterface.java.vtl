@@ -103,8 +103,6 @@ public interface ${group.typeName} {
         #set($localVar = "_" + $localVar)
       #end
       #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-      // arrayAttribute? $arrayAttribute
-      // brackets: "$attributeWrapper.shapeBrackets"
       #findType($attribute.type $arrayAttribute)
       #set($localType = $typeName + $attributeWrapper.shapeBrackets)
       #if($arrayAttribute)
@@ -131,10 +129,14 @@ public interface ${group.typeName} {
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
   #findType($attribute.type $arrayAttribute)
+  #set($localType = $typeName + $attributeWrapper.shapeBrackets)
+  #if($arrayAttribute)
+    #set($localType = "Array")
+  #end
     @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
-    Array ${accessor}();
+    ${localType} ${accessor}();
 
-    void ${modifier}(Array ${localVar});
+    void ${modifier}(${localType} ${localVar});
 
 #end
 ## VARIABLES

@@ -91,7 +91,9 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
   #findType($attributeWrapper.attribute.type $arrayAttribute)
-  #set($typeName = "Array")
+  #if($arrayAttribute)
+    #set($typeName = "Array")
+  #end
 ${indent}    @Override
 ${indent}    public ${typeName} get${property}() {
 ${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute("${attributeWrapper.attribute.name}"))
