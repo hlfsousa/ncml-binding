@@ -1,0 +1,213 @@
+package ${group.packageName};
+
+// imports >>
+#if ($customContent.imports)
+${customContent.imports}##
+#else
+import java.util.*;
+import java.util.function.Consumer;
+
+import io.github.hlfsousa.ncml.io.ArrayUtils;
+import ucar.nc2.Dimension;
+import ucar.ma2.Array;
+import ${group.packageName}.${group.typeName}.*;
+import ${group.packageName}.${group.typeName}VO.*;
+#end
+// << imports
+
+public class ${group.typeName}Initializer {
+#set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
+#macro(findType $type $isArray)
+  #set($unsigned = false)
+  #set($primitive = false)
+  #if($type == "string" || $type == "String")
+    #set($typeName = "String")
+  #elseif($type == "byte" || $type == "ubyte")
+    #set($typeName = "Byte")
+    #set($unsigned = $type.charAt(0) == 'u')
+    #set($primitive = true)
+  #elseif($type == "char")
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "char")
+    #else
+      #set($typeName = "Character")
+    #end
+    #set($primitive = true)
+  #elseif($type == "short" || $type == "ushort")
+    #set($typeName = "Short")
+    #set($unsigned = $type.charAt(0) == 'u')
+    #set($primitive = true)
+  #elseif($type == "int" || $type == "uint")
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "int")
+    #else
+      #set($typeName = "Integer")
+    #end
+    #set($unsigned = $type.charAt(0) == 'u')
+  #elseif($type == "long" || $type == "ulong")
+    #set($typeName = "Long")
+    #set($unsigned = $type.charAt(0) == 'u')
+    #set($primitive = true)
+  #elseif($type == "float")
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "float")
+    #else
+      #set($typeName = "Float")
+    #end
+  #elseif($type == "double")
+    #if ($isArray)
+      #set($primitive = true)
+      #set($typeName = "double")
+    #else
+      #set($typeName = "Double")
+    #end
+  #elseif($type == "Structure")
+    #set($typeName = "Object") // TODO locate type
+  #elseif($type == "Sequence")
+    #set($typeName = "") // TODO Sequence
+  #elseif($type == "opaque")
+    #set($typeName = "Object") // TODO locate type
+  #elseif($type == "enum1")
+    #set($typeName = "") // TODO locate enumTypedef
+  #elseif($type == "enum2")
+    #set($typeName = "") // TODO locate enumTypedef
+  #elseif($type == "enum4")
+    #set($typeName = "") // TODO locate enumTypedef
+  #end
+  #if($primitive && $isArray)
+    #set($typeName = $typeName.toLowerCase())
+  #end
+#end
+
+    private static final Map<String, Consumer<${group.typeName}>> INITIALIZERS = new HashMap<>();
+
+    static {
+        INITIALIZERS.put(null, model -> {
+#foreach($attributeWrapper in $group.attributes)
+  #set($attribute = $attributeWrapper.attribute)
+  #if($attribute.value)
+    #set($accessor = "get" + $attributeWrapper.camelCase($attributeWrapper.name))
+    #set($modifier = "set" + $attributeWrapper.camelCase($attributeWrapper.name))
+    #set($localVar = ${attributeWrapper.dromedaryCase($attributeWrapper.name)})
+    #if($reservedWords.contains($localVar))
+      #set($localVar = "_" + $localVar)
+    #end
+    #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
+    #findType($attribute.type $arrayAttribute)
+            if (model.${accessor}() == null) {
+    #if($typeName == "String")
+                model.${modifier}("${attributeWrapper.escapeLineBreaks($attribute.value)}");
+    #else
+                model.${modifier}((${attribute.type})${attribute.value});
+    #end
+            }
+  #end
+#end
+            // customGroupInit >>$!{customContent.customGroupInit}
+            // << customGroupInit
+        });
+        // userGroupInitializers >>$!{customContent.userGroupInitializers}
+        // << userGroupInitializers
+    }
+
+    public static ${group.typeName} initialize(${group.typeName} value) {
+        return initialize(null, value);
+    }
+
+    public static ${group.typeName} initialize(String key, ${group.typeName} value) {
+        if (value == null) {
+            value = new ${group.typeName}VO();
+        }
+        if (!INITIALIZERS.containsKey(key)) {
+            key = null;
+        }
+        INITIALIZERS.get(key).accept(value);
+        return value;
+    }
+
+#foreach($varWrapper in $group.variables)
+  #if(!$varWrapper.attributes.empty)
+    #set($className = $varWrapper.typeName + "Initializer")
+    #set($intfName = $varWrapper.typeName + "Variable")
+    #set($voName = $varWrapper.typeName + "VO")
+    #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
+    #findType($varWrapper.scaledType $arrayVariable)
+    #set($valueType = $typeName + $varWrapper.shapeBrackets)
+    #if($arrayVariable)
+      #set($valueType = "Array")
+    #end
+    public static class ${className} {
+        
+        private static final Map<String, Consumer<${intfName}<${valueType}>>> INITIALIZERS = new HashMap<>();
+
+        static {
+            INITIALIZERS.put(null, model -> {
+    #foreach($attributeWrapper in $varWrapper.attributes)
+      #set($attribute = $attributeWrapper.attribute)
+      #if($attribute.value)
+        #set($accessor = "get" + $attributeWrapper.camelCase($attributeWrapper.name))
+        #set($modifier = "set" + $attributeWrapper.camelCase($attributeWrapper.name))
+        #set($localVar = ${attributeWrapper.dromedaryCase($attributeWrapper.name)})
+        #if($reservedWords.contains($localVar))
+          #set($localVar = "_" + $localVar)
+        #end
+        #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
+        #findType($attribute.type $arrayAttribute)
+                if (model.${accessor}() == null) {
+        #if($typeName == "String")
+                    model.${modifier}("${attributeWrapper.escapeLineBreaks($attribute.value)}");
+        #else
+                    model.${modifier}((${attribute.type})${attribute.value});
+        #end
+                }
+      #end
+    #end
+    #if(!$varWrapper.shapeBrackets.empty)
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+      #set($maxRank = $varWrapper.shapeBrackets.length() / 2)
+      #set($maxRank = $maxRank - 1)
+      #foreach($rank in [0..$maxRank])
+        #set($dimension = $varWrapper.dimensions[$rank])
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("${dimension.name}")
+        #if(${dimension.unlimited})
+                            .setIsUnlimited(${dimension.unlimited})
+        #end
+                            .setLength(ArrayUtils.getLength(model.getValue(), ${rank}))
+        #if($dimension.variableLength)
+                            .setIsVariableLength(${dimension.variableLength})
+        #end
+                            .build());
+      #end
+                }
+    #end
+    #set($customizationKey = "customInit_" + $varWrapper.name)
+                // ${customizationKey} >>$!{customContent[$customizationKey]}
+                // << ${customizationKey}
+            });
+    #set($customizationKey = "userInitializers_" + $varWrapper.name)
+            // ${customizationKey} >>$!{customContent[$customizationKey]}
+            // << ${customizationKey}
+        }
+    #findType($varWrapper.scaledType $arrayVariable)## might have been ovewritten
+
+        public static ${intfName}<${valueType}> initialize(${intfName}<${valueType}> value) {
+            return initialize(null, value);
+        }
+
+        public static ${intfName}<${valueType}> initialize(String key, ${intfName}<${valueType}> value) {
+            if (value == null) {
+                value = new ${voName}();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+  #end
+#end
+}

@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.hlfsousa</groupId>
     <artifactId>ncml-binding</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
   </parent>
   <artifactId>ncml-binding-examples</artifactId>
   <packaging>pom</packaging>
@@ -12,5 +12,6 @@
   <modules>
     <module>examples-generation</module>
     <module>ncml-bindind-example-readwrite</module>
+    <module>ncml-binding-example-ucararray</module>
   </modules>
 </project>

@@ -54,10 +54,10 @@ import edu.ucar.unidata.netcdf.ncml.Netcdf;
 public class NCMLCodeGenerator {
 
     // TODO move constants to interface, add implementations: plain java, ucar references; add standard to constructor
-    public static final String TEMPLATE_VALUE_OBJECT = "/templates/plain_java/ValueObject.java.vtl";
-    public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/plain_java/NetcdfWrapper.java.vtl";
-    public static final String TEMPLATE_DATA_INTERFACE = "/templates/plain_java/DataInterface.java.vtl";
-    public static final String TEMPLATE_INITIALIZER = "/templates/plain_java/Initializer.java.vtl";
+    public static final String TEMPLATE_VALUE_OBJECT = "/templates/ValueObject.java.vtl";
+    public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/NetcdfWrapper.java.vtl";
+    public static final String TEMPLATE_DATA_INTERFACE = "/templates/DataInterface.java.vtl";
+    public static final String TEMPLATE_INITIALIZER = "/templates/Initializer.java.vtl";
     
     private static final Logger LOG = LoggerFactory.getLogger(NCMLCodeGenerator.class);
 

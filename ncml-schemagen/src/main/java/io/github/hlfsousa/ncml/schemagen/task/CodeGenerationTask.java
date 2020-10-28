@@ -24,8 +24,8 @@ public class CodeGenerationTask {
     private static final String USAGE_TEXT = "usage: java CodeGenerationTask header [-p properties] root_name [-o out_directory] templates\n"
             + "\theader: path or url to the header file\n"
             + "\tproperties: configuration file (.xml or .properties) for customizations\n"
-            + "\troot_name: canonical name of the type that should represent the generated classes"
-            + "\tout_directory: optional location in the filesystem where code will be generated. Default to the current directory"
+            + "\troot_name: canonical name of the type that should represent the generated classes\n"
+            + "\tout_directory: optional location in the filesystem where code will be generated. Default to the current directory\n"
             + "\ttemplates: (template)*; an optional space-separated sequence of additional templates to use in generation\n"
             + "\t\ttemplate: path/suffix; definition of an additional template to use in generation\n"
             + "\t\t\tpath: a file path or url pointing to an NcML header\n"
@@ -112,8 +112,6 @@ public class CodeGenerationTask {
         
         NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, readProperties());
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
-        templates.put("/templates/plain_java/NetcdfWrapper.java.vtl",
-                (group, destDir) -> new File(destDir, group.getTypeName() + "Wrapper.java"));
         templates.putAll(additionalTemplates);
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage);

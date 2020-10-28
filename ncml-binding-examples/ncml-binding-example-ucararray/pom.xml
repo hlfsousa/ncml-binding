@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -6,7 +5,7 @@
     <artifactId>ncml-binding-examples</artifactId>
     <version>0.4.0</version>
   </parent>
-  <artifactId>ncml-binding-example-readwrite</artifactId>
+  <artifactId>ncml-binding-example-ucararray</artifactId>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -43,7 +42,7 @@
         <executions>
           <execution>
             <id>generate-ncml-model</id>
-            <phase>generate-resources</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>java</goal>
             </goals>
@@ -51,12 +50,14 @@
             <configuration>
               <mainClass>io.github.hlfsousa.ncml.schemagen.task.CodeGenerationTask</mainClass>
               <arguments>
-                <argument>${project.basedir}/src/main/resources/cami_archetype.xml</argument>
-                <argument>-p</argument>
-                <argument>${project.basedir}/src/main/resources/cami_archetype.properties</argument>
-                <argument>io.github.hlfsousa.ncml.examples.generation.CommunityAtmosphericModel</argument>
+                <argument>${project.basedir}/src/main/resources/sample_header.xml</argument>
+                <argument>io.github.hlfsousa.ncml.examples.ucararray.SampleModel</argument>
                 <argument>-o</argument>
                 <argument>${project.basedir}/src/main/java</argument>
+                <argument>/templates/DataInterface.java.vtl/.java</argument>
+                <argument>/templates/Initializer.java.vtl/Initializer.java</argument>
+                <argument>/templates/NetcdfWrapper.java.vtl/Wrapper.java</argument>
+                <argument>/templates/ValueObject.java.vtl/VO.java</argument>
               </arguments>
             </configuration>
           </execution>
