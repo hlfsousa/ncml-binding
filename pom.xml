@@ -58,10 +58,6 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
-    <site>
-      <id>github</id>
-      <url>file:///undefined</url>
-    </site>
   </distributionManagement>
 
   <repositories>

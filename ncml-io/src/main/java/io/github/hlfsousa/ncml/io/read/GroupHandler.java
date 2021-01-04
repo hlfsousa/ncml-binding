@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Function;
 
 import com.google.re2j.Matcher;
@@ -31,8 +32,8 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
     private final AttributeConventions attributeConventions;
     private final ConvertUtils convertUtils;
 
-    public GroupHandler(Group group, boolean readOnly) {
-        super(group, readOnly);
+    public GroupHandler(Group group, boolean readOnly, Properties runtimeProperties) {
+        super(group, readOnly, runtimeProperties);
         attributeConventions = new AttributeConventions();
         convertUtils = ConvertUtils.getInstance();
     }
@@ -92,7 +93,7 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
                 ParameterizedType variableType = (ParameterizedType) valueType;
                 Class<?>[] interfaces = new Class<?>[] { (Class<?>) variableType.getRawType() };
                 return getMapped(node.getVariables(), varName, variable -> Proxy.newProxyInstance(classLoader,
-                        interfaces, new VariableHandler(variable, variableType, readOnly)));
+                        interfaces, new VariableHandler(variable, variableType, readOnly, runtimeProperties)));
             } else {
                 // scalar value
                 return getMapped(node.getVariables(), varName, variable -> {
@@ -118,7 +119,7 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
             return variable == null ? null : attributeConventions.readNumericArray(variable);
         } else if (method.getReturnType().isInterface()) {
             return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
-                    new VariableHandler(variable, method.getGenericReturnType(), readOnly));
+                    new VariableHandler(variable, method.getGenericReturnType(), readOnly, runtimeProperties));
         } else {
             return convertUtils.toJavaObject(
                     variable == null ? null : attributeConventions.readNumericArray(variable), method.getReturnType());
@@ -134,14 +135,14 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
                     .getActualTypeArguments()[1];
             Class<?>[] interfaces = new Class<?>[] { valueType };
             return getMapped(node.getGroups(), groupName, child -> Proxy.newProxyInstance(classLoader,
-                    interfaces, new GroupHandler(child, readOnly)));
+                    interfaces, new GroupHandler(child, readOnly, runtimeProperties)));
         }
         Group child = node == null ? null : node.findGroup(groupName);
         if (readOnly && child == null) {
             return null;
         }
         return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
-                new GroupHandler(child, readOnly));
+                new GroupHandler(child, readOnly, runtimeProperties));
     }
 
     private <N extends CDMNode> Map<String, Object> getMapped(Iterable<N> children, String groupName, Function<N, Object> factory) {

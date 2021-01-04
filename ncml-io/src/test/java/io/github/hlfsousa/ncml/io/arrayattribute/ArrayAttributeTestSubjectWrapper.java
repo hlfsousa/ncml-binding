@@ -14,7 +14,7 @@ public class ArrayAttributeTestSubjectWrapper extends NetcdfWrapper implements A
 
     @Override
     public int[] getArrayAttribute() {
-        return Optional.ofNullable(group.findAttribute("array_attribute"))
+        return Optional.ofNullable(group.findAttribute(getRuntimeName(group, "array_attribute", runtimeProperties)))
                 .map(arrayAttribute -> (int[])arrayAttribute.getValues().copyTo1DJavaArray())
                 .orElse(null);
     }
@@ -26,7 +26,7 @@ public class ArrayAttributeTestSubjectWrapper extends NetcdfWrapper implements A
 
     @Override
     public String getStrAttribute() {
-        return Optional.ofNullable(group.findAttribute("str_attribute"))
+        return Optional.ofNullable(group.findAttribute(getRuntimeName(group, "str_attribute", runtimeProperties)))
                 .map(strAttribute -> strAttribute.getStringValue())
                 .orElse(null);
     }

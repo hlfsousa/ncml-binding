@@ -176,8 +176,7 @@ public class CommunityAtmosphericModelInitializer {
                 // customInit_hybrid_level >>
                 // << customInit_hybrid_level
             });
-            // userInitializers_hybrid_level >>
-            
+            // userInitializers_hybrid_level >>            
             INITIALIZERS.put("lev", model -> {
                 // the same as default, plus attribute long_name
                 INITIALIZERS.get(null).accept(model);
@@ -214,6 +213,7 @@ public class CommunityAtmosphericModelInitializer {
                 }
             });
             
+
             // << userInitializers_hybrid_level
         }
 

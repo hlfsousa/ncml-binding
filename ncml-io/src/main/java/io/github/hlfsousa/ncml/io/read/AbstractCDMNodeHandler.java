@@ -10,9 +10,11 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.io.converters.ArrayNumberConverter;
+import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -62,10 +64,12 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
     protected final T node;
     protected final boolean readOnly;
     protected final Map<String, Object> values = new LinkedHashMap<>();
+    protected final Properties runtimeProperties;
 
-    public AbstractCDMNodeHandler(T node, boolean readOnly) {
+    public AbstractCDMNodeHandler(T node, boolean readOnly, Properties runtimeProperties) {
         this.node = node;
         this.readOnly = readOnly;
+        this.runtimeProperties = runtimeProperties;
     }
 
     protected boolean isFromInterface(Object proxy, Method method) {
@@ -109,9 +113,9 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
             if (name.startsWith("get")) {
                 name = name.substring("get".length());
             }
-            return name;
+            return NetcdfWrapper.getRuntimeName(node, name, runtimeProperties);
         }
-        return preset;
+        return NetcdfWrapper.getRuntimeName(node, preset, runtimeProperties);
     }
 
     protected Object getAttribute(Method method) {

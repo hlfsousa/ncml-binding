@@ -32,6 +32,13 @@ function assertNotNull(value, message) {
     }
 }
 
+function assertNull(value, message) {
+    var msg = "Expected nothing, but got " + value;
+    if (!(value == undefined || value == null)) {
+        throw message ? msg + ": " + message : msg;
+    }
+}
+
 function arrayEquals(a1, a2, debug) {
 	if (debug) {
 		print(Java.type("java.util.Arrays").toString(a1));

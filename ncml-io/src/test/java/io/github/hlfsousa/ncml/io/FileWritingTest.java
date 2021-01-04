@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,6 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import io.github.hlfsousa.ncml.io.read.NetcdfReader;
 import io.github.hlfsousa.ncml.io.write.NetcdfWriter;
+import io.github.hlfsousa.ncml.schemagen.NCMLCodeGenerator;
 import ucar.nc2.NetcdfFile;
 
 public class FileWritingTest extends IOTest {
@@ -40,6 +42,8 @@ public class FileWritingTest extends IOTest {
         URL scriptURL = getClass().getResource(String.format("/samples/%s_write.js", referenceName));
         assertThat(schemaURL, is(notNullValue()));
         assertThat(scriptURL, is(notNullValue()));
+        URL runtimePropertiesURL = getClass().getResource(String.format("/samples/%s_runtime.properties", referenceName));
+        Properties runtimeProperties = loadRuntimeProperties(runtimePropertiesURL);
 
         // generate and compile model
         File classesDir = new File("target", referenceName + "-classes");
@@ -47,6 +51,9 @@ public class FileWritingTest extends IOTest {
         classesDir.mkdirs();
         
         Properties properties = new Properties();
+        // initial configuration is ignored
+        properties.setProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION,
+                new File(classesDir, "runtime.properties").getPath());
         InputStream propertiesIn = getClass().getResourceAsStream(String.format("/samples/%s_config.xml", referenceName));
         if (propertiesIn != null) {
             properties.loadFromXML(propertiesIn);
@@ -79,10 +86,13 @@ public class FileWritingTest extends IOTest {
                         .getContextClassLoader().loadClass(rootClassName);
                 File fileFromScratch = new File(sourcesDir, "newContent.nc");
                 NetcdfReader<?> reader = new NetcdfReader<>(rootType);
+                if (runtimeProperties != null) {
+                    reader.setProperties(runtimeProperties);
+                }
                 Object modelObject = reader.create();
                 javascriptEngine.put("model", modelObject);
                 Object editedModel = javascriptEngine.eval("createModel(model)");
-                NetcdfWriter writer = new NetcdfWriter();
+                NetcdfWriter writer = new NetcdfWriter(runtimeProperties);
                 NetcdfFile file = writer.write(editedModel, fileFromScratch);
                 file.close();
 
@@ -111,6 +121,17 @@ public class FileWritingTest extends IOTest {
         if (failure != null) {
             throw failure;
         }
+    }
+
+    private Properties loadRuntimeProperties(URL runtimePropertiesURL) throws IOException {
+        Properties runtimeProperties = null;
+        if (runtimePropertiesURL != null) {
+            runtimeProperties = new Properties();
+            try (InputStream in = runtimePropertiesURL.openStream()) {
+                runtimeProperties.load(in);
+            }
+        }
+        return runtimeProperties;
     }
     
 }

@@ -36,4 +36,10 @@ public abstract class AbstractAttributeContainer extends AbstractNode {
 
     protected abstract List<Attribute> getAttributesImpl();
 
+    @Override
+    public void initializeConfiguration(Properties initialConfiguration) {
+        super.initializeConfiguration(initialConfiguration);
+        getAttributes().forEach(attribute -> attribute.initializeConfiguration(initialConfiguration));
+    }
+
 }

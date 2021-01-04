@@ -53,6 +53,8 @@ import edu.ucar.unidata.netcdf.ncml.Netcdf;
  */
 public class NCMLCodeGenerator {
 
+    public static final String CFG_PROPERTIES_LOCATION = "propertiesLocation";
+    public static final String DEFAULT_PROPERTIES_LOCATION = "ncml-binding.properties";
     // TODO move constants to interface, add implementations: plain java, ucar references; add standard to constructor
     public static final String TEMPLATE_VALUE_OBJECT = "/templates/ValueObject.java.vtl";
     public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/NetcdfWrapper.java.vtl";
@@ -67,6 +69,7 @@ public class NCMLCodeGenerator {
     private String rootGroupName;
     private VelocityEngine velocity;
     private Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>();
+    private Properties initialConfiguration;
 
     /**
      * Creates a code generator based on a CDL XML Header.
@@ -143,8 +146,15 @@ public class NCMLCodeGenerator {
      * @throws IOException if the files cannot be written to
      */
     public void generateSources(File destination) throws IOException {
+        initialConfiguration = new Properties();
         AbstractGroupWrapper rootGroup = new SchemaWrapper(schema, modelPackage, rootGroupName, properties);
+        rootGroup.initializeConfiguration(initialConfiguration);
         generate(rootGroup, destination);
+        try (FileWriter writer = new FileWriter(properties.getProperty(
+                CFG_PROPERTIES_LOCATION, DEFAULT_PROPERTIES_LOCATION))) {
+            initialConfiguration.store(writer, "Initial configuration");
+        }
+        initialConfiguration = null;
     }
 
     private void generate(AbstractGroupWrapper group, File destination) throws IOException {

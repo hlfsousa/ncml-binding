@@ -49,7 +49,7 @@ public class VariableHandlerTest {
     @Test
     public void testVarAttributes() throws Exception {
         ChildGroupVariable variable = (ChildGroupVariable) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] { ChildGroupVariable.class }, new VariableHandler(this.variable, Array.class, true));
+                new Class<?>[] { ChildGroupVariable.class }, new VariableHandler(this.variable, Array.class, true, null));
         assertThat(variable.getLongName(), is("some variable"));
         assertTrue(variable.getLongName() == variable.getLongName());
     }
@@ -57,7 +57,7 @@ public class VariableHandlerTest {
     @Test
     public void testScalarValue() throws Exception {
         ScalarVariable scalarVar = (ScalarVariable) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] { ScalarVariable.class }, new VariableHandler(scalarVariable, Double.class, true));
+                new Class<?>[] { ScalarVariable.class }, new VariableHandler(scalarVariable, Double.class, true, null));
         assertThat(scalarVar.getValue(), is(1.0));
     }
 
