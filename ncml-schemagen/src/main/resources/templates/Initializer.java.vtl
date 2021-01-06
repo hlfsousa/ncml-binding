@@ -105,10 +105,12 @@ public class ${group.typeName}Initializer {
             }
   #end
 #end
-            // customGroupInit >>$!{customContent.customGroupInit}
+            // customGroupInit >>
+$!{customContent.customGroupInit}##
             // << customGroupInit
         });
-        // userGroupInitializers >>$!{customContent.userGroupInitializers}
+        // userGroupInitializers >>
+$!{customContent.userGroupInitializers}##
         // << userGroupInitializers
     }
 
@@ -181,12 +183,14 @@ public class ${group.typeName}Initializer {
                 }
     #end
     #set($customizationKey = "customInit_" + $varWrapper.name)
-                // ${customizationKey} >>$!{customContent[$customizationKey]}
+                // ${customizationKey} >>
+$!{customContent[$customizationKey]}##
                 // << ${customizationKey}
             });
-    #set($customizationKey = "userInitializers_" + $varWrapper.name)
-            // ${customizationKey} >>$!{customContent[$customizationKey]}
-            // << ${customizationKey}
+    #set($initializerKey = "userInitializers_" + $varWrapper.name)
+            // ${initializerKey} >>
+$!{customContent[$initializerKey]}##
+            // << ${initializerKey}
         }
     #findType($varWrapper.scaledType $arrayVariable)## might have been ovewritten
 
