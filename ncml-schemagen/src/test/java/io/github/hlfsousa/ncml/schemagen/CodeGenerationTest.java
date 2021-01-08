@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
@@ -15,6 +16,9 @@ import java.nio.file.Files;
 import java.util.Properties;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLDimension;
@@ -22,10 +26,6 @@ import io.github.hlfsousa.ncml.annotation.CDLDimensions;
 import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
-
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Generates code from a schema and verifies its correctness.
@@ -50,11 +50,20 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
         final String rootGroupName = "SeaSurfaceSalinity";
         
         Properties properties = new Properties();
+        properties.setProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION, "target/ncml-binding.properties");
         generateCode(sourcesDir, rootPackage, rootGroupName, "/sea_surface_salinity_v2.xml", properties);
 
         assertThat("Code was not generated", new File(sourcesDir,
                 rootPackage.replace('.', File.separatorChar) + File.separator + rootGroupName + ".java").isFile(),
                 is(true));
+        
+        File propertiesFile = new File(properties.getProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION));
+        assertThat("Runtime properties file was not generated", propertiesFile.isFile(), is(true));
+        Properties runtimeProperties = new Properties();
+        try (FileReader propertiesReader = new FileReader(propertiesFile)) {
+            runtimeProperties.load(propertiesReader);
+        }
+        assertThat(runtimeProperties.getProperty("metadata.authors"), is("authors"));
     }
 
     @Test

@@ -48,7 +48,7 @@ public class GroupHandlerTest {
     public void testGetGroup() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         TestFile testFile = (TestFile) Proxy.newProxyInstance(classLoader,
-                new Class<?>[] { TestFile.class }, new GroupHandler(rootGroup, true));
+                new Class<?>[] { TestFile.class }, new GroupHandler(rootGroup, true, null));
         assertThat(testFile.getChildGroup(), is(notNullValue()));
         assertTrue(testFile.getChildGroup() == testFile.getChildGroup(), "Each call returns a different instance");
     }
@@ -57,7 +57,7 @@ public class GroupHandlerTest {
     public void testGetVariable() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         ChildGroup child = (ChildGroup) Proxy.newProxyInstance(classLoader,
-                new Class<?>[] { ChildGroup.class }, new GroupHandler(childGroup, true));
+                new Class<?>[] { ChildGroup.class }, new GroupHandler(childGroup, true, null));
         assertThat(child.getSomeVariable(), is(notNullValue()));
         assertTrue(child.getSomeVariable() == child.getSomeVariable(), "Each call returns a different instance");
     }
@@ -66,7 +66,7 @@ public class GroupHandlerTest {
     public void testGetAttribute() {
         TestFile testFile = (TestFile) Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class<?>[] { TestFile.class },
-                new GroupHandler(rootGroup, true));
+                new GroupHandler(rootGroup, true, null));
         assertThat(testFile.getDescription(), is(DESCRIPTION_ATTRIBUTE_VALUE));
     }
 

@@ -58,4 +58,11 @@ public abstract class AbstractGroupWrapper extends AbstractAttributeContainer {
         return selectedAttribute;
     }
 
+    @Override
+    public void initializeConfiguration(Properties initialConfiguration) {
+        super.initializeConfiguration(initialConfiguration);
+        getGroups().forEach(group -> group.initializeConfiguration(initialConfiguration));
+        getVariables().forEach(variable -> variable.initializeConfiguration(initialConfiguration));
+    }
+
 }

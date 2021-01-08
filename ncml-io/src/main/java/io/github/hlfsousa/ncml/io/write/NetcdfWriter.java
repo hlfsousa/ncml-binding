@@ -33,12 +33,14 @@ import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
+import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
+import ucar.nc2.CDMNode;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
@@ -60,6 +62,7 @@ public class NetcdfWriter {
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
+    private Map<String, String> runtimeProperties;
 
     private boolean defaultAttributeValueUsed;
     private boolean closeAfterCreation;
@@ -68,8 +71,17 @@ public class NetcdfWriter {
         this(true);
     }
     
+    public NetcdfWriter(Map<String, String> runtimeProperties) {
+        this(true, runtimeProperties);
+    }
+    
     public NetcdfWriter(boolean closeAfterCreation) {
+        this(closeAfterCreation, null);
+    }
+    
+    public NetcdfWriter(boolean closeAfterCreation, Map<String, String> runtimeProperties) {
         this.closeAfterCreation = closeAfterCreation;
+        this.runtimeProperties = runtimeProperties;
     }
     
     public void setDefaultAttributeValueUsed(boolean defaultAttributeValueUsed) {
@@ -289,10 +301,10 @@ public class NetcdfWriter {
     }
 
     private void createAttributes(NetcdfFileWriter writer, Group group, Object model) {
-        createAttributes(writer, model, attribute -> writer.addGroupAttribute(group, attribute));
+        createAttributes(writer, model, group, attribute -> writer.addGroupAttribute(group, attribute));
     }
 
-    private void createAttributes(NetcdfFileWriter writer, Object model, Consumer<Attribute> attributeConsumer) {
+    private void createAttributes(NetcdfFileWriter writer, Object model, CDMNode parent, Consumer<Attribute> attributeConsumer) {
         forEachAccessor(model, accessor -> {
             CDLAttribute attributeDecl = accessor.getAnnotation(CDLAttribute.class);
             if (attributeDecl == null) {
@@ -302,6 +314,7 @@ public class NetcdfWriter {
             if (name.isEmpty()) {
                 name = getDefaultName(accessor);
             }
+            name = NetcdfWrapper.getRuntimeName(parent, name, runtimeProperties);
             Attribute.Builder attributeBuilder = Attribute.builder(name);
             if (attributeDecl.dataType() != null && !attributeDecl.dataType().isEmpty()) {
                 DataType dataType = DataType.getType(attributeDecl.dataType());
@@ -431,7 +444,7 @@ public class NetcdfWriter {
 
     private void createVariableStructure(NetcdfFileWriter writer, Variable variable, Object model) {
         // variables only have attributes
-        createAttributes(writer, model, attribute -> writer.addVariableAttribute(variable, attribute));
+        createAttributes(writer, model, variable, attribute -> writer.addVariableAttribute(variable, attribute));
     }
 
     @SuppressWarnings("unchecked")

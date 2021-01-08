@@ -94,7 +94,7 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
   #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    @Override
 ${indent}    public ${typeName} get${property}() {
-${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute("${attributeWrapper.attribute.name}"))
+${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute(getRuntimeName(${netcdfObject}, "${attributeWrapper.attribute.name}", runtimeProperties)))
   #if($typeName.endsWith("[]"))
     #if($typeName.startsWith("String"))
 ${indent}                .map(${localVar} -> {
@@ -280,7 +280,7 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public ${typeName}${varWrapper.shapeBrackets} get${property}() {
         return (${typeName}${varWrapper.shapeBrackets}) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(getRuntimeName(group, varName, runtimeProperties)))
                         .map(var -> {
                             try {
                                 Array ncArray = var.read();
@@ -327,7 +327,7 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public ${intfName}<${typeName}> get${property}() {
         return (${intfName}<${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(getRuntimeName(group, varName, runtimeProperties)))
                         .map(${className}::new)
                         .orElse(null));
     }
@@ -372,7 +372,7 @@ ${indent}    }
     #else
     public ${typeName} ${accessor}() {
         return (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
-                key -> Optional.ofNullable(group.findGroup(key)).map(${typeName}Wrapper::new).orElse(null));
+                key -> Optional.ofNullable(group.findGroup(getRuntimeName(group, key, runtimeProperties))).map(${typeName}Wrapper::new).orElse(null));
     }
 
     public void ${modifier}(${typeName} ${childGroup.dromedaryCase($childGroup.name)}) {
