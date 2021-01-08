@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -34,8 +33,8 @@ import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
+import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -63,7 +62,7 @@ public class NetcdfWriter {
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
-    private Properties runtimeProperties;
+    private Map<String, String> runtimeProperties;
 
     private boolean defaultAttributeValueUsed;
     private boolean closeAfterCreation;
@@ -72,7 +71,7 @@ public class NetcdfWriter {
         this(true);
     }
     
-    public NetcdfWriter(Properties runtimeProperties) {
+    public NetcdfWriter(Map<String, String> runtimeProperties) {
         this(true, runtimeProperties);
     }
     
@@ -80,7 +79,7 @@ public class NetcdfWriter {
         this(closeAfterCreation, null);
     }
     
-    public NetcdfWriter(boolean closeAfterCreation, Properties runtimeProperties) {
+    public NetcdfWriter(boolean closeAfterCreation, Map<String, String> runtimeProperties) {
         this.closeAfterCreation = closeAfterCreation;
         this.runtimeProperties = runtimeProperties;
     }

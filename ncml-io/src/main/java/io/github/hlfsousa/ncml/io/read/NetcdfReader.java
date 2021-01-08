@@ -3,7 +3,7 @@ package io.github.hlfsousa.ncml.io.read;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Proxy;
-import java.util.Properties;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,15 @@ public class NetcdfReader<T> {
 
     private final Class<T> rootType;
 
-    private Properties runtimeProperties;
+    private final Map<String, String> runtimeProperties;
 
     public NetcdfReader(Class<T> rootType) {
+        this(rootType, null);
+    }
+    
+    public NetcdfReader(Class<T> rootType, Map<String, String> runtimeProperties) {
         this.rootType = rootType;
+        this.runtimeProperties = runtimeProperties;
     }
     
     @SuppressWarnings("unchecked")
@@ -64,10 +69,6 @@ public class NetcdfReader<T> {
         }
         return (T) Proxy.newProxyInstance(classLoader, new Class<?>[] { rootType },
                 new GroupHandler(netcdf.getRootGroup(), readOnly, runtimeProperties));
-    }
-
-    public void setProperties(Properties runtimeProperties) {
-        this.runtimeProperties = runtimeProperties;
     }
 
 }

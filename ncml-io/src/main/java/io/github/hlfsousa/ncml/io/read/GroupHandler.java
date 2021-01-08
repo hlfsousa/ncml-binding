@@ -32,7 +32,7 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
     private final AttributeConventions attributeConventions;
     private final ConvertUtils convertUtils;
 
-    public GroupHandler(Group group, boolean readOnly, Properties runtimeProperties) {
+    public GroupHandler(Group group, boolean readOnly, Map<String, String> runtimeProperties) {
         super(group, readOnly, runtimeProperties);
         attributeConventions = new AttributeConventions();
         convertUtils = ConvertUtils.getInstance();

@@ -11,6 +11,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.script.ScriptEngine;
@@ -43,7 +46,7 @@ public class FileWritingTest extends IOTest {
         assertThat(schemaURL, is(notNullValue()));
         assertThat(scriptURL, is(notNullValue()));
         URL runtimePropertiesURL = getClass().getResource(String.format("/samples/%s_runtime.properties", referenceName));
-        Properties runtimeProperties = loadRuntimeProperties(runtimePropertiesURL);
+        Map<String, String> runtimeProperties = loadRuntimeProperties(runtimePropertiesURL);
 
         // generate and compile model
         File classesDir = new File("target", referenceName + "-classes");
@@ -85,10 +88,7 @@ public class FileWritingTest extends IOTest {
                 Class<? super Object> rootType = (Class<? super Object>) Thread.currentThread()
                         .getContextClassLoader().loadClass(rootClassName);
                 File fileFromScratch = new File(sourcesDir, "newContent.nc");
-                NetcdfReader<?> reader = new NetcdfReader<>(rootType);
-                if (runtimeProperties != null) {
-                    reader.setProperties(runtimeProperties);
-                }
+                NetcdfReader<?> reader = new NetcdfReader<>(rootType, runtimeProperties);
                 Object modelObject = reader.create();
                 javascriptEngine.put("model", modelObject);
                 Object editedModel = javascriptEngine.eval("createModel(model)");
@@ -123,7 +123,7 @@ public class FileWritingTest extends IOTest {
         }
     }
 
-    private Properties loadRuntimeProperties(URL runtimePropertiesURL) throws IOException {
+    private Map<String, String> loadRuntimeProperties(URL runtimePropertiesURL) throws IOException {
         Properties runtimeProperties = null;
         if (runtimePropertiesURL != null) {
             runtimeProperties = new Properties();
@@ -131,7 +131,15 @@ public class FileWritingTest extends IOTest {
                 runtimeProperties.load(in);
             }
         }
-        return runtimeProperties;
+        if (runtimeProperties == null) {
+            return null;
+        }
+        Map<String, String> asMap = new HashMap<>();
+        for (Enumeration<?> propertyNames = runtimeProperties.propertyNames(); propertyNames.hasMoreElements(); ) {
+            String propertyName = (String) propertyNames.nextElement();
+            asMap.put(propertyName, runtimeProperties.getProperty(propertyName));
+        }
+        return asMap;
     }
     
 }

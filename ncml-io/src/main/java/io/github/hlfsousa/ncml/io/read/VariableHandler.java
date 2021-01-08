@@ -23,7 +23,7 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
     private final Map<Method, Object> invocationCache = new HashMap<>();
     private Type valueType;
 
-    public VariableHandler(Variable variable, Type valueType, boolean readOnly, Properties runtimeProperties) {
+    public VariableHandler(Variable variable, Type valueType, boolean readOnly, Map<String, String> runtimeProperties) {
         super(variable, readOnly, runtimeProperties);
         this.valueType = valueType;
     }
