@@ -94,7 +94,6 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
     if (lowLevelCheck) {
         assertEquals(netcdf.someGroup.unwrap().shortName, "this_group_name_is_not_good_for_a_property", "unwrapped group name");
         assertNull(netcdf.unwrap().findAttribute("customglobalattribute"), "global attribute not renamed by properties");
-        print(netcdf.unwrap());
         assertNotNull(netcdf.unwrap().findAttribute("title"), "global attribute not renamed by properties");
     }
 

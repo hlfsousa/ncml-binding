@@ -1,13 +1,11 @@
 package io.github.hlfsousa.ncml.io.cami;
 
-import java.util.Map;
-
-import io.github.hlfsousa.ncml.annotation.CDLAttribute;
-import io.github.hlfsousa.ncml.annotation.CDLDimension;
-import io.github.hlfsousa.ncml.annotation.CDLDimensions;
-import io.github.hlfsousa.ncml.annotation.CDLRoot;
-import io.github.hlfsousa.ncml.annotation.CDLVariable;
-import io.github.hlfsousa.ncml.declaration.Variable;
+// imports >>
+import io.github.hlfsousa.ncml.annotation.*;
+import io.github.hlfsousa.ncml.declaration.*;
+import java.util.*;
+import ucar.ma2.Array;
+// << imports
 
 @CDLRoot
 @CDLDimensions({

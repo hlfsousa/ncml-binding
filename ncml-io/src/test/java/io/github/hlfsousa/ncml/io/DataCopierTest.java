@@ -5,16 +5,43 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.Properties;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.github.hlfsousa.ncml.io.cami.CommunityAtmosphericModel;
 import io.github.hlfsousa.ncml.io.cami.CommunityAtmosphericModelVO;
 import io.github.hlfsousa.ncml.io.read.NetcdfReader;
 import io.github.hlfsousa.ncml.io.write.NetcdfWriter;
+import io.github.hlfsousa.ncml.schemagen.NCMLCodeGenerator;
 
 public class DataCopierTest {
 
+    @Disabled("enable manually when re-generation is required (classes are versioned)")
+    @Test
+    public void generateModel() throws Exception {
+        File sourcesDir = new File("src/test/java");
+        // /cami_archetype.xml
+        final String schemaDir = "../ncml-binding-examples/ncml-binding-example-readwrite/src/main/resources/";
+        final String schemaLocation = schemaDir + "cami_archetype.xml";
+        final String propertiesLocation = schemaDir + "cami_archetype.properties";
+        final String rootPackage = "io.github.hlfsousa.ncml.io.cami";
+        final String rootGroupName = "CommunityAtmosphericModel";
+        
+        Properties properties = new Properties();
+        try (FileReader reader = new FileReader(propertiesLocation)) {
+            properties.load(reader);
+        }
+        properties.setProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION, "target/ncml-binding.properties");
+        NCMLCodeGenerator generator = new NCMLCodeGenerator(new File(schemaLocation).toURI().toURL(),
+                properties);
+        generator.setModelPackage(rootPackage);
+        generator.setRootGroupName(rootGroupName);
+        generator.generateSources(sourcesDir);
+    }
+    
     @Test
     public void testCopyCami() throws Exception {
         NetcdfReader<CommunityAtmosphericModel> camiReader = new NetcdfReader<>(CommunityAtmosphericModel.class);
