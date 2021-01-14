@@ -71,7 +71,11 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(actualItems, "/mappedGroup[" + key + "]/items/value");
         if (lowLevelCheck) {
             assertEquals(groupObj.unwrap().shortName, key, "unwrapped group name");
-            assertNotNull(groupObj.unwrap().findVariable("items").findAttribute("my_attribute"),
+
+            assertNull(groupObj.unwrap().findVariable("items"), "items not renamed at runtime");
+            assertNotNull(groupObj.unwrap().findVariable("components"), "items not renamed at runtime");
+
+            assertNotNull(groupObj.unwrap().findVariable("components").findAttribute("my_attribute"),
                     "unwraped variable attribute my_attribute at /mappedGroup[" + key + "]/items");
         }
     }

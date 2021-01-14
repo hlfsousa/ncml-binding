@@ -52,10 +52,10 @@ public abstract class AbstractNode {
     }
 
     public void initializeConfiguration(Properties initialConfiguration) {
-        // set self name (full name without initial slash with dots as separator as key, simple name as value)
+        // set self name (full name without initial slash as key, simple name as value)
         String key = getFullName();
         if (!key.isEmpty()) {
-            key = key.substring(1).replace('/', '.');
+            key = key.substring(1);
             initialConfiguration.setProperty(key, getName());
         }
     }

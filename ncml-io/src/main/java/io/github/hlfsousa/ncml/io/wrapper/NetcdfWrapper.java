@@ -35,20 +35,12 @@ public abstract class NetcdfWrapper {
     public static String getRuntimeName(CDMNode node, String childName, Map<String, String> runtimeProperties) {
         if (runtimeProperties != null) {
             String fullName = node.getFullName();
-            String key = fullName.isEmpty() ? childName : (fullName.replace('/', '.') + '.' + childName);
+            String key = fullName.isEmpty() ? childName : (fullName + '/' + childName);
             return Optional.ofNullable(runtimeProperties.get(key)).orElse(childName);
         }
         return childName;
     }
 
-    protected Array getNumericArray(String shortName) {
-        Variable variable = group.findVariable(shortName);
-        if (variable == null) {
-            return null;
-        }
-        return getNumericArray(variable);
-    }
-    
     protected Array getNumericArray(Variable variable) {
         return attributeConventions.readNumericArray(variable);
     }

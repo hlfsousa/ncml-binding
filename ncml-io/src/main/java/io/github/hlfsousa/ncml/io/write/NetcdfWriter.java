@@ -379,6 +379,7 @@ public class NetcdfWriter {
     private void createSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
             CDLVariable variableDecl, Object varModel)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        name = NetcdfWrapper.getRuntimeName(group, name, runtimeProperties);
         Object varValue;
         Class<?> javaType;
         Class<?> variableType = accessor.getReturnType();
@@ -514,6 +515,7 @@ public class NetcdfWriter {
     private void writeSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
             CDLVariable variableDecl, Object varModel) throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, IOException, InvalidRangeException {
+        name = NetcdfWrapper.getRuntimeName(group, name, runtimeProperties);
         Object varValue;
         Class<?> variableType = accessor.getReturnType();
         if (Map.class.isAssignableFrom(variableType)) {
