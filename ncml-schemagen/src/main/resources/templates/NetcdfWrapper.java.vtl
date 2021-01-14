@@ -257,7 +257,7 @@ ${indent}    }
                 if (matcher.matches()) {
                     Array ncArray;
                     if (variable.getDataType().isNumeric()) {
-                        ncArray = getNumericArray(variable.getShortName());
+                        ncArray = getNumericArray(variable);
                     } else {
                         try {
                             ncArray = variable.read();
@@ -359,7 +359,9 @@ ${indent}    }
             for (Group child : group.getGroups()) {
                 Matcher matcher = regex.matcher(child.getShortName());
                 if (matcher.matches()) {
-                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child));
+                    ${typeName}Wrapper childWrapper = new ${typeName}Wrapper(child);
+                    childWrapper.setRuntimeProperties(runtimeProperties);
+                    groupMap.put(child.getShortName(), childWrapper);
                 }
             }
             return groupMap;
@@ -371,8 +373,10 @@ ${indent}    }
     }
     #else
     public ${typeName} ${accessor}() {
-        return (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
+        ${typeName} childWrapper = (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
                 key -> Optional.ofNullable(group.findGroup(getRuntimeName(group, key, runtimeProperties))).map(${typeName}Wrapper::new).orElse(null));
+        ((NetcdfWrapper) childWrapper).setRuntimeProperties(runtimeProperties);
+        return childWrapper;
     }
 
     public void ${modifier}(${typeName} ${childGroup.dromedaryCase($childGroup.name)}) {

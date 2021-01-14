@@ -26,7 +26,7 @@ public class NetcdfWrapperTest {
         
         public Array getBoundaryLayerHeight() {
             // this has a scale factor and offset (see ECMWF_ERA-40_subset.cdl)
-            return getNumericArray("blh");
+            return getNumericArray(group.findVariable("blh"));
         }
         
     }
