@@ -64,6 +64,8 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
             runtimeProperties.load(propertiesReader);
         }
         assertThat(runtimeProperties.getProperty("metadata/authors"), is("authors"));
+        assertThat(runtimeProperties.getProperty("metadata"), is("metadata"));
+        assertThat(runtimeProperties.getProperty("Latitude"), is("Latitude"));
     }
 
     @Test

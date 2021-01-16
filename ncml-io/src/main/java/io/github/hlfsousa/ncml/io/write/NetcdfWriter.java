@@ -462,6 +462,7 @@ public class NetcdfWriter {
                 if (name.isEmpty()) {
                     name = getDefaultName(accessor);
                 }
+                name = NetcdfWrapper.getRuntimeName(group, name, runtimeProperties);
                 if (childModel instanceof Map) {
                     for (Entry<String, Object> entry : ((Map<String,Object>)childModel).entrySet()) {
                         Group childGroup = writer.addGroup(group, entry.getKey());
@@ -571,6 +572,7 @@ public class NetcdfWriter {
                     if (name.isEmpty()) {
                         name = getDefaultName(accessor);
                     }
+                    name = NetcdfWrapper.getRuntimeName(group, name, runtimeProperties);
                     writeContent(writer, group.findGroup(name), childModel);
                 }
             } catch (ReflectiveOperationException e) {
