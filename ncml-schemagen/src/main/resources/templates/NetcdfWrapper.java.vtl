@@ -375,7 +375,9 @@ ${indent}    }
     public ${typeName} ${accessor}() {
         ${typeName} childWrapper = (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
                 key -> Optional.ofNullable(group.findGroup(getRuntimeName(group, key, runtimeProperties))).map(${typeName}Wrapper::new).orElse(null));
-        ((NetcdfWrapper) childWrapper).setRuntimeProperties(runtimeProperties);
+        if (childWrapper != null) {
+            ((NetcdfWrapper) childWrapper).setRuntimeProperties(runtimeProperties);
+        }
         return childWrapper;
     }
 
