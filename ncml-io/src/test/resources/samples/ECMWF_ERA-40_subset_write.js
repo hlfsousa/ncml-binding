@@ -11,7 +11,7 @@ function random(min, max) {
 }
 
 function createModel(model) {
-	if (!model.longitude) {
+	if (model.longitude == null) {
 		var longitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
 		model.longitude = longitude;
 	}
@@ -44,6 +44,9 @@ function editModel(netcdf) {
 	var latitude = new FloatArray(shape[0]);
     for (var i = 0; i < shape[0]; i++) {
 		latitude[i] = random(0, 360);
+    }
+    if (!netcdf.latitude) {
+	    netcdf.latitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LatitudeVO();
     }
 	netcdf.latitude.value = latitude;
 	return netcdf;

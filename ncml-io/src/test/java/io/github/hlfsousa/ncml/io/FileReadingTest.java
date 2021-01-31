@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Properties;
 
 import javax.script.ScriptEngine;
@@ -33,6 +34,7 @@ import ucar.nc2.NetcdfFiles;
 public class FileReadingTest extends IOTest {
 
     private Throwable failure;
+    private RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(Collections.emptyMap());
     
     @ParameterizedTest
     @ValueSource(strings = { "ECMWF_ERA-40_subset", "tos_O1_2001-2002" })
@@ -60,7 +62,9 @@ public class FileReadingTest extends IOTest {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 final Class<?> rootType = contextClassLoader.loadClass(rootClassName);
                 NetcdfFile netcdf = NetcdfFiles.open(ncFile.getAbsolutePath());
-                Object wrapper = contextClassLoader.loadClass(wrapperClassName).getConstructor(Group.class).newInstance(netcdf.getRootGroup());
+                Object wrapper = contextClassLoader.loadClass(wrapperClassName)
+                        .getConstructor(Group.class, RuntimeConfiguration.class)
+                        .newInstance(netcdf.getRootGroup(), runtimeConfiguration);
                 assertThat(wrapper, isA(rootType));
                 
                 // execute verification script

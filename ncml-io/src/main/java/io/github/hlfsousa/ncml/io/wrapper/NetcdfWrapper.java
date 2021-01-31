@@ -1,9 +1,9 @@
 package io.github.hlfsousa.ncml.io.wrapper;
 
 import java.util.Map;
-import java.util.Optional;
 
 import io.github.hlfsousa.ncml.io.AttributeConventions;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.nc2.CDMNode;
 import ucar.nc2.Group;
@@ -18,25 +18,24 @@ public abstract class NetcdfWrapper {
 
     protected final Group group;
     protected static AttributeConventions attributeConventions = new AttributeConventions();
-    protected Map<String, String> runtimeProperties;
+    protected final RuntimeConfiguration runtimeConfiguration;
 
-    public NetcdfWrapper(Group group) {
+    public NetcdfWrapper(Group group, RuntimeConfiguration runtimeConfiguration) {
         this.group = group;
+        this.runtimeConfiguration = runtimeConfiguration;
     }
 
     public Group unwrap() {
         return group;
     }
     
-    public void setRuntimeProperties(Map<String, String> properties) {
-        this.runtimeProperties = properties;
-    }
-    
     public static String getRuntimeName(CDMNode node, String childName, Map<String, String> runtimeProperties) {
         if (runtimeProperties != null) {
             String fullName = node.getFullName();
             String key = fullName.isEmpty() ? childName : (fullName + '/' + childName);
-            return Optional.ofNullable(runtimeProperties.get(key)).orElse(childName);
+            if (runtimeProperties.containsKey(key)) {
+                return runtimeProperties.get(key);
+            }
         }
         return childName;
     }

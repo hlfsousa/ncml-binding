@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,9 +38,12 @@ public class VariableHandlerTest {
     @Mock
     private Variable scalarVariable;
 
+    private RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(Collections.emptyMap());
+
     @BeforeEach
     public void setupMocks() throws Exception {
         when(variable.findAttribute("long_name")).thenReturn(longName);
+        when(variable.getFullName()).thenReturn("variable");
         when(longName.getStringValue()).thenReturn("some variable");
 
         when(scalarVariable.isScalar()).thenReturn(true);
@@ -49,7 +53,7 @@ public class VariableHandlerTest {
     @Test
     public void testVarAttributes() throws Exception {
         ChildGroupVariable variable = (ChildGroupVariable) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] { ChildGroupVariable.class }, new VariableHandler(this.variable, Array.class, true, null));
+                new Class<?>[] { ChildGroupVariable.class }, new VariableHandler(this.variable, Array.class, true, runtimeConfiguration));
         assertThat(variable.getLongName(), is("some variable"));
         assertTrue(variable.getLongName() == variable.getLongName());
     }
@@ -57,7 +61,7 @@ public class VariableHandlerTest {
     @Test
     public void testScalarValue() throws Exception {
         ScalarVariable scalarVar = (ScalarVariable) Proxy.newProxyInstance(getClass().getClassLoader(),
-                new Class<?>[] { ScalarVariable.class }, new VariableHandler(scalarVariable, Double.class, true, null));
+                new Class<?>[] { ScalarVariable.class }, new VariableHandler(scalarVariable, Double.class, true, runtimeConfiguration));
         assertThat(scalarVar.getValue(), is(1.0));
     }
 

@@ -5,6 +5,7 @@ ${customContent.imports}
 #else
 // imports >>
 import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import java.io.IOException;
 import java.util.*;
@@ -94,7 +95,7 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
   #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    @Override
 ${indent}    public ${typeName} get${property}() {
-${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute(getRuntimeName(${netcdfObject}, "${attributeWrapper.attribute.name}", runtimeProperties)))
+${indent}        return Optional.ofNullable(${netcdfObject}.findAttribute(runtimeConfiguration.getRuntimeName(${netcdfObject}, "${attributeWrapper.attribute.name}")))
   #if($typeName.endsWith("[]"))
     #if($typeName.startsWith("String"))
 ${indent}                .map(${localVar} -> {
@@ -230,8 +231,8 @@ ${indent}    }
   #end
 #end
 
-    public ${group.typeName}Wrapper(Group group) {
-        super(group);
+    public ${group.typeName}Wrapper(Group group, RuntimeConfiguration runtimeConfiguration) {
+        super(group, runtimeConfiguration);
     }
 
 #if(!${group.variables.empty})
@@ -250,7 +251,8 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public Map<String, ${typeName}> get${property}() {
         return (Map<String, ${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, ${typeName}> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -280,7 +282,7 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public ${typeName}${varWrapper.shapeBrackets} get${property}() {
         return (${typeName}${varWrapper.shapeBrackets}) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(getRuntimeName(group, varName, runtimeProperties)))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(var -> {
                             try {
                                 Array ncArray = var.read();
@@ -307,7 +309,8 @@ ${indent}    }
       #if($varWrapper.mapped)
     public Map<String, ${intfName}<${typeName}>> get${property}() {
         return (Map<String, ${intfName}<${typeName}>>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, ${intfName}<${typeName}>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -327,7 +330,7 @@ ${indent}    }
     @SuppressWarnings("unchecked")
     public ${intfName}<${typeName}> get${property}() {
         return (${intfName}<${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
-                varName -> Optional.ofNullable(group.findVariable(getRuntimeName(group, varName, runtimeProperties)))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(${className}::new)
                         .orElse(null));
     }
@@ -355,12 +358,12 @@ ${indent}    }
     public Map<String, ${typeName}> ${accessor}() {
         return (Map<String, ${typeName}>) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}", key -> {
             Map<String, ${typeName}> groupMap = new LinkedHashMap<>();
-            Pattern regex = Pattern.compile("${escapeString.apply($childGroup.mapExpression)}");
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    "${escapeString.apply($childGroup.mapExpression)}"));
             for (Group child : group.getGroups()) {
                 Matcher matcher = regex.matcher(child.getShortName());
                 if (matcher.matches()) {
-                    ${typeName}Wrapper childWrapper = new ${typeName}Wrapper(child);
-                    childWrapper.setRuntimeProperties(runtimeProperties);
+                    ${typeName}Wrapper childWrapper = new ${typeName}Wrapper(child, runtimeConfiguration);
                     groupMap.put(child.getShortName(), childWrapper);
                 }
             }
@@ -374,10 +377,8 @@ ${indent}    }
     #else
     public ${typeName} ${accessor}() {
         ${typeName} childWrapper = (${typeName}) groupCache.computeIfAbsent("${escapeString.apply($childGroup.nameTag)}",
-                key -> Optional.ofNullable(group.findGroup(getRuntimeName(group, key, runtimeProperties))).map(${typeName}Wrapper::new).orElse(null));
-        if (childWrapper != null) {
-            ((NetcdfWrapper) childWrapper).setRuntimeProperties(runtimeProperties);
-        }
+                key -> Optional.ofNullable(group.findGroup(runtimeConfiguration.getRuntimeName(group, key)))
+                        .map(child -> new ${typeName}Wrapper(child, runtimeConfiguration)).orElse(null));
         return childWrapper;
     }
 

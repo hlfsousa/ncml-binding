@@ -7,11 +7,11 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 
@@ -23,7 +23,8 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
     private final Map<Method, Object> invocationCache = new HashMap<>();
     private Type valueType;
 
-    public VariableHandler(Variable variable, Type valueType, boolean readOnly, Map<String, String> runtimeProperties) {
+    public VariableHandler(Variable variable, Type valueType, boolean readOnly,
+            RuntimeConfiguration runtimeProperties) {
         super(variable, readOnly, runtimeProperties);
         this.valueType = valueType;
     }
