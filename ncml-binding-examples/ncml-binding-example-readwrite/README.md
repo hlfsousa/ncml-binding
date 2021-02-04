@@ -63,5 +63,12 @@ ReferencePressureInitializer.initialize(refPressure);
 
 See `DataProcessor` for more examples, including mapped variables and custom initializers.
 
+## Future-proofing the code
+At some point in the future, after the code is generated, the intended file format may change without changing semantics. For instance, there may be a requirement to change variable name from `lat` to `latitude`. By default, when the code is generated you will get a file named "ncml-binding.properties" at the root of the project. This location (file path relative to project root) can be set through property `propertiesLocation` in `cami_archetype.properties`. This file contains mappings for the NetCDF elements and allows for some future-proofing. Should you want to change the name of the elements, this properties file can be used.
+
+To use these properties (from whether the generated file or another source), load the file and use it when instantiating the required `io.github.hlfsousa.ncml.io.RuntimeConfiguration`. Make sure the file is available for future modification. When any change is needed, you can add an entry with the full name of the node as the key, and the new name as value. You can also use a regular expression. For details, check the project Wiki.
+
+You can also use an empty `RuntimeConfiguration` and just use the names as provided in the header without the possibility of future adjustments.
+
 ## Freedom of choice
 Additional details can be seen in the code. As part of the repository, this project can be built from source. The generated files are not included in the source code to better illustrate the process. Run the build, open the sources in your IDE, check the test class for how to use a writer and write your own customizations. Compare with the effort of writing a file directly and provide feedback at GitHub. There are new features coming up, and what users say will have a lot of weight in upcoming decisions.
