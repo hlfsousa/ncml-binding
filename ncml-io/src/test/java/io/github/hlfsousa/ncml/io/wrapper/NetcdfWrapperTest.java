@@ -5,9 +5,11 @@ import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
@@ -20,8 +22,8 @@ public class NetcdfWrapperTest {
 
     private static class TestWrapper extends NetcdfWrapper {
         
-        public TestWrapper(Group group) {
-            super(group);
+        public TestWrapper(Group group, RuntimeConfiguration runtimeConfiguration) {
+            super(group, runtimeConfiguration);
         }
         
         public Array getBoundaryLayerHeight() {
@@ -39,7 +41,7 @@ public class NetcdfWrapperTest {
             Variable blh = rootGroup.findVariable("blh");
             Array rawArray = blh.read();
 
-            TestWrapper testSubject = new TestWrapper(rootGroup);
+            TestWrapper testSubject = new TestWrapper(rootGroup, new RuntimeConfiguration(Collections.emptyMap()));
             Array scaledArray = testSubject.getBoundaryLayerHeight();
 
             assertThat(rawArray.getShape(), is(scaledArray.getShape()));

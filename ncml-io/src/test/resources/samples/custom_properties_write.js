@@ -7,7 +7,7 @@ var StringArray = Java.type("java.lang.String[]");
 function createModel(model) {
     model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
     var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
-    group.name = "g01";
+    group.name = "group_01";
     group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function() {
 	    var value = new IntArray(10);
@@ -19,7 +19,7 @@ function createModel(model) {
     group.groupItems.setMyVariableAttribute("custom attribute - g01");
 
     model.mappedGroup = new java.util.LinkedHashMap();
-    model.mappedGroup.put("g01", group);
+    model.mappedGroup.put("group_01", group);
 
     var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
@@ -111,7 +111,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
 
 function editModel(netcdf) {
     var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
-    group.name = "g02";
+    group.name = "group_02";
     var IntArray = Java.type("int[]");
     group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function(){
@@ -122,7 +122,7 @@ function editModel(netcdf) {
         return value;
     }();
     group.groupItems.myVariableAttribute = "custom attribute - g02";
-    netcdf.mappedGroup["g02"] = group;
+    netcdf.mappedGroup["group_02"] = group;
 
     var avgTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     avgTemp.longName = "average temperature";

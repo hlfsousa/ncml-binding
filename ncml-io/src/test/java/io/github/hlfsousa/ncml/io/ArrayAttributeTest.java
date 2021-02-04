@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,8 @@ public class ArrayAttributeTest {
 
     private static final File RES_DIR = new File("src/test/resources/array_attribute");
     private static final File NC_FILE = new File(RES_DIR, "ArrayAttributeTest.nc");
+    
+    private RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(Collections.emptyMap());
 
     /**
      * Manually create a file that contains an array attribute, then generates code for the other tests. The code
@@ -94,7 +97,7 @@ public class ArrayAttributeTest {
         NetcdfWriter writer = new NetcdfWriter();
         File dest = File.createTempFile("ArrayAttributeTest-readFile", ".nc");
         NetcdfFile netcdf = writer.write(testSubject, dest);
-        ArrayAttributeTestSubjectWrapper wrapper = new ArrayAttributeTestSubjectWrapper(netcdf.getRootGroup());
+        ArrayAttributeTestSubjectWrapper wrapper = new ArrayAttributeTestSubjectWrapper(netcdf.getRootGroup(), runtimeConfiguration);
         assertThat(wrapper.getArrayAttribute(), is(intArray));
         netcdf.close();
         
