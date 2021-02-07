@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 assertNotNull(netcdf, "no input provided");
 assertTrue(netcdf.history == "2004-09-15 17:04:29 GMT by mars2netcdf-0.92", "/@history");
 assertTrue(netcdf.conventions == "CF-1.0", "/@Conventions");

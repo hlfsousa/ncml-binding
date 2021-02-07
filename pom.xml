@@ -27,6 +27,9 @@
       <url>https://github.com/hlfsousa</url>
     </developer>
   </developers>
+  <organization>
+    <name>Henrique L. F. de Sousa</name>
+  </organization>
 
   <scm>
     <connection>scm:git:git://github.com/hlfsousa/ncml-binding.git</connection>
@@ -139,6 +142,28 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.9.1</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <configuration>
+            <verbose>false</verbose>
+          </configuration>
+          <executions>
+            <execution>
+              <id>update-license</id>
+              <goals>
+                <goal>update-file-header</goal>
+              </goals>
+              <phase>process-sources</phase>
+              <configuration>
+                <licenseName>lgpl_v2_1</licenseName>
+                <inceptionYear>2020</inceptionYear>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -182,6 +207,10 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
