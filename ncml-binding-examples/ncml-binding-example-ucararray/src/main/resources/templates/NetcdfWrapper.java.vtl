@@ -253,8 +253,8 @@ ${indent}    }
   #end
 #end
 
-    public ${group.typeName}Wrapper(Group group) {
-        super(group);
+    public ${group.typeName}Wrapper(Group group, RuntimeConfiguration runtimeConfiguration) {
+        super(group, runtimeConfiguration);
     }
 
 #if(!${group.variables.empty})
@@ -382,7 +382,7 @@ ${indent}    }
             for (Group child : group.getGroups()) {
                 Matcher matcher = regex.matcher(child.getShortName());
                 if (matcher.matches()) {
-                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child));
+                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child, runtimeConfiguration));
                 }
             }
             return groupMap;
