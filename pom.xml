@@ -4,7 +4,7 @@
 
   <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
   <packaging>pom</packaging>
 
   <name>NcML Binding</name>
@@ -27,12 +27,15 @@
       <url>https://github.com/hlfsousa</url>
     </developer>
   </developers>
+  <organization>
+    <name>Henrique L. F. de Sousa</name>
+  </organization>
 
   <scm>
     <connection>scm:git:git://github.com/hlfsousa/ncml-binding.git</connection>
     <developerConnection>scm:git:ssh://github.com/hlfsousa/ncml-binding.git</developerConnection>
     <url>http://github.com/hlfsousa/ncml-binding/tree/master</url>
-    <tag>ncml-binding-0.4.0</tag>
+    <tag>ncml-binding-0.5.0</tag>
   </scm>
 
   <properties>
@@ -58,10 +61,6 @@
       <id>ossrh</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
-    <site>
-      <id>github</id>
-      <url>file:///undefined</url>
-    </site>
   </distributionManagement>
 
   <repositories>
@@ -143,6 +142,28 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.9.1</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>2.0.0</version>
+          <configuration>
+            <verbose>false</verbose>
+          </configuration>
+          <executions>
+            <execution>
+              <id>update-license</id>
+              <goals>
+                <goal>update-file-header</goal>
+              </goals>
+              <phase>process-sources</phase>
+              <configuration>
+                <licenseName>lgpl_v2_1</licenseName>
+                <inceptionYear>2020</inceptionYear>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -186,6 +207,10 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

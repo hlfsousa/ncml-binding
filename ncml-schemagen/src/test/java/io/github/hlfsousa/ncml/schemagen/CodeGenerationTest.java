@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.schemagen;
 
+/*-
+ * #%L
+ * ncml-schemagen
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.arrayWithSize;
@@ -7,6 +29,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.net.URL;
@@ -15,6 +38,9 @@ import java.nio.file.Files;
 import java.util.Properties;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLDimension;
@@ -22,10 +48,6 @@ import io.github.hlfsousa.ncml.annotation.CDLDimensions;
 import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
-
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 /**
  * Generates code from a schema and verifies its correctness.
@@ -50,11 +72,22 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
         final String rootGroupName = "SeaSurfaceSalinity";
         
         Properties properties = new Properties();
+        properties.setProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION, "target/ncml-binding.properties");
         generateCode(sourcesDir, rootPackage, rootGroupName, "/sea_surface_salinity_v2.xml", properties);
 
         assertThat("Code was not generated", new File(sourcesDir,
                 rootPackage.replace('.', File.separatorChar) + File.separator + rootGroupName + ".java").isFile(),
                 is(true));
+        
+        File propertiesFile = new File(properties.getProperty(NCMLCodeGenerator.CFG_PROPERTIES_LOCATION));
+        assertThat("Runtime properties file was not generated", propertiesFile.isFile(), is(true));
+        Properties runtimeProperties = new Properties();
+        try (FileReader propertiesReader = new FileReader(propertiesFile)) {
+            runtimeProperties.load(propertiesReader);
+        }
+        assertThat(runtimeProperties.getProperty("metadata/authors"), is("authors"));
+        assertThat(runtimeProperties.getProperty("metadata"), is("metadata"));
+        assertThat(runtimeProperties.getProperty("Latitude"), is("Latitude"));
     }
 
     @Test

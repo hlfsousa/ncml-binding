@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.io;
 
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isA;
@@ -10,6 +32,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Properties;
 
 import javax.script.ScriptEngine;
@@ -33,6 +56,7 @@ import ucar.nc2.NetcdfFiles;
 public class FileReadingTest extends IOTest {
 
     private Throwable failure;
+    private RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(Collections.emptyMap());
     
     @ParameterizedTest
     @ValueSource(strings = { "ECMWF_ERA-40_subset", "tos_O1_2001-2002" })
@@ -60,7 +84,9 @@ public class FileReadingTest extends IOTest {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 final Class<?> rootType = contextClassLoader.loadClass(rootClassName);
                 NetcdfFile netcdf = NetcdfFiles.open(ncFile.getAbsolutePath());
-                Object wrapper = contextClassLoader.loadClass(wrapperClassName).getConstructor(Group.class).newInstance(netcdf.getRootGroup());
+                Object wrapper = contextClassLoader.loadClass(wrapperClassName)
+                        .getConstructor(Group.class, RuntimeConfiguration.class)
+                        .newInstance(netcdf.getRootGroup(), runtimeConfiguration);
                 assertThat(wrapper, isA(rootType));
                 
                 // execute verification script

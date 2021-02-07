@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.io.write;
 
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.beanutils.ConvertUtils.convert;
@@ -12,6 +34,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -33,12 +56,14 @@ import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
+import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
+import ucar.nc2.CDMNode;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
@@ -60,6 +85,7 @@ public class NetcdfWriter {
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
+    private RuntimeConfiguration runtimeConfiguration;
 
     private boolean defaultAttributeValueUsed;
     private boolean closeAfterCreation;
@@ -68,8 +94,17 @@ public class NetcdfWriter {
         this(true);
     }
     
+    public NetcdfWriter(RuntimeConfiguration runtimeConfiguration) {
+        this(true, runtimeConfiguration);
+    }
+    
     public NetcdfWriter(boolean closeAfterCreation) {
+        this(closeAfterCreation, new RuntimeConfiguration(Collections.emptyMap()));
+    }
+    
+    public NetcdfWriter(boolean closeAfterCreation, RuntimeConfiguration runtimeConfiguration) {
         this.closeAfterCreation = closeAfterCreation;
+        this.runtimeConfiguration = runtimeConfiguration;
     }
     
     public void setDefaultAttributeValueUsed(boolean defaultAttributeValueUsed) {
@@ -213,7 +248,6 @@ public class NetcdfWriter {
         String scope = localPath;
         while (!scope.equals("")) {
             List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
-            boolean found = false;
             for (Dimension existing : dimensionsInScope) {
                 if (existing.getShortName().equals(name)) {
                     return existing;
@@ -289,10 +323,10 @@ public class NetcdfWriter {
     }
 
     private void createAttributes(NetcdfFileWriter writer, Group group, Object model) {
-        createAttributes(writer, model, attribute -> writer.addGroupAttribute(group, attribute));
+        createAttributes(writer, model, group, attribute -> writer.addGroupAttribute(group, attribute));
     }
 
-    private void createAttributes(NetcdfFileWriter writer, Object model, Consumer<Attribute> attributeConsumer) {
+    private void createAttributes(NetcdfFileWriter writer, Object model, CDMNode parent, Consumer<Attribute> attributeConsumer) {
         forEachAccessor(model, accessor -> {
             CDLAttribute attributeDecl = accessor.getAnnotation(CDLAttribute.class);
             if (attributeDecl == null) {
@@ -302,6 +336,7 @@ public class NetcdfWriter {
             if (name.isEmpty()) {
                 name = getDefaultName(accessor);
             }
+            name = runtimeConfiguration.getRuntimeName(parent, name);
             Attribute.Builder attributeBuilder = Attribute.builder(name);
             if (attributeDecl.dataType() != null && !attributeDecl.dataType().isEmpty()) {
                 DataType dataType = DataType.getType(attributeDecl.dataType());
@@ -340,13 +375,14 @@ public class NetcdfWriter {
                 Object varModel = accessor.invoke(model);
                 if (varModel instanceof Map) {
                     // variable is mapped, validate names
-                    Pattern nameRegex = Pattern.compile(
-                            variableDecl.name().substring(variableDecl.name().indexOf(':') + 1));
+                    Pattern nameRegex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                            variableDecl.name().substring(variableDecl.name().indexOf(':') + 1)));
                     Map<String, Object> map = (Map<String, Object>) varModel;
                     for (Entry<String, Object> entry : map.entrySet()) {
                         if (!nameRegex.matcher(entry.getKey()).matches()) {
                             throw new IllegalArgumentException("Variable name " + entry.getKey()
-                                    + " does not match definition " + variableDecl.name());
+                                    + " does not match definition " + variableDecl.name() + " (runtime: "
+                                    + nameRegex.pattern() + ")");
                         }
                         createSingleVariable(writer, entry.getKey(), group, accessor, variableDecl, entry.getValue());
                     }
@@ -366,6 +402,7 @@ public class NetcdfWriter {
     private void createSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
             CDLVariable variableDecl, Object varModel)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        name = runtimeConfiguration.getRuntimeName(group, name);
         Object varValue;
         Class<?> javaType;
         Class<?> variableType = accessor.getReturnType();
@@ -431,7 +468,7 @@ public class NetcdfWriter {
 
     private void createVariableStructure(NetcdfFileWriter writer, Variable variable, Object model) {
         // variables only have attributes
-        createAttributes(writer, model, attribute -> writer.addVariableAttribute(variable, attribute));
+        createAttributes(writer, model, variable, attribute -> writer.addVariableAttribute(variable, attribute));
     }
 
     @SuppressWarnings("unchecked")
@@ -444,16 +481,25 @@ public class NetcdfWriter {
                 if (groupDecl == null || (childModel = accessor.invoke(model)) == null) {
                     return;
                 }
-                String name = groupDecl.name();
-                if (name.isEmpty()) {
-                    name = getDefaultName(accessor);
-                }
                 if (childModel instanceof Map) {
                     for (Entry<String, Object> entry : ((Map<String,Object>)childModel).entrySet()) {
-                        Group childGroup = writer.addGroup(group, entry.getKey());
+                        String name = runtimeConfiguration.getRuntimeName(group, entry.getKey());
+                        // validate group name?
+                        Pattern nameRegex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                                groupDecl.name().substring(groupDecl.name().indexOf(':') + 1)));
+                        if (!nameRegex.matcher(name).matches()) {
+                            throw new IllegalStateException("Group name " + name + " does not match definition "
+                                    + groupDecl.name() + " (runtime " + nameRegex.pattern() + ")");
+                        }
+                        Group childGroup = writer.addGroup(group, name);
                         createStructure(writer, childGroup, entry.getValue(), declaredDimensions);
                     }
                 } else {
+                    String name = groupDecl.name();
+                    if (name.isEmpty()) {
+                        name = getDefaultName(accessor);
+                    }
+                    name = runtimeConfiguration.getRuntimeName(group, name);
                     Group childGroup = writer.addGroup(group, name);
                     createStructure(writer, childGroup, childModel, declaredDimensions);
                 }
@@ -501,6 +547,7 @@ public class NetcdfWriter {
     private void writeSingleVariable(NetcdfFileWriter writer, String name, Group group, Method accessor,
             CDLVariable variableDecl, Object varModel) throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, IOException, InvalidRangeException {
+        name = runtimeConfiguration.getRuntimeName(group, name);
         Object varValue;
         Class<?> variableType = accessor.getReturnType();
         if (Map.class.isAssignableFrom(variableType)) {
@@ -549,13 +596,15 @@ public class NetcdfWriter {
                 }
                 if (childModel instanceof Map) {
                     for (Entry<String,Object> entry : ((Map<String,Object>)childModel).entrySet()) {
-                        writeContent(writer, group.findGroup(entry.getKey()), entry.getValue());
+                        String childGroupName = runtimeConfiguration.getRuntimeName(group, entry.getKey());
+                        writeContent(writer, group.findGroup(childGroupName), entry.getValue());
                     }
                 } else {
                     String name = groupDecl.name();
                     if (name.isEmpty()) {
                         name = getDefaultName(accessor);
                     }
+                    name = runtimeConfiguration.getRuntimeName(group, name);
                     writeContent(writer, group.findGroup(name), childModel);
                 }
             } catch (ReflectiveOperationException e) {

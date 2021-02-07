@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.io.read;
 
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -20,6 +42,7 @@ import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.nc2.CDMNode;
 import ucar.nc2.Group;
@@ -31,8 +54,8 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
     private final AttributeConventions attributeConventions;
     private final ConvertUtils convertUtils;
 
-    public GroupHandler(Group group, boolean readOnly) {
-        super(group, readOnly);
+    public GroupHandler(Group group, boolean readOnly, RuntimeConfiguration runtimeProperties) {
+        super(group, readOnly, runtimeProperties);
         attributeConventions = new AttributeConventions();
         convertUtils = ConvertUtils.getInstance();
     }
@@ -92,7 +115,7 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
                 ParameterizedType variableType = (ParameterizedType) valueType;
                 Class<?>[] interfaces = new Class<?>[] { (Class<?>) variableType.getRawType() };
                 return getMapped(node.getVariables(), varName, variable -> Proxy.newProxyInstance(classLoader,
-                        interfaces, new VariableHandler(variable, variableType, readOnly)));
+                        interfaces, new VariableHandler(variable, variableType, readOnly, runtimeConfiguration)));
             } else {
                 // scalar value
                 return getMapped(node.getVariables(), varName, variable -> {
@@ -117,8 +140,8 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
              */
             return variable == null ? null : attributeConventions.readNumericArray(variable);
         } else if (method.getReturnType().isInterface()) {
-            return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
-                    new VariableHandler(variable, method.getGenericReturnType(), readOnly));
+            return variable == null ? null : Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
+                    new VariableHandler(variable, method.getGenericReturnType(), readOnly, runtimeConfiguration));
         } else {
             return convertUtils.toJavaObject(
                     variable == null ? null : attributeConventions.readNumericArray(variable), method.getReturnType());
@@ -134,19 +157,19 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
                     .getActualTypeArguments()[1];
             Class<?>[] interfaces = new Class<?>[] { valueType };
             return getMapped(node.getGroups(), groupName, child -> Proxy.newProxyInstance(classLoader,
-                    interfaces, new GroupHandler(child, readOnly)));
+                    interfaces, new GroupHandler(child, readOnly, runtimeConfiguration)));
         }
         Group child = node == null ? null : node.findGroup(groupName);
         if (readOnly && child == null) {
             return null;
         }
         return Proxy.newProxyInstance(classLoader, new Class<?>[] { method.getReturnType() },
-                new GroupHandler(child, readOnly));
+                new GroupHandler(child, readOnly, runtimeConfiguration));
     }
 
     private <N extends CDMNode> Map<String, Object> getMapped(Iterable<N> children, String groupName, Function<N, Object> factory) {
         Map<String,Object> map = new LinkedHashMap<>();
-        Pattern regex = Pattern.compile(groupName.substring(groupName.indexOf(':') + 1));
+        Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(node, groupName.substring(groupName.indexOf(':') + 1)));
         for (N child : children) {
             Matcher matcher = regex.matcher(child.getShortName());
             if (matcher.matches()) {

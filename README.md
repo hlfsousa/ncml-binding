@@ -27,11 +27,13 @@ The default code generation will provide you with some pieces of data:
 1. An annotated interface which corresponds to the header file. Any object that implements this interface can represent a file. If you choose so, a file can be read through a proxy that implements this interface, so that only the interface is required for interacting with NetCDF files.
 2. A NetCDF wrapper object that wraps the `netcdf-java` library objects directly and implements the interface above. This allows for customization of the implementation, such as additional properties or methods.
 3. A (plain Java) value object. You can use this object to create NetCDF content from scratch.
+4. A runtime configuration properties file. You can use this properties file to change how the NetCDF files are read and written.
 
 Additional templates can be provided in order to generate more classes or any other type of file from the NcML header. Then you can read your file with two simple lines:
 
 ```java
-NetcdfReader<MyFile> reader = new NetcdfReader<>(MyFile.class);
+RuntimeConfiguration emptyConfig = new RuntimeConfiguration(Collections.emptyMap());
+NetcdfReader<MyFile> reader = new NetcdfReader<>(MyFile.class, emptyConfig);
 MyFile myFile = reader.read(new File("/path/to/my_file.nc"), true); // read-only
 // done! Now you can read any property, e.g.:
 String someAttribute = myFile.getSomeAttribute();

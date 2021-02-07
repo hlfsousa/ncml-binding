@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
 
@@ -11,7 +32,7 @@ function random(min, max) {
 }
 
 function createModel(model) {
-	if (!model.longitude) {
+	if (model.longitude == null) {
 		var longitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LongitudeVO();
 		model.longitude = longitude;
 	}
@@ -44,6 +65,9 @@ function editModel(netcdf) {
 	var latitude = new FloatArray(shape[0]);
     for (var i = 0; i < shape[0]; i++) {
 		latitude[i] = random(0, 360);
+    }
+    if (!netcdf.latitude) {
+	    netcdf.latitude = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.LatitudeVO();
     }
 	netcdf.latitude.value = latitude;
 	return netcdf;

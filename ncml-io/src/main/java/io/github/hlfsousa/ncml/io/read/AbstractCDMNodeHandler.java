@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.io.read;
 
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
@@ -12,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.converters.ArrayNumberConverter;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
@@ -62,10 +85,15 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
     protected final T node;
     protected final boolean readOnly;
     protected final Map<String, Object> values = new LinkedHashMap<>();
+    protected final RuntimeConfiguration runtimeConfiguration;
 
-    public AbstractCDMNodeHandler(T node, boolean readOnly) {
+    public AbstractCDMNodeHandler(T node, boolean readOnly, RuntimeConfiguration runtimeConfiguration) {
+        if (runtimeConfiguration == null) {
+            throw new IllegalArgumentException("runtimeConfiguration cannot be null");
+        }
         this.node = node;
         this.readOnly = readOnly;
+        this.runtimeConfiguration = runtimeConfiguration;
     }
 
     protected boolean isFromInterface(Object proxy, Method method) {
@@ -109,9 +137,9 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
             if (name.startsWith("get")) {
                 name = name.substring("get".length());
             }
-            return name;
+            return runtimeConfiguration.getRuntimeName(node, name);
         }
-        return preset;
+        return runtimeConfiguration.getRuntimeName(node, preset);
     }
 
     protected Object getAttribute(Method method) {

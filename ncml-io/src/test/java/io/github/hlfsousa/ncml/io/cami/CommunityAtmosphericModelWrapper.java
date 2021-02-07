@@ -1,5 +1,27 @@
 package io.github.hlfsousa.ncml.io.cami;
 
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,15 +32,14 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// imports >>
 import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
-// << imports
 
 public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements CommunityAtmosphericModel {
 
@@ -55,7 +76,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -67,7 +88,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -79,7 +100,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -125,7 +146,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -137,7 +158,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -149,7 +170,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -195,7 +216,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -207,7 +228,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -219,7 +240,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getPositive() {
-            return Optional.ofNullable(variable.findAttribute("positive"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "positive")))
                     .map(positive -> positive.getStringValue())
                     .orElse(null);
         }
@@ -231,7 +252,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getStandardName() {
-            return Optional.ofNullable(variable.findAttribute("standard_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "standard_name")))
                     .map(standardName -> standardName.getStringValue())
                     .orElse(null);
         }
@@ -243,7 +264,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getFormulaTerms() {
-            return Optional.ofNullable(variable.findAttribute("formula_terms"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "formula_terms")))
                     .map(formulaTerms -> formulaTerms.getStringValue())
                     .orElse(null);
         }
@@ -255,7 +276,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -301,7 +322,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -313,7 +334,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -325,7 +346,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getCalendar() {
-            return Optional.ofNullable(variable.findAttribute("calendar"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "calendar")))
                     .map(calendar -> calendar.getStringValue())
                     .orElse(null);
         }
@@ -337,7 +358,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -383,7 +404,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -395,7 +416,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -441,7 +462,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -453,7 +474,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -499,7 +520,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -511,7 +532,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -557,7 +578,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -569,7 +590,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -615,7 +636,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -627,7 +648,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -682,7 +703,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -694,7 +715,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -816,7 +837,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -870,7 +891,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -924,7 +945,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -978,7 +999,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1032,7 +1053,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1086,7 +1107,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1140,7 +1161,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1194,7 +1215,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1206,7 +1227,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1251,7 +1272,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1297,7 +1318,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1343,7 +1364,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1389,7 +1410,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1435,7 +1456,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1481,7 +1502,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1493,7 +1514,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1539,7 +1560,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1551,7 +1572,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1597,7 +1618,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1609,7 +1630,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1655,7 +1676,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1667,7 +1688,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1713,7 +1734,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1725,7 +1746,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1737,7 +1758,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -1749,7 +1770,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getFromHires() {
-            return Optional.ofNullable(variable.findAttribute("from_hires"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "from_hires")))
                     .map(fromHires -> fromHires.getStringValue())
                     .orElse(null);
         }
@@ -1795,7 +1816,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1807,7 +1828,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1819,7 +1840,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -1831,7 +1852,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getFromHires() {
-            return Optional.ofNullable(variable.findAttribute("from_hires"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "from_hires")))
                     .map(fromHires -> fromHires.getStringValue())
                     .orElse(null);
         }
@@ -1877,7 +1898,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1889,7 +1910,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -1901,7 +1922,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -1913,7 +1934,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getFromHires() {
-            return Optional.ofNullable(variable.findAttribute("from_hires"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "from_hires")))
                     .map(fromHires -> fromHires.getStringValue())
                     .orElse(null);
         }
@@ -1959,7 +1980,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -1971,7 +1992,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2017,7 +2038,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2029,7 +2050,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2075,7 +2096,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2087,7 +2108,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2133,7 +2154,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2145,7 +2166,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2327,7 +2348,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2339,7 +2360,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2385,7 +2406,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2397,7 +2418,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2443,7 +2464,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2455,7 +2476,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2467,7 +2488,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public Double getFillValue() {
-            return Optional.ofNullable(variable.findAttribute("_FillValue"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "_FillValue")))
                     .map(fillValue -> (Double)fillValue.getNumericValue())
                     .orElse(null);
         }
@@ -2479,7 +2500,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getFromHires() {
-            return Optional.ofNullable(variable.findAttribute("from_hires"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "from_hires")))
                     .map(fromHires -> fromHires.getStringValue())
                     .orElse(null);
         }
@@ -2525,7 +2546,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2537,7 +2558,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2583,7 +2604,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2595,7 +2616,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2675,7 +2696,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getLongName() {
-            return Optional.ofNullable(variable.findAttribute("long_name"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "long_name")))
                     .map(longName -> longName.getStringValue())
                     .orElse(null);
         }
@@ -2687,7 +2708,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
         @Override
         public String getUnits() {
-            return Optional.ofNullable(variable.findAttribute("units"))
+            return Optional.ofNullable(variable.findAttribute(runtimeConfiguration.getRuntimeName(variable, "units")))
                     .map(units -> units.getStringValue())
                     .orElse(null);
         }
@@ -2701,8 +2722,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
 
 
-    public CommunityAtmosphericModelWrapper(Group group) {
-        super(group);
+    public CommunityAtmosphericModelWrapper(Group group, RuntimeConfiguration runtimeConfiguration) {
+        super(group, runtimeConfiguration);
     }
 
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
@@ -2714,7 +2735,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public LatitudeVariable<double[]> getLatitude() {
         return (LatitudeVariable<double[]>) variableCache.computeIfAbsent("lat",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(LatitudeWrapper::new)
                         .orElse(null));
     }
@@ -2726,7 +2747,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public LongitudeVariable<double[]> getLongitude() {
         return (LongitudeVariable<double[]>) variableCache.computeIfAbsent("lon",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(LongitudeWrapper::new)
                         .orElse(null));
     }
@@ -2756,7 +2777,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TimeVariable<double[]> getTime() {
         return (TimeVariable<double[]>) variableCache.computeIfAbsent("time",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TimeWrapper::new)
                         .orElse(null));
     }
@@ -2768,7 +2789,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public HybridACoefficientAtLayerInterfacesVariable<double[]> getHybridACoefficientAtLayerInterfaces() {
         return (HybridACoefficientAtLayerInterfacesVariable<double[]>) variableCache.computeIfAbsent("hyai",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(HybridACoefficientAtLayerInterfacesWrapper::new)
                         .orElse(null));
     }
@@ -2780,7 +2801,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public HybridBCoefficientAtLayerInterfacesVariable<double[]> getHybridBCoefficientAtLayerInterfaces() {
         return (HybridBCoefficientAtLayerInterfacesVariable<double[]>) variableCache.computeIfAbsent("hybi",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(HybridBCoefficientAtLayerInterfacesWrapper::new)
                         .orElse(null));
     }
@@ -2792,7 +2813,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public HybridACoefficientAtLayerMidpointsVariable<double[]> getHybridACoefficientAtLayerMidpoints() {
         return (HybridACoefficientAtLayerMidpointsVariable<double[]>) variableCache.computeIfAbsent("hyam",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(HybridACoefficientAtLayerMidpointsWrapper::new)
                         .orElse(null));
     }
@@ -2804,7 +2825,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public HybridBCoefficientAtLayerMidpointsVariable<double[]> getHybridBCoefficientAtLayerMidpoints() {
         return (HybridBCoefficientAtLayerMidpointsVariable<double[]>) variableCache.computeIfAbsent("hybm",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(HybridBCoefficientAtLayerMidpointsWrapper::new)
                         .orElse(null));
     }
@@ -2816,7 +2837,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public GaussWeightsVariable<double[]> getGaussWeights() {
         return (GaussWeightsVariable<double[]>) variableCache.computeIfAbsent("gw",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(GaussWeightsWrapper::new)
                         .orElse(null));
     }
@@ -2828,7 +2849,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public ReferencePressureVariable<Double> getReferencePressure() {
         return (ReferencePressureVariable<Double>) variableCache.computeIfAbsent("P0",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(ReferencePressureWrapper::new)
                         .orElse(null));
     }
@@ -2840,7 +2861,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public DateWrittenVariable<char[][]> getDateWritten() {
         return (DateWrittenVariable<char[][]>) variableCache.computeIfAbsent("date_written",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(DateWrittenWrapper::new)
                         .orElse(null));
     }
@@ -2852,7 +2873,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TimeWrittenVariable<char[][]> getTimeWritten() {
         return (TimeWrittenVariable<char[][]>) variableCache.computeIfAbsent("time_written",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TimeWrittenWrapper::new)
                         .orElse(null));
     }
@@ -2864,7 +2885,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SpectralTruncationParameterMVariable<Integer> getSpectralTruncationParameterM() {
         return (SpectralTruncationParameterMVariable<Integer>) variableCache.computeIfAbsent("ntrm",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SpectralTruncationParameterMWrapper::new)
                         .orElse(null));
     }
@@ -2876,7 +2897,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SpectralTruncationParameterNVariable<Integer> getSpectralTruncationParameterN() {
         return (SpectralTruncationParameterNVariable<Integer>) variableCache.computeIfAbsent("ntrn",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SpectralTruncationParameterNWrapper::new)
                         .orElse(null));
     }
@@ -2888,7 +2909,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SpectralTruncationParameterKVariable<Integer> getSpectralTruncationParameterK() {
         return (SpectralTruncationParameterKVariable<Integer>) variableCache.computeIfAbsent("ntrk",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SpectralTruncationParameterKWrapper::new)
                         .orElse(null));
     }
@@ -2900,7 +2921,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public BaseDayVariable<Integer> getBaseDay() {
         return (BaseDayVariable<Integer>) variableCache.computeIfAbsent("ndbase",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(BaseDayWrapper::new)
                         .orElse(null));
     }
@@ -2912,7 +2933,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SecondsOfBaseDayVariable<Integer> getSecondsOfBaseDay() {
         return (SecondsOfBaseDayVariable<Integer>) variableCache.computeIfAbsent("nsbase",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SecondsOfBaseDayWrapper::new)
                         .orElse(null));
     }
@@ -2924,7 +2945,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public BaseDateVariable<Integer> getBaseDate() {
         return (BaseDateVariable<Integer>) variableCache.computeIfAbsent("nbdate",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(BaseDateWrapper::new)
                         .orElse(null));
     }
@@ -2936,7 +2957,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SecondsOfBaseDateVariable<Integer> getSecondsOfBaseDate() {
         return (SecondsOfBaseDateVariable<Integer>) variableCache.computeIfAbsent("nbsec",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SecondsOfBaseDateWrapper::new)
                         .orElse(null));
     }
@@ -2948,7 +2969,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TimestepVariable<Integer> getTimestep() {
         return (TimestepVariable<Integer>) variableCache.computeIfAbsent("mdt",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TimestepWrapper::new)
                         .orElse(null));
     }
@@ -2960,7 +2981,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CurrentDayVariable<int[]> getCurrentDay() {
         return (CurrentDayVariable<int[]>) variableCache.computeIfAbsent("ndcur",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CurrentDayWrapper::new)
                         .orElse(null));
     }
@@ -2972,7 +2993,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CurrentSecondsOfCurrentDayVariable<int[]> getCurrentSecondsOfCurrentDay() {
         return (CurrentSecondsOfCurrentDayVariable<int[]>) variableCache.computeIfAbsent("nscur",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CurrentSecondsOfCurrentDayWrapper::new)
                         .orElse(null));
     }
@@ -2984,7 +3005,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CurrentDateVariable<int[]> getCurrentDate() {
         return (CurrentDateVariable<int[]>) variableCache.computeIfAbsent("date",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CurrentDateWrapper::new)
                         .orElse(null));
     }
@@ -2996,7 +3017,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CurrentSecondsOfCurrentDateVariable<int[]> getCurrentSecondsOfCurrentDate() {
         return (CurrentSecondsOfCurrentDateVariable<int[]>) variableCache.computeIfAbsent("datesec",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CurrentSecondsOfCurrentDateWrapper::new)
                         .orElse(null));
     }
@@ -3008,7 +3029,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CurrentTimestepVariable<int[]> getCurrentTimestep() {
         return (CurrentTimestepVariable<int[]>) variableCache.computeIfAbsent("nsteph",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CurrentTimestepWrapper::new)
                         .orElse(null));
     }
@@ -3038,7 +3059,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TemperatureVariable<double[][][][]> getTemperature() {
         return (TemperatureVariable<double[][][][]>) variableCache.computeIfAbsent("T",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TemperatureWrapper::new)
                         .orElse(null));
     }
@@ -3050,7 +3071,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SpecificHumidityVariable<double[][][][]> getSpecificHumidity() {
         return (SpecificHumidityVariable<double[][][][]>) variableCache.computeIfAbsent("Q",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SpecificHumidityWrapper::new)
                         .orElse(null));
     }
@@ -3062,7 +3083,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SurfacePressureVariable<double[][][]> getSurfacePressure() {
         return (SurfacePressureVariable<double[][][]>) variableCache.computeIfAbsent("PS",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SurfacePressureWrapper::new)
                         .orElse(null));
     }
@@ -3074,7 +3095,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SurfaceGeopotentialVariable<double[][][]> getSurfaceGeopotential() {
         return (SurfaceGeopotentialVariable<double[][][]>) variableCache.computeIfAbsent("PHIS",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SurfaceGeopotentialWrapper::new)
                         .orElse(null));
     }
@@ -3086,7 +3107,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public OrographyStandardDeviationVariable<double[][][]> getOrographyStandardDeviation() {
         return (OrographyStandardDeviationVariable<double[][][]>) variableCache.computeIfAbsent("SGH",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(OrographyStandardDeviationWrapper::new)
                         .orElse(null));
     }
@@ -3116,7 +3137,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public PblHeightVariable<double[][][]> getPblHeight() {
         return (PblHeightVariable<double[][][]>) variableCache.computeIfAbsent("PBLH",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(PblHeightWrapper::new)
                         .orElse(null));
     }
@@ -3128,7 +3149,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public PerturbationTemperatureVariable<double[][][]> getPerturbationTemperature() {
         return (PerturbationTemperatureVariable<double[][][]>) variableCache.computeIfAbsent("TPERT",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(PerturbationTemperatureWrapper::new)
                         .orElse(null));
     }
@@ -3140,7 +3161,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public PerturbationSpecificHumidityVariable<double[][][]> getPerturbationSpecificHumidity() {
         return (PerturbationSpecificHumidityVariable<double[][][]>) variableCache.computeIfAbsent("QPERT",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(PerturbationSpecificHumidityWrapper::new)
                         .orElse(null));
     }
@@ -3152,7 +3173,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public CloudFractionVariable<double[][][][]> getCloudFraction() {
         return (CloudFractionVariable<double[][][][]>) variableCache.computeIfAbsent("CLOUD",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(CloudFractionWrapper::new)
                         .orElse(null));
     }
@@ -3164,7 +3185,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public QCWATVariable<double[][][][]> getQCWAT() {
         return (QCWATVariable<double[][][][]>) variableCache.computeIfAbsent("QCWAT",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(QCWATWrapper::new)
                         .orElse(null));
     }
@@ -3176,7 +3197,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TCWATVariable<double[][][][]> getTCWAT() {
         return (TCWATVariable<double[][][][]>) variableCache.computeIfAbsent("TCWAT",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TCWATWrapper::new)
                         .orElse(null));
     }
@@ -3188,7 +3209,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public LCWATVariable<double[][][][]> getLCWAT() {
         return (LCWATVariable<double[][][][]>) variableCache.computeIfAbsent("LCWAT",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(LCWATWrapper::new)
                         .orElse(null));
     }
@@ -3200,7 +3221,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TSICERADVariable<double[][][]> getTSICERAD() {
         return (TSICERADVariable<double[][][]>) variableCache.computeIfAbsent("TSICERAD",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TSICERADWrapper::new)
                         .orElse(null));
     }
@@ -3230,7 +3251,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public WaterEquivalentSnowDepthVariable<double[][][]> getWaterEquivalentSnowDepth() {
         return (WaterEquivalentSnowDepthVariable<double[][][]>) variableCache.computeIfAbsent("SNOWHICE",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(WaterEquivalentSnowDepthWrapper::new)
                         .orElse(null));
     }
@@ -3242,7 +3263,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public GridboxLandFractionVariable<double[][][]> getGridboxLandFraction() {
         return (GridboxLandFractionVariable<double[][][]>) variableCache.computeIfAbsent("LANDFRAC",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(GridboxLandFractionWrapper::new)
                         .orElse(null));
     }
@@ -3254,7 +3275,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public FractionOfSfcAreaCoveredBySeaIceVariable<double[][][]> getFractionOfSfcAreaCoveredBySeaIce() {
         return (FractionOfSfcAreaCoveredBySeaIceVariable<double[][][]>) variableCache.computeIfAbsent("ICEFRAC",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(FractionOfSfcAreaCoveredBySeaIceWrapper::new)
                         .orElse(null));
     }
@@ -3266,7 +3287,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public SeaIceThicknessVariable<double[][][]> getSeaIceThickness() {
         return (SeaIceThicknessVariable<double[][][]>) variableCache.computeIfAbsent("SICTHK",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(SeaIceThicknessWrapper::new)
                         .orElse(null));
     }
@@ -3278,7 +3299,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
     @SuppressWarnings("unchecked")
     public TSOCNVariable<double[][][]> getTSOCN() {
         return (TSOCNVariable<double[][][]>) variableCache.computeIfAbsent("TSOCN",
-                varName -> Optional.ofNullable(group.findVariable(varName))
+                varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
                         .map(TSOCNWrapper::new)
                         .orElse(null));
     }
@@ -3307,7 +3328,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getConventions() {
-        return Optional.ofNullable(group.findAttribute("Conventions"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "Conventions")))
                 .map(conventions -> conventions.getStringValue())
                 .orElse(null);
     }
@@ -3319,7 +3340,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getLogname() {
-        return Optional.ofNullable(group.findAttribute("logname"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "logname")))
                 .map(logname -> logname.getStringValue())
                 .orElse(null);
     }
@@ -3331,7 +3352,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getHost() {
-        return Optional.ofNullable(group.findAttribute("host"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "host")))
                 .map(host -> host.getStringValue())
                 .orElse(null);
     }
@@ -3343,7 +3364,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getSource() {
-        return Optional.ofNullable(group.findAttribute("source"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "source")))
                 .map(source -> source.getStringValue())
                 .orElse(null);
     }
@@ -3355,7 +3376,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getCase() {
-        return Optional.ofNullable(group.findAttribute("case"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "case")))
                 .map(_case -> _case.getStringValue())
                 .orElse(null);
     }
@@ -3367,7 +3388,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getTitle() {
-        return Optional.ofNullable(group.findAttribute("title"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "title")))
                 .map(title -> title.getStringValue())
                 .orElse(null);
     }
@@ -3379,7 +3400,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getHistory() {
-        return Optional.ofNullable(group.findAttribute("history"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "history")))
                 .map(history -> history.getStringValue())
                 .orElse(null);
     }
@@ -3391,7 +3412,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     @Override
     public String getMakeRoss() {
-        return Optional.ofNullable(group.findAttribute("make_ross"))
+        return Optional.ofNullable(group.findAttribute(runtimeConfiguration.getRuntimeName(group, "make_ross")))
                 .map(makeRoss -> makeRoss.getStringValue())
                 .orElse(null);
     }

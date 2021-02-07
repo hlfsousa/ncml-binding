@@ -1,3 +1,24 @@
+/*-
+ * #%L
+ * ncml-io
+ * %%
+ * Copyright (C) 2020 - 2021 Henrique L. F. de Sousa
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ * #L%
+ */
 importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 
 var IntArray = Java.type("int[]");
@@ -7,7 +28,7 @@ var StringArray = Java.type("java.lang.String[]");
 function createModel(model) {
     model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
     var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
-    group.name = "g01";
+    group.name = "group_01";
     group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function() {
 	    var value = new IntArray(10);
@@ -19,7 +40,7 @@ function createModel(model) {
     group.groupItems.setMyVariableAttribute("custom attribute - g01");
 
     model.mappedGroup = new java.util.LinkedHashMap();
-    model.mappedGroup.put("g01", group);
+    model.mappedGroup.put("group_01", group);
 
     var maxTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     maxTemp.setLongName("maximum temperature");
@@ -71,7 +92,11 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(actualItems, "/mappedGroup[" + key + "]/items/value");
         if (lowLevelCheck) {
             assertEquals(groupObj.unwrap().shortName, key, "unwrapped group name");
-            assertNotNull(groupObj.unwrap().findVariable("items").findAttribute("my_attribute"),
+
+            assertNull(groupObj.unwrap().findVariable("items"), "items not renamed at runtime");
+            assertNotNull(groupObj.unwrap().findVariable("components"), "items not renamed at runtime");
+
+            assertNotNull(groupObj.unwrap().findVariable("components").findAttribute("my_attribute"),
                     "unwraped variable attribute my_attribute at /mappedGroup[" + key + "]/items");
         }
     }
@@ -92,8 +117,9 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
     assertEquals(netcdf.myGlobalAttribute, netcdf.myGlobalAttribute);
 
     if (lowLevelCheck) {
-        assertEquals(netcdf.someGroup.unwrap().shortName, "this_group_name_is_not_good_for_a_property", "unwrapped group name");
-        assertNotNull(netcdf.unwrap().findAttribute("customglobalattribute"), "unwrapped global attribute");
+        assertEquals(netcdf.someGroup.unwrap().shortName, "better_group_name", "unwrapped/replaced group name");
+        assertNull(netcdf.unwrap().findAttribute("customglobalattribute"), "global attribute not renamed by properties");
+        assertNotNull(netcdf.unwrap().findAttribute("title"), "global attribute not renamed by properties");
     }
 
     assertEquals(netcdf.someString, model.someString, "/someString");
@@ -106,7 +132,7 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
 
 function editModel(netcdf) {
     var group = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO();
-    group.name = "g02";
+    group.name = "group_02";
     var IntArray = Java.type("int[]");
     group.groupItems = new Packages.io.github.hlfsousa.ncml.io.test.MyGroupVO.ItemsVO();
     group.groupItems.value = function(){
@@ -117,7 +143,7 @@ function editModel(netcdf) {
         return value;
     }();
     group.groupItems.myVariableAttribute = "custom attribute - g02";
-    netcdf.mappedGroup["g02"] = group;
+    netcdf.mappedGroup["group_02"] = group;
 
     var avgTemp = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.TemperaturesVO();
     avgTemp.longName = "average temperature";
