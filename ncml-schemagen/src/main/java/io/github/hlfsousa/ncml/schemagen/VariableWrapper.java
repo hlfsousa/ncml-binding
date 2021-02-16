@@ -116,6 +116,18 @@ public class VariableWrapper extends AbstractAttributeContainer {
         if (variable.getShape() == null) {
             return "";
         }
+        if (Boolean.parseBoolean(properties.getProperty(NCMLCodeGenerator.SCALAR_DIMENSION, "false"))) {
+            List<Dimension> dimensions = getDimensions();
+            if (dimensions.size() == 1) {
+                Dimension dim = dimensions.get(0);
+                if (!dim.isIsUnlimited() && !dim.isIsVariableLength()) {
+                    int length = Integer.parseInt(dim.getLength());
+                    if (length == 1) {
+                        return "";
+                    }
+                }
+            }
+        }
         int rank = variable.getShape().split("\\s++").length;
         StringBuilder str = new StringBuilder(rank * 2);
         for (int i = 0; i < rank; i++) {

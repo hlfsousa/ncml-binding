@@ -77,6 +77,7 @@ public class NCMLCodeGenerator {
 
     public static final String CFG_PROPERTIES_LOCATION = "propertiesLocation";
     public static final String DEFAULT_PROPERTIES_LOCATION = "ncml-binding.properties";
+    public static final String SCALAR_DIMENSION = "lengthEquals1AsScalar";
     // TODO move constants to interface, add implementations: plain java, ucar references; add standard to constructor
     public static final String TEMPLATE_VALUE_OBJECT = "/templates/ValueObject.java.vtl";
     public static final String TEMPLATE_NETCDF_WRAPPER = "/templates/NetcdfWrapper.java.vtl";

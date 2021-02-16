@@ -243,8 +243,8 @@ ${indent}    }
 #end
 
 #foreach($varWrapper in $group.variables)
-  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
-    #if(${varWrapper.dimensions.empty})
+  #if(!$varWrapper.attributes.empty || !$varWrapper.shapeBrackets.empty)
+    #if(${varWrapper.shapeBrackets.empty})
       #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
@@ -267,7 +267,7 @@ ${indent}    }
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
     #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-    #if($varWrapper.attributes.empty && $varWrapper.dimensions.empty)
+    #if($varWrapper.attributes.empty && $varWrapper.shapeBrackets.empty)
       #findType($varWrapper.scaledType $arrayVariable)
       #if($varWrapper.mapped)
     @SuppressWarnings("unchecked")
@@ -325,7 +325,7 @@ ${indent}    }
       #set($className = $varWrapper.typeName + "Wrapper")
       #set($intfName = $varWrapper.typeName + "Variable")
       #findType($varWrapper.scaledType $arrayVariable)
-      #if(!$varWrapper.dimensions.empty)
+      #if(!$varWrapper.shapeBrackets.empty)
         #set($typeName = $typeName + $varWrapper.shapeBrackets)
       #end
       #if($varWrapper.mapped)

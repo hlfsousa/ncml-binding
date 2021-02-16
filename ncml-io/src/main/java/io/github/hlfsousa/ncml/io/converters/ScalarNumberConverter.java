@@ -33,19 +33,25 @@ public class ScalarNumberConverter implements Converter<Number> {
 
     @Override
     public Array toArray(Number value, CDLVariable variableDecl) {
-        return toArray(value, variableDecl.unsigned());
+        return toArray(value, variableDecl.unsigned(), variableDecl.shape().length == 0);
     }
     
     @Override
     public Array toArray(Number value, CDLAttribute attributeDecl) {
-        return toArray(value, attributeDecl.unsigned());
+        return toArray(value, attributeDecl.unsigned(), true);
     }
 
-    private Array toArray(Number value, boolean unsigned) {
+    private Array toArray(Number value, boolean unsigned, boolean scalar) {
         DataType dataType = DataType.getType(value.getClass(), unsigned);
-        Array scalarArray = Array.factory(dataType, new int[0]);
-        scalarArray.setObject(Index.scalarIndexImmutable, value);
-        return scalarArray;
+        Array numericArray;
+        if (scalar) {
+            numericArray = Array.factory(dataType, new int[0]);
+            numericArray.setObject(Index.scalarIndexImmutable, value);
+        } else {
+            numericArray = Array.factory(dataType, new int[] {1});
+            numericArray.setObject(0, value);
+        }
+        return numericArray;
     }
 
     @Override

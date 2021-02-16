@@ -113,7 +113,7 @@ public interface ${group.typeName} {
 #end
 ## INNER INTERFACE (VARIABLES WITH ATTRIBUTES)
 #foreach($variable in $group.variables)
-  #if(!$variable.dimensions.empty || !$variable.attributes.empty)
+  #if(!$variable.shapeBrackets.empty || !$variable.attributes.empty)
     interface ${variable.typeName}Variable<T> extends Variable<T> {
 
     #foreach($attributeWrapper in $variable.attributes)
@@ -165,7 +165,7 @@ public interface ${group.typeName} {
   #findType($varWrapper.scaledType $arrayVariable)
   #set($propType = $typeName)
     @CDLVariable(name = "${escapeString.apply($variable.name)}", type = ${rawType}.class, unsigned = ${unsigned}#if($variable.shape), shape = { #foreach($dimension in $variable.shape.split(" "))"${dimension}"#if($foreach.hasNext), #end#end }#end)
-  #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
+  #if(!$variable.attribute.empty || !$varWrapper.shapeBrackets.empty)
     #if($varWrapper.mapped)
       #if($variable.shape)
         #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")

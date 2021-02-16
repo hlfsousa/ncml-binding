@@ -187,7 +187,7 @@ $!{customContent.userGroupInitializers}##
     #if(!$varWrapper.shapeBrackets.empty)
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-      #set($maxRank = $varWrapper.shapeBrackets.length() / 2)
+      #set($maxRank = $varWrapper.dimensions.size())
       #set($maxRank = $maxRank - 1)
       #foreach($rank in [0..$maxRank])
         #set($dimension = $varWrapper.dimensions[$rank])

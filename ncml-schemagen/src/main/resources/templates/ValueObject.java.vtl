@@ -193,8 +193,8 @@ ${indent}    }
 
 #end
 #foreach($varWrapper in $group.variables)
-  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
-    #if($varWrapper.dimensions.empty)
+  #if(!$varWrapper.attributes.empty || !$varWrapper.shapeBrackets.empty)
+    #if($varWrapper.shapeBrackets.empty)
       #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
@@ -215,7 +215,7 @@ $!{customContent.additionalFields}##
     #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
     #findType($varWrapper.scaledType $arrayVariable)
     #set($propType = $typeName)
-    #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
+    #if(!$variable.attribute.empty || !$varWrapper.shapeBrackets.empty)
       #if($varWrapper.mapped)
         #if($variable.shape)
           #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")
