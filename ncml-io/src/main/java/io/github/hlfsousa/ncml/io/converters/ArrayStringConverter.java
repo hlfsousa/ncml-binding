@@ -54,7 +54,13 @@ public class ArrayStringConverter implements Converter<Object> {
 
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
-        return array.copyToNDJavaArray();
+        // shape=1 to scalar
+        if (toType.isArray()) {
+            return array.copyToNDJavaArray();
+        } else {
+            assert array.getSize() == 1 : array.shapeToString();
+            return array.getObject(0);
+        }
     }
 
     @Override

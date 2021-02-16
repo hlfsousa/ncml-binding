@@ -28,24 +28,31 @@ import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import ucar.ma2.IndexIterator;
 
 public class ScalarStringConverter implements Converter<String> {
 
     @Override
     public Array toArray(String value, CDLVariable variableDecl) {
-        return toArray(value);
+        return toArray(value, variableDecl.shape().length == 0);
     }
 
     @Override
     public Array toArray(String value, CDLAttribute attributeDecl) {
-        return toArray(value);
+        return toArray(value, true);
     }
 
-    private Array toArray(String value) {
+    private Array toArray(String value, boolean scalar) {
         DataType dataType = DataType.STRING;
-        Array scalarArray = Array.factory(dataType, new int[0]);
-        scalarArray.setObject(Index.scalarIndexImmutable, value);
-        return scalarArray;
+        Array stringArray;
+        if (scalar) {
+            stringArray = Array.factory(dataType, new int[0]);
+            stringArray.setObject(Index.scalarIndexImmutable, value);
+        } else {
+            stringArray = Array.factory(dataType, new int[] {1});
+            stringArray.setObject(0, value);
+        }
+        return stringArray;
     }
 
     @Override

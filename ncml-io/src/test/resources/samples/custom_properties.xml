@@ -26,6 +26,7 @@
     xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
                       https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
   <dimension name="number_of_items" length="10" />
+  <dimension name="scalar" length="1" /><!-- Issue #84 -->
 
   <attribute name="customglobalattribute" type="string" />
   
@@ -50,7 +51,7 @@
   </group>
   
   <!-- Issue #36 -->
-  <variable name="someString" type="string" />
+  <variable name="someString" type="string" shape="scalar" />
   <variable name="stringArray" type="string" shape="number_of_items" />
 
 </netcdf>
