@@ -22,24 +22,19 @@ package io.github.hlfsousa.ncml.io.cami;
  * #L%
  */
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+// imports >>
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
-import ucar.ma2.Array;
-import ucar.ma2.DataType;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import ucar.ma2.*;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
+// << imports
 
 public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements CommunityAtmosphericModel {
 
@@ -2758,7 +2753,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     public Map<String, HybridLevelVariable<double[]>> getHybridLevel() {
         return (Map<String, HybridLevelVariable<double[]>>) variableCache.computeIfAbsent("hybrid_level:lev|ilev", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, HybridLevelVariable<double[]>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -3040,7 +3036,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     public Map<String, WindVariable<double[][][][]>> getWind() {
         return (Map<String, WindVariable<double[][][][]>>) variableCache.computeIfAbsent("wind:U|V", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, WindVariable<double[][][][]>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -3118,7 +3115,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     public Map<String, LandOceanTransitionMaskVariable<double[][][]>> getLandOceanTransitionMask() {
         return (Map<String, LandOceanTransitionMaskVariable<double[][][]>>) variableCache.computeIfAbsent("land_ocean_transition_mask:LANDM|LANDM_COSLAT", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, LandOceanTransitionMaskVariable<double[][][]>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -3232,7 +3230,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     public Map<String, SecondaryTemperatureVariable<double[][][]>> getSecondaryTemperature() {
         return (Map<String, SecondaryTemperatureVariable<double[][][]>>) variableCache.computeIfAbsent("secondary_temperature:TS|TSICE|TS1|TS2|TS3|TS4|TBOT", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, SecondaryTemperatureVariable<double[][][]>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());
@@ -3310,7 +3309,8 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
 
     public Map<String, GridBoxAveragedCondensateAmountVariable<double[][][][]>> getGridBoxAveragedCondensateAmount() {
         return (Map<String, GridBoxAveragedCondensateAmountVariable<double[][][][]>>) variableCache.computeIfAbsent("grid_box_averaged_condensate_amount:CLDLIQ|CLDICE", varName -> {
-            Pattern regex = Pattern.compile(varName.substring(varName.indexOf(':') + 1));
+            Pattern regex = Pattern.compile(runtimeConfiguration.getRuntimeName(group,
+                    varName.substring(varName.indexOf(':') + 1)));
             Map<String, GridBoxAveragedCondensateAmountVariable<double[][][][]>> value = new LinkedHashMap<>();
             for (Variable variable : group.getVariables()) {
                 Matcher matcher = regex.matcher(variable.getShortName());

@@ -1,5 +1,8 @@
 package io.github.hlfsousa.ncml.io.converters;
 
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+
 /*-
  * #%L
  * ncml-io
@@ -27,6 +30,7 @@ import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.ArrayUtils;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayString;
 import ucar.ma2.DataType;
 import ucar.ma2.IndexIterator;
 
@@ -43,20 +47,43 @@ public class ArrayStringConverter implements Converter<Object> {
     }
 
     private Array toArray(Object value) {
-        Array array = Array.factory(DataType.STRING, ArrayUtils.shapeOf(value));
-        IndexIterator indexIterator = array.getIndexIterator();
-        while (indexIterator.hasNext()) {
-            indexIterator.next();
-            indexIterator.setObjectCurrent(ArrayUtils.getElement(value, indexIterator.getCurrentCounter()));
+        try {
+            int[] lengths = ArrayUtils.shapeOf(value);
+            Class<?> arrayType = Class.forName(ArrayString.class.getName() + "$D" + lengths.length);
+            Class<?>[] parameterTypes = new Class<?>[lengths.length];
+            Arrays.fill(parameterTypes, int.class);
+            Constructor<?> constructor = arrayType.getConstructor(parameterTypes);
+            Object[] parameters = new Object[lengths.length];
+            for (int i = 0; i < lengths.length; i++) {
+                parameters[i] = lengths[i];
+            }
+            Array array = (Array) constructor.newInstance(parameters);
+            IndexIterator indexIterator = array.getIndexIterator();
+            while (indexIterator.hasNext()) {
+                indexIterator.next();
+                indexIterator.setObjectCurrent(ArrayUtils.getElement(value, indexIterator.getCurrentCounter()));
+            }
+            return array;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
         }
-        return array;
     }
 
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
         // shape=1 to scalar
         if (toType.isArray()) {
-            return array.copyToNDJavaArray();
+            if (array.getDataType() == DataType.OBJECT) {
+                Object javaArray = ArrayUtils.createArray(array.getShape(), String.class);
+                IndexIterator idx = array.getIndexIterator();
+                while (idx.hasNext()) {
+                    String value = (String) idx.getObjectNext();
+                    ArrayUtils.setElement(javaArray, idx.getCurrentCounter(), value);
+                }
+                return javaArray;
+            } else {
+                return array.copyToNDJavaArray();
+            }
         } else {
             assert array.getSize() == 1 : array.shapeToString();
             return array.getObject(0);
@@ -80,6 +107,12 @@ public class ArrayStringConverter implements Converter<Object> {
 
     @Override
     public boolean isApplicable(Array array) {
+        if (array.getDataType() == DataType.OBJECT) {
+            Object firstValue = array.getObject(array.getIndex());
+            if (firstValue instanceof String) {
+                return true;
+            }
+        }
         return array.getRank() > 0 && array.getDataType() == DataType.STRING;
     }
 

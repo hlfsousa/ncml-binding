@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.hlfsousa</groupId>
     <artifactId>ncml-binding</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>ncml-schemagen</artifactId>
@@ -19,7 +19,7 @@
 
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>cdm-core</artifactId>
+      <artifactId>netcdf4</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

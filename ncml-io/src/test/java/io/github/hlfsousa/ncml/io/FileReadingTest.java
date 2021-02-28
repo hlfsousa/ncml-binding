@@ -45,7 +45,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.github.hlfsousa.ncml.io.read.NetcdfReader;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.NetcdfFiles;
 
 /**
  * This is an integration test, and it takes all steps in the process: generates the model from an NCML, compiles the
@@ -58,6 +57,7 @@ public class FileReadingTest extends IOTest {
     private Throwable failure;
     private RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration(Collections.emptyMap());
     
+    @SuppressWarnings("deprecation")
     @ParameterizedTest
     @ValueSource(strings = { "ECMWF_ERA-40_subset", "tos_O1_2001-2002" })
     public void testWrapperReading(String referenceName) throws Throwable {
@@ -79,11 +79,10 @@ public class FileReadingTest extends IOTest {
         generateModel(schemaURL, sourcesDir, classesDir, rootClassName, new Properties());
 
         Thread execThread = new Thread(() -> {
-            try {
-                // read file
+            // read file
+            try (NetcdfFile netcdf = new NetcdfFile(ncFile.getAbsolutePath())) {
                 final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
                 final Class<?> rootType = contextClassLoader.loadClass(rootClassName);
-                NetcdfFile netcdf = NetcdfFiles.open(ncFile.getAbsolutePath());
                 Object wrapper = contextClassLoader.loadClass(wrapperClassName)
                         .getConstructor(Group.class, RuntimeConfiguration.class)
                         .newInstance(netcdf.getRootGroup(), runtimeConfiguration);

@@ -102,10 +102,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_latitudes >>
                 // << customInit_latitudes
@@ -144,10 +142,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_longitudes >>
                 // << customInit_longitudes
@@ -195,10 +191,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_lev >>
                 // << customInit_lev
@@ -246,10 +240,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("ilev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("ilev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_ilev >>
                 // << customInit_ilev
@@ -291,10 +283,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_time >>
                 // << customInit_time
@@ -330,10 +320,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("ilev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("ilev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_hyai >>
                 // << customInit_hyai
@@ -369,10 +357,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("ilev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("ilev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_hybi >>
                 // << customInit_hybi
@@ -408,10 +394,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_hyam >>
                 // << customInit_hyam
@@ -447,10 +431,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_hybm >>
                 // << customInit_hybm
@@ -486,10 +468,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, false, false));
                 }
                 // customInit_gw >>
                 // << customInit_gw
@@ -789,10 +769,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_ndcur >>
                 // << customInit_ndcur
@@ -825,10 +803,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_nscur >>
                 // << customInit_nscur
@@ -861,10 +837,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_date >>
                 // << customInit_date
@@ -897,10 +871,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_datesec >>
                 // << customInit_datesec
@@ -933,10 +905,8 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
                 }
                 // customInit_nsteph >>
                 // << customInit_nsteph
@@ -972,22 +942,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_U >>
                 // << customInit_U
@@ -1023,22 +985,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_V >>
                 // << customInit_V
@@ -1074,22 +1028,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_temperature >>
                 // << customInit_temperature
@@ -1125,22 +1071,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_Q >>
                 // << customInit_Q
@@ -1176,18 +1114,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_PS >>
                 // << customInit_PS
@@ -1229,18 +1161,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_PHIS >>
                 // << customInit_PHIS
@@ -1282,18 +1208,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_SGH >>
                 // << customInit_SGH
@@ -1335,18 +1255,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_LANDM >>
                 // << customInit_LANDM
@@ -1382,18 +1296,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_PBLH >>
                 // << customInit_PBLH
@@ -1429,18 +1337,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TPERT >>
                 // << customInit_TPERT
@@ -1476,18 +1378,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_QPERT >>
                 // << customInit_QPERT
@@ -1523,22 +1419,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_CLOUD >>
                 // << customInit_CLOUD
@@ -1574,18 +1462,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TS >>
                 // << customInit_TS
@@ -1621,18 +1503,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TSICE >>
                 // << customInit_TSICE
@@ -1668,18 +1544,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TS1 >>
                 // << customInit_TS1
@@ -1715,18 +1585,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TS2 >>
                 // << customInit_TS2
@@ -1762,18 +1626,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TS3 >>
                 // << customInit_TS3
@@ -1809,18 +1667,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TS4 >>
                 // << customInit_TS4
@@ -1856,18 +1708,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_SNOWHICE >>
                 // << customInit_SNOWHICE
@@ -1909,18 +1755,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_LANDFRAC >>
                 // << customInit_LANDFRAC
@@ -1956,18 +1796,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_TBOT >>
                 // << customInit_TBOT
@@ -2003,18 +1837,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_ICEFRAC >>
                 // << customInit_ICEFRAC
@@ -2050,18 +1878,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_SICTHK >>
                 // << customInit_SICTHK
@@ -2097,22 +1919,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_CLDLIQ >>
                 // << customInit_CLDLIQ
@@ -2148,22 +1962,14 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lev")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
                 }
                 // customInit_CLDICE >>
                 // << customInit_CLDICE
@@ -2205,18 +2011,12 @@ public class CommunityAtmosphericModelInitializer {
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("time")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lat")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
-                            .build());
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("lon")
-                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
-                            .build());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
                 }
                 // customInit_LANDM_COSLAT >>
                 // << customInit_LANDM_COSLAT

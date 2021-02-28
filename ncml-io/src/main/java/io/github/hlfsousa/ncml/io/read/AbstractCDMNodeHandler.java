@@ -49,7 +49,6 @@ import ucar.nc2.Variable;
  *
  * @param <T> Type type of node that this handles.
  */
-@SuppressWarnings("deprecation")
 public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
 
     protected static final Method TO_STRING;
@@ -144,7 +143,7 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
 
     protected Object getAttribute(Method method) {
         CDLAttribute attributeAnnotation = method.getAnnotation(CDLAttribute.class);
-        DataType dataType = DataType.getType(method.getReturnType(), attributeAnnotation.unsigned());
+        DataType dataType = DataType.getType(method.getReturnType());
         String attName = getActualName(method, attributeAnnotation.name());
         Attribute attribute;
         if (node == null) {

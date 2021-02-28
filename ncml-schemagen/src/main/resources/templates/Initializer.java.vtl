@@ -191,16 +191,8 @@ $!{customContent.userGroupInitializers}##
       #set($maxRank = $maxRank - 1)
       #foreach($rank in [0..$maxRank])
         #set($dimension = $varWrapper.dimensions[$rank])
-                    model.getDimensions().add(Dimension.builder()
-                            .setName("${dimension.name}")
-        #if(${dimension.unlimited})
-                            .setIsUnlimited(${dimension.unlimited})
-        #end
-                            .setLength(ArrayUtils.getLength(model.getValue(), ${rank}))
-        #if($dimension.variableLength)
-                            .setIsVariableLength(${dimension.variableLength})
-        #end
-                            .build());
+                    model.getDimensions().add(new Dimension("${dimension.name}", 
+                            ArrayUtils.getLength(model.getValue(), ${rank}), true, ${dimension.isUnlimited}, ${dimension.isVariableLength}));
       #end
                 }
     #end

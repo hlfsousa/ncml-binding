@@ -42,7 +42,7 @@ public class ScalarNumberConverter implements Converter<Number> {
     }
 
     private Array toArray(Number value, boolean unsigned, boolean scalar) {
-        DataType dataType = DataType.getType(value.getClass(), unsigned);
+        DataType dataType = DataType.getType(value.getClass());
         Array numericArray;
         if (scalar) {
             numericArray = Array.factory(dataType, new int[0]);

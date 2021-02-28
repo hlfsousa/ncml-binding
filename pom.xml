@@ -4,7 +4,7 @@
 
   <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
-  <version>0.6.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>NcML Binding</name>
@@ -43,11 +43,11 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <version.netcdf-java>5.3.3</version.netcdf-java>    
+    <version.netcdf-java>4.6.13</version.netcdf-java>    
     <version.slf4j>1.7.28</version.slf4j>
     <version.beanutils>1.9.4</version.beanutils>
 
-    <version.junit>5.5.1</version.junit>
+    <version.junit>5.7.1</version.junit>
     <version.hamcrest>2.2</version.hamcrest>
     <version.mockito>3.3.3</version.mockito>
   </properties>
@@ -92,10 +92,13 @@
 
       <dependency>
         <groupId>edu.ucar</groupId>
-        <artifactId>netcdf-java-bom</artifactId>
+        <artifactId>cdm</artifactId>
         <version>${version.netcdf-java}</version>
-        <type>pom</type>
-        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>netcdf4</artifactId>
+        <version>${version.netcdf-java}</version>
       </dependency>
       <dependency>
         <!-- edu.ucar libraries depend on SLF4J API, and we need to bind it to something -->

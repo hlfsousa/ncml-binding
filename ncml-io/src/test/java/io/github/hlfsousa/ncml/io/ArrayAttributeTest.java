@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -71,26 +72,23 @@ public class ArrayAttributeTest {
      * NetCDF being tested.
      */
     @Test
-    @SuppressWarnings("deprecation")
     @Disabled("Enable manually when the model has to be re-generated, run this method only")
     public void createFile() throws Exception {
         RES_DIR.mkdirs();
         NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4_classic, NC_FILE.getAbsolutePath());
         Group rootGroup = writer.addGroup(null, null);
 
-        Attribute.Builder intAttributeBuilder = Attribute.builder(INT_ATTRIBUTE_NAME);
-        intAttributeBuilder.setValues(Array.makeFromJavaArray(ARRAY_INT));
-        writer.addGroupAttribute(rootGroup, intAttributeBuilder.build());
+        Attribute intAttribute = new Attribute(INT_ATTRIBUTE_NAME, Array.factory(ARRAY_INT));
+        writer.addGroupAttribute(rootGroup, intAttribute);
 
         // This is written as a single string value -- string array attributes are not supported
-        Attribute.Builder stringAttributeBuilder = Attribute.builder(STRING_ATTRIBUTE_NAME);
         Array strNcArray = new ArrayString.D1(ARRAY_STRING.length);
         int idx = 0;
         for (IndexIterator it = strNcArray.getIndexIterator(); it.hasNext(); idx++) {
             it.setObjectNext(ARRAY_STRING[idx]);
         }
-        stringAttributeBuilder.setValues(strNcArray);
-        writer.addGroupAttribute(rootGroup, stringAttributeBuilder.build());
+        Attribute stringAttribute = new Attribute(STRING_ATTRIBUTE_NAME, strNcArray);
+        writer.addGroupAttribute(rootGroup, stringAttribute);
 
         writer.create();
         writer.getNetcdfFile().close();
@@ -98,10 +96,15 @@ public class ArrayAttributeTest {
         File logFile = new File("target/ArrayAttributeTest.err");
 
         File ncmlFile = new File(RES_DIR, "ArrayAttributeTest.xml");
-        assertThat(new ProcessBuilder(Arrays.asList("ncdump", "-h", "-x", NC_FILE.getAbsolutePath()))
-                .redirectOutput(Redirect.to(ncmlFile))
-                .redirectError(Redirect.to(logFile))
-                .start().waitFor(), is(0));
+        try {
+            assertThat(new ProcessBuilder(Arrays.asList("ncdump", "-h", "-x", NC_FILE.getAbsolutePath()))
+                    .redirectOutput(Redirect.to(ncmlFile))
+                    .redirectError(Redirect.to(logFile))
+                    .start().waitFor(), is(0));
+        } catch (Throwable t) {
+            Files.readAllLines(logFile.toPath()).forEach(System.err::println);
+            throw t;
+        }
 
         CodeGenerationTask codeGeneration = new CodeGenerationTask();
         codeGeneration.setHeaderURL(ncmlFile.toURI().toURL());

@@ -81,7 +81,7 @@ public class AttributeConventions {
             @Override
             public Array transform(Array scaledArray, Number scaleFactor, Number addOffset, Number missingValue) {
                 Array rawArray = Array.factory(
-                        missingValue != null ? DataType.getType(missingValue.getClass(), false) : DataType.SHORT,
+                        missingValue != null ? DataType.getType(missingValue.getClass()) : DataType.SHORT,
                         scaledArray.getShape());
                 for (IndexIterator writeIt = rawArray.getIndexIterator(), readIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
@@ -99,7 +99,7 @@ public class AttributeConventions {
         TO_SCALED {
             @Override
             public Array transform(Array rawArray, Number scaleFactor, Number addOffset, Number missingValue) {
-                Array scaledArray = Array.factory(DataType.getType(scaleFactor.getClass(), false), rawArray.getShape());
+                Array scaledArray = Array.factory(DataType.getType(scaleFactor.getClass()), rawArray.getShape());
                 for (IndexIterator readIt = rawArray.getIndexIterator(), writeIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
                     double rawValue = readIt.getDoubleNext();

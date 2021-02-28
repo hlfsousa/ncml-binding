@@ -35,12 +35,12 @@ public class ArrayNumberConverter implements Converter<Object> {
 
     @Override
     public Array toArray(Object value, CDLVariable variableDecl) {
-        return Array.makeFromJavaArray(value, variableDecl.unsigned());
+        return Array.factory(value);
     }
     
     @Override
     public Array toArray(Object value, CDLAttribute attributeDecl) {
-        return Array.makeFromJavaArray(value, attributeDecl.unsigned());
+        return Array.factory(value);
     }
 
     @Override
