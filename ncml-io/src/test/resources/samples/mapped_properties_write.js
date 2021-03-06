@@ -23,6 +23,7 @@ importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
 
 var IntArray = Java.type("int[]");
+var IntArray2 = Java.type("int[][]");
 
 function createModel(model) {
     model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
@@ -66,6 +67,22 @@ function createModel(model) {
     model.intMap.put("int_A", 1);
     model.intMap.put("int_B", 2);
 
+    /*
+    THIS VERSION CANNOT WRITE VLEN
+    model.varLength = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.VarLengthVO();
+    model.varLength.value = function() {
+	    var value = new IntArray2(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
+	        var itemLength = Math.round(random(10, 20));
+            value[i] = new IntArray(itemLength);
+            for (var j = 0; j < itemLength; j++) {
+	            value[i][j] = Math.round(random(0, 100));
+            }
+        }
+        return value;
+    }();
+    */
+
     return model;
 }
 
@@ -103,6 +120,10 @@ function verifyCreatedFile(netcdf, model) {
         assertEquals(actualIntMap[key], expectedIntMap[key], key);
 	}
 
+    var expectedVarLength = model.varLength;
+    var actualVarLength = netcdf.varLength;
+    assertNotNull(actualVarLength, "/varLength");
+    assertTrue(arrayEquals(expectedVarLength.value, actualVarLength.value, true), "/varLength content");
 }
 
 function editModel(netcdf) {

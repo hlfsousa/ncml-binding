@@ -60,6 +60,7 @@ import io.github.hlfsousa.ncml.io.AttributeConventions;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
+import io.github.hlfsousa.ncml.io.converters.VLenNumberConverter;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -115,6 +116,17 @@ public class NetcdfWriter {
     }
 
     public NetcdfFile write(Object model, File location) throws IOException {
+        // assuming new file or overwrite
+        NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4, location.getAbsolutePath());
+        LOGGER.debug("Writing to " + location);
+        NetcdfFile netcdfFile = write(model, writer);
+        if (closeAfterCreation) {
+            netcdfFile.close();
+        }
+        return netcdfFile;
+    }
+
+    public NetcdfFile write(Object model, NetcdfFileWriter writer) throws IOException {
         CDLRoot rootAnnotation = getFullHierarchy(model).stream()
                 .map(t -> t.getAnnotation(CDLRoot.class))
                 .filter(a -> a != null)
@@ -127,9 +139,6 @@ public class NetcdfWriter {
         Set<String> usedDimensions = new HashSet<>();
         collectDimensions(model, declaredDimensions, usedDimensions, "/");
         
-        LOGGER.debug("Writing to " + location);
-        // assuming new file or overwrite
-        NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4, location.getAbsolutePath());
         // create root group
         Group rootGroup = writer.addGroup(null, null);
         LOGGER.debug("Creating structure");
@@ -139,9 +148,6 @@ public class NetcdfWriter {
         writeContent(writer, rootGroup, model);
         LOGGER.debug("All done");
         NetcdfFile netcdfFile = writer.getNetcdfFile();
-        if (closeAfterCreation) {
-            netcdfFile.close();
-        }
         return netcdfFile;
     }
     
@@ -154,7 +160,9 @@ public class NetcdfWriter {
             Optional.ofNullable(type.getAnnotation(CDLDimension.class)).ifPresent(dimensionsList::add);
             for (CDLDimension localDimension : dimensionsList) {
                 declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>())
-                        .add(new Dimension(localDimension.name(), localDimension.length(), true,
+                        .add(new Dimension(localDimension.name(),
+                                localDimension.variableLength() ?  -1 : Math.max(localDimension.length(), 1), 
+                                !localDimension.variableLength(),
                                 localDimension.unlimited(), localDimension.variableLength()));
             }
         }
@@ -238,11 +246,12 @@ public class NetcdfWriter {
                             continue; // variable length must be -1
                         }
                         updateDimension(declaredDimensions, localPath, new Dimension(name, length,
-                                declared.isShared(), declared.isUnlimited(), declared.isVariableLength()));
+                                declared.isShared() && !declared.isVariableLength(), declared.isUnlimited(),
+                                declared.isVariableLength()));
                         varValue = java.lang.reflect.Array.get(varValue, 0);
                     }
                 } else if (varValue instanceof Array) {
-                    
+                    throw new IllegalStateException("Support not present for collecting dimensions from Array");
                 }
             }
         }
@@ -322,7 +331,10 @@ public class NetcdfWriter {
         }
         List<Dimension> dimensions = declaredDimensions.get(fullName);
         if (dimensions != null) {
-            dimensions.stream()/*.filter(dim -> usedDimensions.contains(dim.getShortName()))*/.forEach(group::addDimension);
+            dimensions.stream()
+                    .filter(dim -> usedDimensions.contains(dim.getShortName()))
+                    .filter(dim -> dim.isShared())
+                    .forEach(group::addDimension);
         }
     }
 
@@ -445,8 +457,10 @@ public class NetcdfWriter {
         String[] shape = variableDecl.shape();
         if (varModel instanceof io.github.hlfsousa.ncml.declaration.Variable) {
             List<Dimension> dimensions = ((io.github.hlfsousa.ncml.declaration.Variable<?>)varModel).getDimensions();
-            if (dimensions  != null) {
-                shape = dimensions.stream().map(d -> d.getShortName()).collect(toList()).toArray(new String[0]);
+            if (dimensions != null) {
+                shape = dimensions.stream()
+                        .map(d -> d.isVariableLength() ? "*" : d.getShortName())
+                        .collect(toList()).toArray(new String[dimensions.size()]);
             }
         }
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
@@ -580,10 +594,14 @@ public class NetcdfWriter {
         if (varValue instanceof Array) {
             ncArray = (Array)varValue;
         } else {
-            ncArray = convertUtils.toArray(varValue, variableDecl);
+            if (variable.isVariableLength()) {
+                ncArray = new VLenNumberConverter().toArray(varValue, variableDecl);
+            } else {
+                ncArray = convertUtils.toArray(varValue, variableDecl);
+            }
         }
         
-        if (ncArray != null) {
+        if (ncArray != null && !variable.isVariableLength()) {
             ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
         }
         

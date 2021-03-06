@@ -117,5 +117,24 @@ public class ConvertUtilsTest {
         revertedValue = convertUtils.toJavaObject(ncArray, String[].class);
         assertThat(revertedValue, is(javaArray));
     }
+    
+    @Test
+    public void testVLenLong() throws Exception {
+        long[][] javaArray = new long[10][];
+        for (int i = 0; i < javaArray.length; i++) {
+            javaArray[i] = new long[1 + i];
+            for (int j = 0; j < javaArray[i].length; j++) {
+                javaArray[i][j] = j;
+            }
+        }
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getScalarLong").getAnnotation(CDLVariable.class);
+
+        Array ncArray = convertUtils.toArray(javaArray, variableDecl);
+        assertThat(ncArray.getDataType(), is(DataType.OBJECT));
+        assertThat(ncArray.getShape(), is(new int[] { javaArray.length }));
+
+        long[][] revertedValue = convertUtils.toJavaObject(ncArray, long[][].class);
+        assertThat(revertedValue, is(javaArray));
+    }
 
 }

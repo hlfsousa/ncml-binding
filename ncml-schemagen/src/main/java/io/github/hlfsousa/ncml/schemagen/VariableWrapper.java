@@ -154,4 +154,19 @@ public class VariableWrapper extends AbstractAttributeContainer {
                 .orElse(getVariable().getType());
     }
 
+    public boolean isScalar() {
+        if (getAttributes().isEmpty()) {
+            if (getDimensions().isEmpty()) {
+                return true;
+            } else if (getDimensions().size() == 1) {
+                Dimension singleDimension = getDimensions().get(0);
+                if ("1".equals(singleDimension.getLength()) && !singleDimension.isIsUnlimited() && !singleDimension.isIsVariableLength()
+                        && Boolean.parseBoolean(properties.getProperty(NCMLCodeGenerator.SCALAR_DIMENSION))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
