@@ -63,6 +63,177 @@ public class CommunityAtmosphericModelInitializer {
             if (model.getMakeRoss() == null) {
                 model.setMakeRoss("true");
             }
+            if (model.getLatitudes() != null) {
+                LatitudesInitializer.initialize(model.getLatitudes());
+            }
+            if (model.getLongitudes() != null) {
+                LongitudesInitializer.initialize(model.getLongitudes());
+            }
+            if (model.getLev() != null) {
+                LevInitializer.initialize(model.getLev());
+            }
+            if (model.getIlev() != null) {
+                IlevInitializer.initialize(model.getIlev());
+            }
+            if (model.getTime() != null) {
+                TimeInitializer.initialize(model.getTime());
+            }
+            if (model.getHyai() != null) {
+                HyaiInitializer.initialize(model.getHyai());
+            }
+            if (model.getHybi() != null) {
+                HybiInitializer.initialize(model.getHybi());
+            }
+            if (model.getHyam() != null) {
+                HyamInitializer.initialize(model.getHyam());
+            }
+            if (model.getHybm() != null) {
+                HybmInitializer.initialize(model.getHybm());
+            }
+            if (model.getGw() != null) {
+                GwInitializer.initialize(model.getGw());
+            }
+            if (model.getReferencePressure() != null) {
+                ReferencePressureInitializer.initialize(model.getReferencePressure());
+            }
+            if (model.getDateWritten() != null) {
+                DateWrittenInitializer.initialize(model.getDateWritten());
+            }
+            if (model.getTimeWritten() != null) {
+                TimeWrittenInitializer.initialize(model.getTimeWritten());
+            }
+            if (model.getNtrm() != null) {
+                NtrmInitializer.initialize(model.getNtrm());
+            }
+            if (model.getNtrn() != null) {
+                NtrnInitializer.initialize(model.getNtrn());
+            }
+            if (model.getNtrk() != null) {
+                NtrkInitializer.initialize(model.getNtrk());
+            }
+            if (model.getNdbase() != null) {
+                NdbaseInitializer.initialize(model.getNdbase());
+            }
+            if (model.getNsbase() != null) {
+                NsbaseInitializer.initialize(model.getNsbase());
+            }
+            if (model.getNbdate() != null) {
+                NbdateInitializer.initialize(model.getNbdate());
+            }
+            if (model.getNbsec() != null) {
+                NbsecInitializer.initialize(model.getNbsec());
+            }
+            if (model.getMdt() != null) {
+                MdtInitializer.initialize(model.getMdt());
+            }
+            if (model.getNdcur() != null) {
+                NdcurInitializer.initialize(model.getNdcur());
+            }
+            if (model.getNscur() != null) {
+                NscurInitializer.initialize(model.getNscur());
+            }
+            if (model.getDate() != null) {
+                DateInitializer.initialize(model.getDate());
+            }
+            if (model.getDatesec() != null) {
+                DatesecInitializer.initialize(model.getDatesec());
+            }
+            if (model.getNsteph() != null) {
+                NstephInitializer.initialize(model.getNsteph());
+            }
+            if (model.getU() != null) {
+                UInitializer.initialize(model.getU());
+            }
+            if (model.getV() != null) {
+                VInitializer.initialize(model.getV());
+            }
+            if (model.getTemperature() != null) {
+                TemperatureInitializer.initialize(model.getTemperature());
+            }
+            if (model.getQ() != null) {
+                QInitializer.initialize(model.getQ());
+            }
+            if (model.getPS() != null) {
+                PSInitializer.initialize(model.getPS());
+            }
+            if (model.getPHIS() != null) {
+                PHISInitializer.initialize(model.getPHIS());
+            }
+            if (model.getSGH() != null) {
+                SGHInitializer.initialize(model.getSGH());
+            }
+            if (model.getLANDM() != null) {
+                LANDMInitializer.initialize(model.getLANDM());
+            }
+            if (model.getPBLH() != null) {
+                PBLHInitializer.initialize(model.getPBLH());
+            }
+            if (model.getTPERT() != null) {
+                TPERTInitializer.initialize(model.getTPERT());
+            }
+            if (model.getQPERT() != null) {
+                QPERTInitializer.initialize(model.getQPERT());
+            }
+            if (model.getCLOUD() != null) {
+                CLOUDInitializer.initialize(model.getCLOUD());
+            }
+            if (model.getQCWAT() != null) {
+                QCWATInitializer.initialize(model.getQCWAT());
+            }
+            if (model.getTCWAT() != null) {
+                TCWATInitializer.initialize(model.getTCWAT());
+            }
+            if (model.getLCWAT() != null) {
+                LCWATInitializer.initialize(model.getLCWAT());
+            }
+            if (model.getTSICERAD() != null) {
+                TSICERADInitializer.initialize(model.getTSICERAD());
+            }
+            if (model.getTS() != null) {
+                TSInitializer.initialize(model.getTS());
+            }
+            if (model.getTSICE() != null) {
+                TSICEInitializer.initialize(model.getTSICE());
+            }
+            if (model.getTS1() != null) {
+                TS1Initializer.initialize(model.getTS1());
+            }
+            if (model.getTS2() != null) {
+                TS2Initializer.initialize(model.getTS2());
+            }
+            if (model.getTS3() != null) {
+                TS3Initializer.initialize(model.getTS3());
+            }
+            if (model.getTS4() != null) {
+                TS4Initializer.initialize(model.getTS4());
+            }
+            if (model.getSNOWHICE() != null) {
+                SNOWHICEInitializer.initialize(model.getSNOWHICE());
+            }
+            if (model.getLANDFRAC() != null) {
+                LANDFRACInitializer.initialize(model.getLANDFRAC());
+            }
+            if (model.getTBOT() != null) {
+                TBOTInitializer.initialize(model.getTBOT());
+            }
+            if (model.getICEFRAC() != null) {
+                ICEFRACInitializer.initialize(model.getICEFRAC());
+            }
+            if (model.getSICTHK() != null) {
+                SICTHKInitializer.initialize(model.getSICTHK());
+            }
+            if (model.getTSOCN() != null) {
+                TSOCNInitializer.initialize(model.getTSOCN());
+            }
+            if (model.getCLDLIQ() != null) {
+                CLDLIQInitializer.initialize(model.getCLDLIQ());
+            }
+            if (model.getCLDICE() != null) {
+                CLDICEInitializer.initialize(model.getCLDICE());
+            }
+            if (model.getLANDMCOSLAT() != null) {
+                LANDMCOSLATInitializer.initialize(model.getLANDMCOSLAT());
+            }
             // customGroupInit >>
             // << customGroupInit
         });
@@ -84,7 +255,6 @@ public class CommunityAtmosphericModelInitializer {
         INITIALIZERS.get(key).accept(value);
         return value;
     }
-
     public static class LatitudesInitializer {
         
         private static final Map<String, Consumer<LatitudesVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -98,12 +268,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("degrees_north");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -127,6 +298,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class LongitudesInitializer {
         
         private static final Map<String, Consumer<LongitudesVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -140,12 +312,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("degrees_east");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -169,6 +342,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class LevInitializer {
         
         private static final Map<String, Consumer<LevVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -191,12 +365,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setFormulaTerms("a: hyam b: hybm p0: P0 ps: PS");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -220,6 +395,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class IlevInitializer {
         
         private static final Map<String, Consumer<IlevVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -242,12 +418,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setFormulaTerms("a: hyai b: hybi p0: P0 ps: PS");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("ilev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -271,6 +448,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TimeInitializer {
         
         private static final Map<String, Consumer<TimeVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -287,12 +465,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setCalendar("noleap");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -316,6 +495,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class HyaiInitializer {
         
         private static final Map<String, Consumer<HyaiVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -326,12 +506,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setLongName("hybrid A coefficient at layer interfaces");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("ilev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -355,6 +536,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class HybiInitializer {
         
         private static final Map<String, Consumer<HybiVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -365,12 +547,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setLongName("hybrid B coefficient at layer interfaces");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("ilev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -394,6 +577,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class HyamInitializer {
         
         private static final Map<String, Consumer<HyamVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -404,12 +588,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setLongName("hybrid A coefficient at layer midpoints");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -433,6 +618,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class HybmInitializer {
         
         private static final Map<String, Consumer<HybmVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -443,12 +629,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setLongName("hybrid B coefficient at layer midpoints");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -472,6 +659,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class GwInitializer {
         
         private static final Map<String, Consumer<GwVariable<double[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -482,12 +670,13 @@ public class CommunityAtmosphericModelInitializer {
                     model.setLongName("gauss weights");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)9.99999961690316e+35);
+                    model.setFillValue((double)9.99999961690316e+35); 
                 }
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -511,6 +700,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class ReferencePressureInitializer {
         
         private static final Map<String, Consumer<ReferencePressureVariable<Double>>> INITIALIZERS = new HashMap<>(); // false
@@ -543,6 +733,87 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
+    public static class DateWrittenInitializer {
+        
+        private static final Map<String, Consumer<DateWrittenVariable<char[][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("chars")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                }
+                // customInit_date_written >>
+                // << customInit_date_written
+            });
+            // userInitializers_date_written >>
+            // << userInitializers_date_written
+        }
+
+        public static DateWrittenVariable<char[][]> initialize(DateWrittenVariable<char[][]> value) {
+            return initialize(null, value);
+        }
+
+        public static DateWrittenVariable<char[][]> initialize(String key, DateWrittenVariable<char[][]> value) {
+            if (value == null) {
+                value = new DateWrittenVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
+    public static class TimeWrittenInitializer {
+        
+        private static final Map<String, Consumer<TimeWrittenVariable<char[][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("chars")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                }
+                // customInit_time_written >>
+                // << customInit_time_written
+            });
+            // userInitializers_time_written >>
+            // << userInitializers_time_written
+        }
+
+        public static TimeWrittenVariable<char[][]> initialize(TimeWrittenVariable<char[][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TimeWrittenVariable<char[][]> initialize(String key, TimeWrittenVariable<char[][]> value) {
+            if (value == null) {
+                value = new TimeWrittenVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
     public static class NtrmInitializer {
         
         private static final Map<String, Consumer<NtrmVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -572,6 +843,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NtrnInitializer {
         
         private static final Map<String, Consumer<NtrnVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -601,6 +873,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NtrkInitializer {
         
         private static final Map<String, Consumer<NtrkVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -630,6 +903,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NdbaseInitializer {
         
         private static final Map<String, Consumer<NdbaseVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -659,6 +933,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NsbaseInitializer {
         
         private static final Map<String, Consumer<NsbaseVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -688,6 +963,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NbdateInitializer {
         
         private static final Map<String, Consumer<NbdateVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -717,6 +993,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NbsecInitializer {
         
         private static final Map<String, Consumer<NbsecVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -746,6 +1023,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class MdtInitializer {
         
         private static final Map<String, Consumer<MdtVariable<Integer>>> INITIALIZERS = new HashMap<>(); // false
@@ -778,6 +1056,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NdcurInitializer {
         
         private static final Map<String, Consumer<NdcurVariable<int[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -791,6 +1070,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -814,6 +1094,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NscurInitializer {
         
         private static final Map<String, Consumer<NscurVariable<int[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -827,6 +1108,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -850,6 +1132,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class DateInitializer {
         
         private static final Map<String, Consumer<DateVariable<int[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -863,6 +1146,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -886,6 +1170,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class DatesecInitializer {
         
         private static final Map<String, Consumer<DatesecVariable<int[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -899,6 +1184,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -922,6 +1208,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class NstephInitializer {
         
         private static final Map<String, Consumer<NstephVariable<int[]>>> INITIALIZERS = new HashMap<>(); // true
@@ -935,6 +1222,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                 }
@@ -958,6 +1246,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class UInitializer {
         
         private static final Map<String, Consumer<UVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -974,18 +1263,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -1009,6 +1302,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class VInitializer {
         
         private static final Map<String, Consumer<VVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1025,18 +1319,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -1060,6 +1358,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TemperatureInitializer {
         
         private static final Map<String, Consumer<TemperatureVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1076,18 +1375,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -1111,6 +1414,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class QInitializer {
         
         private static final Map<String, Consumer<QVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1127,18 +1431,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -1162,6 +1470,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class PSInitializer {
         
         private static final Map<String, Consumer<PSVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1178,14 +1487,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1209,6 +1521,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class PHISInitializer {
         
         private static final Map<String, Consumer<PHISVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1222,7 +1535,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("M2/S2");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)1.e+36);
+                    model.setFillValue((double)1.e+36); 
                 }
                 if (model.getFromHires() == null) {
                     model.setFromHires("true");
@@ -1231,14 +1544,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1262,6 +1578,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class SGHInitializer {
         
         private static final Map<String, Consumer<SGHVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1275,7 +1592,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("M");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)1.e+36);
+                    model.setFillValue((double)1.e+36); 
                 }
                 if (model.getFromHires() == null) {
                     model.setFromHires("true");
@@ -1284,14 +1601,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1315,6 +1635,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class LANDMInitializer {
         
         private static final Map<String, Consumer<LANDMVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1328,7 +1649,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("none");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)1.e+36);
+                    model.setFillValue((double)1.e+36); 
                 }
                 if (model.getFromHires() == null) {
                     model.setFromHires("true");
@@ -1337,14 +1658,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1368,6 +1692,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class PBLHInitializer {
         
         private static final Map<String, Consumer<PBLHVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1384,14 +1709,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1415,6 +1743,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TPERTInitializer {
         
         private static final Map<String, Consumer<TPERTVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1431,14 +1760,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1462,6 +1794,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class QPERTInitializer {
         
         private static final Map<String, Consumer<QPERTVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1478,14 +1811,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1509,6 +1845,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class CLOUDInitializer {
         
         private static final Map<String, Consumer<CLOUDVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1525,18 +1862,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -1560,6 +1901,202 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
+    public static class QCWATInitializer {
+        
+        private static final Map<String, Consumer<QCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lat")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lev")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lon")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
+                            .build());
+                }
+                // customInit_QCWAT >>
+                // << customInit_QCWAT
+            });
+            // userInitializers_QCWAT >>
+            // << userInitializers_QCWAT
+        }
+
+        public static QCWATVariable<double[][][][]> initialize(QCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static QCWATVariable<double[][][][]> initialize(String key, QCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new QCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
+    public static class TCWATInitializer {
+        
+        private static final Map<String, Consumer<TCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lat")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lev")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lon")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
+                            .build());
+                }
+                // customInit_TCWAT >>
+                // << customInit_TCWAT
+            });
+            // userInitializers_TCWAT >>
+            // << userInitializers_TCWAT
+        }
+
+        public static TCWATVariable<double[][][][]> initialize(TCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TCWATVariable<double[][][][]> initialize(String key, TCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new TCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
+    public static class LCWATInitializer {
+        
+        private static final Map<String, Consumer<LCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lat")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lev")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lon")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 3))
+                            .build());
+                }
+                // customInit_LCWAT >>
+                // << customInit_LCWAT
+            });
+            // userInitializers_LCWAT >>
+            // << userInitializers_LCWAT
+        }
+
+        public static LCWATVariable<double[][][][]> initialize(LCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static LCWATVariable<double[][][][]> initialize(String key, LCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new LCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
+    public static class TSICERADInitializer {
+        
+        private static final Map<String, Consumer<TSICERADVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lat")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lon")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
+                            .build());
+                }
+                // customInit_TSICERAD >>
+                // << customInit_TSICERAD
+            });
+            // userInitializers_TSICERAD >>
+            // << userInitializers_TSICERAD
+        }
+
+        public static TSICERADVariable<double[][][]> initialize(TSICERADVariable<double[][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TSICERADVariable<double[][][]> initialize(String key, TSICERADVariable<double[][][]> value) {
+            if (value == null) {
+                value = new TSICERADVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
     public static class TSInitializer {
         
         private static final Map<String, Consumer<TSVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1576,14 +2113,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1607,6 +2147,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TSICEInitializer {
         
         private static final Map<String, Consumer<TSICEVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1623,14 +2164,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1654,6 +2198,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TS1Initializer {
         
         private static final Map<String, Consumer<TS1Variable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1670,14 +2215,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1701,6 +2249,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TS2Initializer {
         
         private static final Map<String, Consumer<TS2Variable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1717,14 +2266,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1748,6 +2300,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TS3Initializer {
         
         private static final Map<String, Consumer<TS3Variable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1764,14 +2317,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1795,6 +2351,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TS4Initializer {
         
         private static final Map<String, Consumer<TS4Variable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1811,14 +2368,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1842,6 +2402,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class SNOWHICEInitializer {
         
         private static final Map<String, Consumer<SNOWHICEVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1858,14 +2419,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1889,6 +2453,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class LANDFRACInitializer {
         
         private static final Map<String, Consumer<LANDFRACVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1902,7 +2467,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("FRAC");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)1.e+36);
+                    model.setFillValue((double)1.e+36); 
                 }
                 if (model.getFromHires() == null) {
                     model.setFromHires("true");
@@ -1911,14 +2476,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1942,6 +2510,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class TBOTInitializer {
         
         private static final Map<String, Consumer<TBOTVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1958,14 +2527,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -1989,6 +2561,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class ICEFRACInitializer {
         
         private static final Map<String, Consumer<ICEFRACVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -2005,14 +2578,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -2036,6 +2612,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class SICTHKInitializer {
         
         private static final Map<String, Consumer<SICTHKVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -2052,14 +2629,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -2083,6 +2663,52 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
+    public static class TSOCNInitializer {
+        
+        private static final Map<String, Consumer<TSOCNVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("time")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 0))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lat")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 1))
+                            .build());
+                    model.getDimensions().add(Dimension.builder()
+                            .setName("lon")
+                            .setIsShared(true)
+                            .setLength(ArrayUtils.getLength(model.getValue(), 2))
+                            .build());
+                }
+                // customInit_TSOCN >>
+                // << customInit_TSOCN
+            });
+            // userInitializers_TSOCN >>
+            // << userInitializers_TSOCN
+        }
+
+        public static TSOCNVariable<double[][][]> initialize(TSOCNVariable<double[][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TSOCNVariable<double[][][]> initialize(String key, TSOCNVariable<double[][][]> value) {
+            if (value == null) {
+                value = new TSOCNVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+
     public static class CLDLIQInitializer {
         
         private static final Map<String, Consumer<CLDLIQVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -2099,18 +2725,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -2134,6 +2764,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class CLDICEInitializer {
         
         private static final Map<String, Consumer<CLDICEVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -2150,18 +2781,22 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lev")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 3))
                             .build());
                 }
@@ -2185,6 +2820,7 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
     public static class LANDMCOSLATInitializer {
         
         private static final Map<String, Consumer<LANDMCOSLATVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -2198,7 +2834,7 @@ public class CommunityAtmosphericModelInitializer {
                     model.setUnits("none");
                 }
                 if (model.getFillValue() == null) {
-                    model.setFillValue((double)1.e+36);
+                    model.setFillValue((double)1.e+36); 
                 }
                 if (model.getFromHires() == null) {
                     model.setFromHires("true");
@@ -2207,14 +2843,17 @@ public class CommunityAtmosphericModelInitializer {
                     model.setDimensions(new ArrayList<>());
                     model.getDimensions().add(Dimension.builder()
                             .setName("time")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 0))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lat")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 1))
                             .build());
                     model.getDimensions().add(Dimension.builder()
                             .setName("lon")
+                            .setIsShared(true)
                             .setLength(ArrayUtils.getLength(model.getValue(), 2))
                             .build());
                 }
@@ -2238,4 +2877,5 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+
 }

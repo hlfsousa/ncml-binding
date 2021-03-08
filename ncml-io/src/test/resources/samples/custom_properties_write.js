@@ -66,7 +66,8 @@ function createModel(model) {
     model.someGroup = someGroup;
     model.myGlobalAttribute = "global attribute customization ok";
 
-    model.someString = "this is a string";
+    model.someString = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.SomeStringVO();
+    model.someString.value = "this is a string";
 
     model.stringArray = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
     model.stringArray.value = function() {
@@ -122,7 +123,8 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
         assertNotNull(netcdf.unwrap().findAttribute("title"), "global attribute not renamed by properties");
     }
 
-    assertEquals(netcdf.someString, model.someString, "/someString");
+    assertNotNull(netcdf.someString, "/someString empty");
+    assertEquals(netcdf.someString.value, model.someString.value, "/someString");
     var expectedStringArray = model.stringArray;
     var actualStringArray = netcdf.stringArray;
     assertNotNull(actualStringArray, "/stringArray");

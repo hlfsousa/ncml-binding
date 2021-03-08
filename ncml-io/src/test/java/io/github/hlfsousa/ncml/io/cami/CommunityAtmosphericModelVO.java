@@ -616,6 +616,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class ReferencePressureVO implements ReferencePressureVariable<Double> {
 
+        private List<Dimension> dimensions;
         private Double value;
 
         @Override
@@ -627,12 +628,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -723,6 +726,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class SpectralTruncationParameterMVO implements SpectralTruncationParameterMVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -734,12 +738,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -758,6 +764,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class SpectralTruncationParameterNVO implements SpectralTruncationParameterNVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -769,12 +776,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -793,6 +802,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class SpectralTruncationParameterKVO implements SpectralTruncationParameterKVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -804,12 +814,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -828,6 +840,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class BaseDayVO implements BaseDayVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -839,12 +852,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -863,6 +878,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class SecondsOfBaseDayVO implements SecondsOfBaseDayVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -874,12 +890,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -898,6 +916,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class BaseDateVO implements BaseDateVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -909,12 +928,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -933,6 +954,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class SecondsOfBaseDateVO implements SecondsOfBaseDateVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -944,12 +966,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;
@@ -968,6 +992,7 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
 
     public static class TimestepVO implements TimestepVariable<Integer> {
 
+        private List<Dimension> dimensions;
         private Integer value;
 
         @Override
@@ -979,12 +1004,14 @@ public class CommunityAtmosphericModelVO implements CommunityAtmosphericModel {
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
         private String longName;

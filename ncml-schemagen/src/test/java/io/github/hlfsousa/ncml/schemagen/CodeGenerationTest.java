@@ -134,7 +134,7 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 CDLVariable varAnnotation = latitude.getAnnotation(CDLVariable.class);
                 assertThat(varAnnotation, is(notNullValue()));
                 assertThat(varAnnotation.name(), is("Latitude"));
-                assertThat(varAnnotation.type(), is(float.class));
+                assertThat(varAnnotation.dataType(), is("float"));
                 assertThat(varAnnotation.shape(), is(arrayWithSize(1)));
                 assertThat(varAnnotation.shape(), is(arrayContaining("Latitude")));
             }
@@ -178,7 +178,7 @@ public class CodeGenerationTest extends AbstractCodeGenerationTest {
                 CDLVariable varAnnotation = revisionDate.getAnnotation(CDLVariable.class);
                 assertThat(varAnnotation, is(notNullValue()));
                 assertThat(varAnnotation.name(), is("revision_date"));
-                assertThat(varAnnotation.type(), is(long.class));
+                assertThat(varAnnotation.dataType(), is("long"));
                 assertThat(varAnnotation.shape(), is(arrayWithSize(1)));
                 assertThat(varAnnotation.shape(), is(arrayContaining("revision_count")));
             }

@@ -24,6 +24,7 @@ package io.github.hlfsousa.ncml.schemagen;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import edu.ucar.unidata.netcdf.ncml.Attribute;
@@ -57,6 +58,10 @@ public class AttributeWrapper extends AbstractNode {
 
     public Attribute getAttribute() {
         return attribute;
+    }
+    
+    public boolean isUnsigned() {
+        return attribute.getType().startsWith("u") || Optional.ofNullable(attribute.isIsUnsigned()).orElse(false);
     }
 
     public String getShapeBrackets() {

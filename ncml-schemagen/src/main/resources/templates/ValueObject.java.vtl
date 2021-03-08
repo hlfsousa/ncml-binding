@@ -27,7 +27,9 @@ package ${group.packageName};
 ${customContent.imports}##
 #else
 // DEFAULT IMPORTS
+import java.math.BigInteger;
 import java.util.*;
+import java.io.*;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
 import ucar.nc2.Dimension;
@@ -36,53 +38,54 @@ import ucar.nc2.Dimension;
 
 public class ${group.typeName}VO implements ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
-#macro(findType $type $isArray)
-  #set($unsigned = false)
-  #set($primitive = false)
+#macro(findType $type  $unsigned $isArray)
+  #set($primitive = $isArray)
   #if($type == "string" || $type == "String")
     #set($typeName = "String")
+    #set($primitive = false)
   #elseif($type == "byte" || $type == "ubyte")
-    #set($typeName = "Byte")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "Short")
+    #else
+      #set($typeName = "Byte")
+    #end
   #elseif($type == "char")
     #if ($isArray)
-      #set($primitive = true)
       #set($typeName = "char")
     #else
       #set($typeName = "Character")
     #end
-    #set($primitive = true)
   #elseif($type == "short" || $type == "ushort")
-    #set($typeName = "Short")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
+    #else
+      #set($typeName = "Short")
+    #end
   #elseif($type == "int" || $type == "uint")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "int")
+    #if($unsigned)
+      #set($typeName = "Long")
     #else
-      #set($typeName = "Integer")
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
     #end
-    #set($unsigned = $type.charAt(0) == 'u')
   #elseif($type == "long" || $type == "ulong")
-    #set($typeName = "Long")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "BigInteger")
+      #set($primitive = false)
+    #else
+      #set($typeName = "Long")
+    #end
   #elseif($type == "float")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "float")
-    #else
       #set($typeName = "Float")
-    #end
   #elseif($type == "double")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "double")
-    #else
       #set($typeName = "Double")
-    #end
   #elseif($type == "Structure")
     #set($typeName = "Object") // TODO locate type
   #elseif($type == "Sequence")
@@ -98,7 +101,7 @@ public class ${group.typeName}VO implements ${group.typeName} {
   #end
   #if($primitive && $isArray)
     #set($typeName = $typeName.toLowerCase())
-  #end  
+  #end
 #end
 #macro(declareAttribute $attributeWrapper $indent)
   #set($property = ${attributeWrapper.camelCase($attributeWrapper.name)})
@@ -107,7 +110,7 @@ public class ${group.typeName}VO implements ${group.typeName} {
     #set($localVar = "_" + $localVar)
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-  #findType($attributeWrapper.attribute.type $arrayAttribute)
+  #findType($attributeWrapper.attribute.type $attributeWrapper.unsigned $arrayAttribute)
   #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    private ${typeName} ${localVar};
 
@@ -127,10 +130,17 @@ ${indent}    }
   #set($className = $varWrapper.typeName + "VO")
   #set($intfName = $varWrapper.typeName + "Variable")
   #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-  #findType($varWrapper.scaledType false)
+  #findType($varWrapper.scaledType $varWrapper.unsigned false)
     public static class ${className} implements ${intfName}<${typeName}> {
 
+        private List<Dimension> dimensions;
         private ${typeName} value;
+
+        public ${className}() {}
+
+        public ${className}(${typeName} value) {
+            this.value = value;
+        }
 
         @Override
         public ${typeName} getValue() {
@@ -141,12 +151,14 @@ ${indent}    }
             this.value = value;
         }
 
+        @Override
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return dimensions;
         }
 
+        @Override
         public void setDimensions(List<Dimension> dimensions) {
-            throw new UnsupportedOperationException("This is a scalar variable");
+            this.dimensions = dimensions;
         }
 
   #foreach($attributeWrapper in ${varWrapper.attributes})
@@ -158,13 +170,18 @@ ${indent}    }
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
   #set($voName = $varWrapper.typeName + "VO")
   #set($intfName = $varWrapper.typeName + "Variable")
-  #findType($varWrapper.scaledType true)
+  #set($arrayValue = !$varWrapper.scalar)
+  #findType($varWrapper.scaledType $varWrapper.unsigned $arrayValue)
     public static class ${voName} implements ${intfName}<${typeName}${varWrapper.shapeBrackets}> {
 
         private ${typeName}${varWrapper.shapeBrackets} value;
         private List<Dimension> dimensions;
 
         public ${voName}() {}
+
+        public ${voName}(${typeName}${varWrapper.shapeBrackets} value) {
+            this.value = value;
+        }
 
         @Override
         public ${typeName}${varWrapper.shapeBrackets} getValue() {
@@ -193,8 +210,8 @@ ${indent}    }
 
 #end
 #foreach($varWrapper in $group.variables)
-  #if(!$varWrapper.attributes.empty || !$varWrapper.shapeBrackets.empty)
-    #if($varWrapper.shapeBrackets.empty)
+  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
+    #if($varWrapper.dimensions.empty)## shape="1" as scalar still has a dimension
       #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
@@ -206,42 +223,25 @@ ${indent}    }
 $!{customContent.additionalFields}##
     // << additionalFields
 #if(!${group.variables.empty})
-
   #foreach($varWrapper in $group.variables)
     #set($variable = $varWrapper.variable)
     #set($accessor = "get" + $varWrapper.camelCase($varWrapper.name))
     #set($modifier = "set" + $varWrapper.camelCase($varWrapper.name))
     #set($localVar = $varWrapper.dromedaryCase($varWrapper.name))
-    #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-    #findType($varWrapper.scaledType $arrayVariable)
+    #set($arrayVariable = !$varWrapper.scalar)
+    #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
     #set($propType = $typeName)
-    #if(!$variable.attribute.empty || !$varWrapper.shapeBrackets.empty)
+    #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
       #if($varWrapper.mapped)
-        #if($variable.shape)
-          #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")
-        #else
-          #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + ">>")
-        #end
+        #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")
       #else
-        #if($variable.shape)
-          #set($propType = $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets +">")
-        #else
-          #set($propType = $varWrapper.typeName + "Variable<" + $typeName + ">")
-        #end
+        #set($propType = $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets +">")
       #end
     #else
       #if($varWrapper.mapped)
-        #if($variable.shape)
-          #set($propType = "Map<String, " + $typeName + $varWrapper.shapeBrackets + ">")
-        #else
-          #set($propType = "Map<String, " + $typeName + ">")
-        #end
+        #set($propType = "Map<String, " + $typeName + $varWrapper.shapeBrackets + ">")
       #else
-        #if($variable.shape)
-          #set($propType = $typeName + $varWrapper.shapeBrackets)
-        #else
-          #set($propType = $typeName)
-        #end
+        #set($propType = $typeName + $varWrapper.shapeBrackets)
       #end
     #end
     private ${propType} ${localVar};

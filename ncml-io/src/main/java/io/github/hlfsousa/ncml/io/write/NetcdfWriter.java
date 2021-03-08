@@ -55,12 +55,14 @@ import io.github.hlfsousa.ncml.annotation.CDLDimensions;
 import io.github.hlfsousa.ncml.annotation.CDLGroup;
 import io.github.hlfsousa.ncml.annotation.CDLRoot;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
+import io.github.hlfsousa.ncml.io.ArrayUtils;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.DataType.Signedness;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -222,10 +224,10 @@ public class NetcdfWriter {
         } else if (variableAnnotation.shape().length > 0) {
             Object varValue = variable.getValue();
             if (varValue != null) {
-                if (varValue.getClass().isArray()) {
+                if (variableAnnotation.shape().length > 0) {
                     for (int i = 0; i < variableAnnotation.shape().length; i++) {
                         String name = variableAnnotation.shape()[i];
-                        int length = java.lang.reflect.Array.getLength(varValue);
+                        int length = varValue.getClass().isArray() ? java.lang.reflect.Array.getLength(varValue) : 1;
                         if (name.matches("\\d+") && !name.equals(String.valueOf(length))) {
                             throw new IllegalStateException("Immutable dimension at " + localPath);
                         }
@@ -234,8 +236,11 @@ public class NetcdfWriter {
                             continue; // variable length must be -1
                         }
                         updateDimension(declaredDimensions, localPath, new Dimension(name, length,
-                                declared.isShared(), declared.isUnlimited(), declared.isVariableLength()));
-                        varValue = java.lang.reflect.Array.get(varValue, 0);
+                                declared.isShared() && !declared.isVariableLength(), declared.isUnlimited(),
+                                declared.isVariableLength()));
+                        if (varValue.getClass().isArray()) {
+                            varValue = java.lang.reflect.Array.get(varValue, 0); // to get next dimension
+                        }
                     }
                 } else if (varValue instanceof Array) {
                     
@@ -432,7 +437,8 @@ public class NetcdfWriter {
                 javaType = (valueType instanceof Class) ? (Class<?>) valueType : null;
             }
         }
-        if (varValue == null) {
+        if (varValue == null || ArrayUtils.isEmpty(varValue)) {
+            LOGGER.debug("no value for {}, skipping variable", name);
             return;
         }
         DataType dataType = getDataType(variableDecl, varValue, javaType);
@@ -452,8 +458,10 @@ public class NetcdfWriter {
 
     private DataType getDataType(CDLVariable variableDecl, Object varValue, Class<?> javaType) {
         DataType dataType = null;
-        if (variableDecl.type() != Object.class) {
-            dataType = DataType.getType(variableDecl.type(), variableDecl.unsigned());
+        if (!variableDecl.dataType().isEmpty()) {
+            // this will fail for unsigned types as they do not match ncml-2.2.xsd
+            dataType = DataType.getType(variableDecl.dataType())
+                    .withSignedness(variableDecl.unsigned() ? Signedness.UNSIGNED : Signedness.SIGNED);
         } else if (varValue instanceof Array) {
             /* if this is a scaled value, the type should be explicit. Otherwise we would have to
              * look into the missing value attribute for the implicit type and... well, that's not
@@ -564,13 +572,18 @@ public class NetcdfWriter {
         } else {
             varValue = varModel;
         }
-        if (varValue == null) {
+        if (varValue == null || ArrayUtils.isEmpty(varValue)) {
             LOGGER.debug("no value, nothing to write");
             return;
         }
         LOGGER.debug("actual var name to be written is " + name);
         final Variable variable = group.findVariable(name);
+        if (variable == null) {
+            LOGGER.debug("variable was not created during createStructure(...): {}", name);
+            return;
+        }
         
+        try {
         Array ncArray;
         if (varValue instanceof Array) {
             ncArray = (Array)varValue;
@@ -583,6 +596,9 @@ public class NetcdfWriter {
         }
         
         writer.write(variable, ncArray);
+        } catch (Exception e) {
+            throw new IllegalStateException("Error writing variable " + variable.getShortName(), e);
+        }
     }
 
     @SuppressWarnings("unchecked")

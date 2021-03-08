@@ -153,15 +153,15 @@ public class AnnotationDeclarationTest {
         /**
          * 1-D number variable (naked).
          */
-        @CDLVariable(type = Integer.class, shape = "dim1")
+        @CDLVariable(dataType = "int", shape = "dim1")
         Array getNumber1D();
 
         /** 2-D variable with attributes. */
-        @CDLVariable(type = Byte.class, unsigned = true, shape = { "dim2", "dim3" }) // dim3 is inferred
+        @CDLVariable(dataType = "byte", unsigned = true, shape = { "dim2", "dim3" }) // dim3 is inferred
         MyVariable<Array> getUbyte2D();
 
         /** Naked variable with anonymous dimension. */
-        @CDLVariable(name = "anonDimension", type = Integer.class, shape = "5")
+        @CDLVariable(name = "anonDimension", dataType = "int", shape = "5")
         Array getFiveNumbers();
 
     }

@@ -1,5 +1,7 @@
 package io.github.hlfsousa.ncml.io.wrapper;
 
+import java.math.BigInteger;
+
 /*-
  * #%L
  * ncml-io
@@ -64,6 +66,26 @@ public abstract class NetcdfWrapper {
 
     protected Array getNumericArray(Variable variable) {
         return attributeConventions.readNumericArray(variable);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Number> T unsigned(Number value) {
+        if  (value == null) {
+            return null;
+        }
+        if (value instanceof Byte) {
+            return (T) (Integer) Byte.toUnsignedInt((Byte)value);
+        }
+        if (value instanceof Short) {
+            return (T) (Integer) Short.toUnsignedInt((Short) value);
+        }
+        if (value instanceof Integer) {
+            return (T) (Long) Integer.toUnsignedLong((Integer) value);
+        }
+        if (value instanceof Long) {
+            return (T) new BigInteger(Long.toUnsignedString((Long) value));
+        }
+        throw new IllegalArgumentException("Unsupported type " + value.getClass());
     }
 
 }

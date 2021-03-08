@@ -170,7 +170,7 @@ public class AttributeConventions {
             }
             return value;
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to read variable " + variable.getShortName());
+            throw new IllegalStateException("Unable to read variable " + variable.getShortName(), e);
         }
     }
 

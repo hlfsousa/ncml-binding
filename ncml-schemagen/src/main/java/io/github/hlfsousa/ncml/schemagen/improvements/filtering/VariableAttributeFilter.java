@@ -44,25 +44,25 @@ import edu.ucar.unidata.netcdf.ncml.Variable;
 
 public class VariableAttributeFilter implements ElementFilter<Variable> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VariableAttributeFilter.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private List<String> commonValues = new ArrayList<>();
-    private List<String> absentValues = new ArrayList<>();
-    private String archetypeNameAttribute;
+    protected List<String> commonValues = new ArrayList<>();
+    protected List<String> absentValues = new ArrayList<>();
+    protected String archetypeNameAttribute;
     private boolean sequentialMatching;
     
     @Override
     public List<Variable> apply(List<Variable> variableList, Properties properties) {
-        LOGGER.debug("filtering {} variables", variableList.size());
+        logger.debug("filtering {} variables", variableList.size());
         List<Variable> archetypes = new ArrayList<>();
         for (int i = 0; i < variableList.size(); i++) {
             Variable baseVariable = variableList.get(i);
-            LOGGER.debug("looking into variable {}", baseVariable.getName());
+            logger.debug("looking into variable {}", baseVariable.getName());
             List<Variable> matchingVariables = new ArrayList<>();
             for (ListIterator<Variable> matchIterator = variableList.listIterator(i + 1); matchIterator.hasNext(); ) {
                 Variable possibleMatch = matchIterator.next();
                 if (attributesMatch(baseVariable, possibleMatch) && canCreateArchetypeName(baseVariable, possibleMatch, matchingVariables)) {
-                    LOGGER.debug("match found: {}", possibleMatch.getName());
+                    logger.debug("match found: {}", possibleMatch.getName());
                     matchIterator.remove(); // consume variable into archetype
                     matchingVariables.add(possibleMatch);
                 } else if (sequentialMatching) {
@@ -79,7 +79,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return archetypes;
     }
 
-    private boolean canCreateArchetypeName(Variable baseVariable, Variable possibleMatch,
+    protected boolean canCreateArchetypeName(Variable baseVariable, Variable possibleMatch,
             List<Variable> matchingVariables) {
         if (archetypeNameAttribute != null) {
             Function<Variable, String> extractName = variable -> variable.getAttribute().stream()
@@ -97,14 +97,14 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return true;
     }
 
-    private boolean attributesMatch(Variable baseVariable, Variable possibleMatch) {
+    protected boolean attributesMatch(Variable baseVariable, Variable possibleMatch) {
         return haveSameRank(baseVariable, possibleMatch)
                 && declareSameAttributes(baseVariable, possibleMatch)
                 && commonAttributeValuesMatch(baseVariable, possibleMatch)
                 && absentAttributesNotFound(baseVariable, possibleMatch);
     }
 
-    private boolean absentAttributesNotFound(Variable baseVariable, Variable possibleMatch) {
+    protected boolean absentAttributesNotFound(Variable baseVariable, Variable possibleMatch) {
         return absentValues.isEmpty() ||
                 !(baseVariable.getAttribute().stream()
                         .filter(attribute -> absentValues.contains(attribute.getName()))
@@ -114,7 +114,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
                         .findAny().isPresent());
     }
 
-    private boolean haveSameRank(Variable baseVariable, Variable possibleMatch) {
+    protected boolean haveSameRank(Variable baseVariable, Variable possibleMatch) {
         String baseShape = baseVariable.getShape();
         if (baseShape == null) {
             baseShape = "";
@@ -126,7 +126,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return baseShape.split("\\s++").length == matchShape.split("\\s++").length;
     }
 
-    private boolean commonAttributeValuesMatch(Variable baseVariable, Variable possibleMatch) {
+    protected boolean commonAttributeValuesMatch(Variable baseVariable, Variable possibleMatch) {
         Map<String, String> baseAttributes = baseVariable.getAttribute().stream()
                 .filter(attribute -> commonValues.contains(attribute.getName()))
                 .collect(toMap(attribute -> attribute.getName(), attribute -> attribute.getValue()));
@@ -148,7 +148,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return baseAttributes.equals(matchAttributes);
     }
 
-    private boolean declareSameAttributes(Variable baseVariable, Variable possibleMatch) {
+    protected boolean declareSameAttributes(Variable baseVariable, Variable possibleMatch) {
         Set<String> expectedAttributes = baseVariable.getAttribute().stream()
                 .map(attribute -> attribute.getName()).collect(toSet());
         Set<String> matchAttributes = possibleMatch.getAttribute().stream()
@@ -156,9 +156,9 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
         return expectedAttributes.equals(matchAttributes);
     }
 
-    private Variable createArchetype(List<Variable> matchingVariables) {
+    protected Variable createArchetype(List<Variable> matchingVariables) {
         Variable archetype = matchingVariables.get(0);
-        LOGGER.debug("creating archetype based on {}", archetype.getName());
+        logger.debug("creating archetype based on {}", archetype.getName());
         // FIXME attribute types might be implicit, so they will be unknown when cleared
         //setAttributeTypes(matchingVariables);
         setMappedName(archetype, matchingVariables);
@@ -196,10 +196,10 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
             archetypeName = regex.replace("|", "_or_");
         }
         archetype.setName(archetypeName.replace(' ', '_') + ":" + regex);
-        LOGGER.debug("archetype name is {}", archetype.getName());
+        logger.debug("archetype name is {}", archetype.getName());
     }
     
-    private void clearUnequalAttributes(Variable archetype, List<Variable> matchingVariables) {
+    protected void clearUnequalAttributes(Variable archetype, List<Variable> matchingVariables) {
         for (Attribute attribute : archetype.getAttribute()) {
             if (attribute.getValue() != null) {
                 for (Variable otherVariable : matchingVariables) {
@@ -208,7 +208,7 @@ public class VariableAttributeFilter implements ElementFilter<Variable> {
                             .findAny().get();
                     if (!attribute.getValue().equals(matchingAttribute.getValue())) {
                         attribute.setValue(null);
-                        LOGGER.debug("attribute cleared: {}", attribute.getName());
+                        logger.debug("attribute cleared: {}", attribute.getName());
                         break;
                     }
                 }

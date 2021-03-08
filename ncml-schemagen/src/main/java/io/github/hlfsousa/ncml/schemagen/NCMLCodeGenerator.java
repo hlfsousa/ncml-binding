@@ -22,6 +22,7 @@ package io.github.hlfsousa.ncml.schemagen;
  * #L%
  */
 
+import static org.apache.velocity.runtime.RuntimeConstants.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -37,6 +40,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,8 +49,9 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
+import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +98,7 @@ public class NCMLCodeGenerator {
     private VelocityEngine velocity;
     private Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>();
     private Properties initialConfiguration;
+    private Map<String, Object> contextValues;
 
     /**
      * Creates a code generator based on a CDL XML Header.
@@ -107,10 +113,29 @@ public class NCMLCodeGenerator {
         Unmarshaller schemaReader = jaxbContext.createUnmarshaller();
         schema = (Netcdf) schemaReader.unmarshal(headerLocation);
 
+        String loaderClassFmt = RESOURCE_LOADER + ".%s." + RESOURCE_LOADER_CLASS;
+        Map<String, Class<? extends ResourceLoader>> resourceLoaders = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> configuration = new HashMap<>();
+        resourceLoaders.put("file", FileResourceLoader.class);
+        configuration.computeIfAbsent("file", key -> {
+           Map<String, Object> config = new HashMap<>();
+           config.put(RESOURCE_LOADER_PATHS, ".,/,src/main/resources,src/test/resources");
+           return config;
+        });
+        resourceLoaders.put("classpath", ClasspathResourceLoader.class);
+
         velocity = new VelocityEngine();
-        velocity.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
-        velocity.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
+        velocity.setProperty(RESOURCE_LOADERS, resourceLoaders.keySet().stream().collect(Collectors.joining(",")));
+        resourceLoaders.forEach((name, type) -> {
+            velocity.setProperty(String.format(loaderClassFmt, name), type.getName());
+            if (configuration.containsKey(name)) {
+                configuration.get(name).forEach((cfgKey, value) -> {
+                    velocity.setProperty(RESOURCE_LOADER + "." + name + "." + cfgKey, value);
+                });
+            }
+        });
         velocity.setProperty("velocimacro.inline.local_scope", true);
+        //velocity.setProperty(RESOURCE_LOADER_PATHS, ".,/");
         velocity.init();
 
         templates.put(TEMPLATE_DATA_INTERFACE,
@@ -126,7 +151,8 @@ public class NCMLCodeGenerator {
     /**
      * Provides an unmodifiable view of the templates that are going to be used during generation. The keys of this map
      * are paths to templates (to be searched for in the current classpath) and values are functions that determine the
-     * output file name from the destination location (up to the package) and the group to be written.
+     * output file name from the destination location (up to the package) and the group to be written. Should this
+     * function return null, no generation will be performed for the group.
      * 
      * @return unmodifiable view of templates to be used in generation
      */
@@ -141,6 +167,16 @@ public class NCMLCodeGenerator {
      */
     public void setTemplates(Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates) {
         this.templates = templates;
+    }
+
+    /**
+     * Sets additional context values to be made available to the templates. This class does not prevent name
+     * collisions.
+     * 
+     * @param contextValues map containing all values that will be added to the the Velocity context passed to templates
+     */
+    public void setContextValues(Map<String, Object> contextValues) {
+        this.contextValues = contextValues;
     }
 
     /**
@@ -184,7 +220,12 @@ public class NCMLCodeGenerator {
         // limit scope of variables to insulate from recursion and save some memory
         {
             VelocityContext context = new VelocityContext();
-            // TODO generator tag information
+            // TODO generator tag information?
+            if (contextValues != null) {
+                for (Entry<String, Object> entry : contextValues.entrySet()) {
+                    context.put(entry.getKey(), entry.getValue());
+                }
+            }
             context.put("group", group);
             context.put("escapeString", (Function<String,String>) str -> str.replaceAll("[\"\\\\]", "\\\\$0").replace("\n", "\\n"));
 
@@ -199,6 +240,9 @@ public class NCMLCodeGenerator {
                 context.put("customContent", customContent);
                 context.put("configuration", properties);
                 File destFile = entry.getValue().apply(group, packageDir);
+                if (destFile == null) {
+                    continue; // skip requested
+                }
                 if (destFile.isFile()) {
                     readCustomContent(destFile, customContent);
                 }

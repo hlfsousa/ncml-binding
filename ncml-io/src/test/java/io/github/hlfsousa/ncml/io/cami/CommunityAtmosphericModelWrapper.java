@@ -694,7 +694,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -828,7 +828,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -882,7 +882,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -936,7 +936,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -990,7 +990,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -1044,7 +1044,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -1098,7 +1098,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -1152,7 +1152,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -1206,7 +1206,7 @@ public class CommunityAtmosphericModelWrapper extends NetcdfWrapper implements C
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {

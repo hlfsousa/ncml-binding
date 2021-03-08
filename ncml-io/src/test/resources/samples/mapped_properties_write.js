@@ -103,6 +103,12 @@ function verifyCreatedFile(netcdf, model) {
         assertEquals(actualIntMap[key], expectedIntMap[key], key);
 	}
 
+    /*
+    var expectedVarLength = model.varLength;
+    var actualVarLength = netcdf.varLength;
+    assertNotNull(actualVarLength, "/varLength");
+    assertTrue(arrayEquals(expectedVarLength.value, actualVarLength.value, true), "/varLength content");
+    */
 }
 
 function editModel(netcdf) {

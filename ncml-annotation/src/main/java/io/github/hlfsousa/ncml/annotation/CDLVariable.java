@@ -39,11 +39,10 @@ public @interface CDLVariable {
     String name() default "";
 
     /**
-     * Variable type, which must be supported ({@link ucar.ma2.Array}, String, subclass of Number, or enumeration that
-     * implements {@link CDLEnumeration}).
+     * Variable type, which must match ucar.ma2.DataType.
      */
-    Class<?> type() default Object.class;
-
+    String dataType() default "";
+    
     boolean unsigned() default false;
 
     String[] shape() default {};

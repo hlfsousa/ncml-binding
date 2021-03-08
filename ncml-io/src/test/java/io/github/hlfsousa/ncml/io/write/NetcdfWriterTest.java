@@ -61,7 +61,7 @@ public class NetcdfWriterTest {
 
         void setChildGroup(ChildGroup childGroup);
 
-        @CDLVariable(name = "rootVariable", type = Float.class, shape = "globalDimension")
+        @CDLVariable(name = "rootVariable", dataType = "float", shape = "globalDimension")
         IArrayVariable getRootVariable();
 
         void setRootVariable(IArrayVariable rootVariable);
@@ -100,7 +100,7 @@ public class NetcdfWriterTest {
     })
     public static interface IChildGroup {
         
-        @CDLVariable(name = "childVariable", shape = { "globalDimension", "localDimension"}, type = Integer.class)
+        @CDLVariable(name = "childVariable", shape = { "globalDimension", "localDimension"}, dataType = "int")
         IArrayVariable getChildVariable();
         
         void setChildVariable(IArrayVariable childVariable);

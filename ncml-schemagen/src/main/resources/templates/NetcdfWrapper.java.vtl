@@ -22,14 +22,15 @@ package ${group.packageName};
  * #L%
  */
 
+// imports >>
 #if ($customContent.imports)
 ${customContent.imports}
 #else
-// imports >>
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -37,58 +38,59 @@ import ucar.ma2.*;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
-// << imports
 #end
+// << imports
 
 public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
-#macro(findType $type $isArray)
-  #set($unsigned = false)
-  #set($primitive = false)
+#macro(findType $type $unsigned $isArray)
+  #set($primitive = $isArray)
   #if($type == "string" || $type == "String")
     #set($typeName = "String")
+    #set($primitive = false)
   #elseif($type == "byte" || $type == "ubyte")
-    #set($typeName = "Byte")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "Short")
+    #else
+      #set($typeName = "Byte")
+    #end
   #elseif($type == "char")
     #if ($isArray)
-      #set($primitive = true)
       #set($typeName = "char")
     #else
       #set($typeName = "Character")
     #end
-    #set($primitive = true)
   #elseif($type == "short" || $type == "ushort")
-    #set($typeName = "Short")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
+    #else
+      #set($typeName = "Short")
+    #end
   #elseif($type == "int" || $type == "uint")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "int")
+    #if($unsigned)
+      #set($typeName = "Long")
     #else
-      #set($typeName = "Integer")
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
     #end
-    #set($unsigned = $type.charAt(0) == 'u')
   #elseif($type == "long" || $type == "ulong")
-    #set($typeName = "Long")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "BigInteger")
+      #set($primitive = false)
+    #else
+      #set($typeName = "Long")
+    #end
   #elseif($type == "float")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "float")
-    #else
       #set($typeName = "Float")
-    #end
   #elseif($type == "double")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "double")
-    #else
       #set($typeName = "Double")
-    #end
   #elseif($type == "Structure")
     #set($typeName = "Object") // TODO locate type
   #elseif($type == "Sequence")
@@ -104,7 +106,7 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
   #end
   #if($primitive && $isArray)
     #set($typeName = $typeName.toLowerCase())
-  #end  
+  #end
 #end
 #macro(declareAttribute $attributeWrapper $netcdfObject $indent)
   #set($property = ${attributeWrapper.camelCase($attributeWrapper.name)})
@@ -113,7 +115,7 @@ public class ${group.typeName}Wrapper extends NetcdfWrapper implements ${group.t
     #set($localVar = "_" + $localVar)
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-  #findType($attributeWrapper.attribute.type $arrayAttribute)
+  #findType($attributeWrapper.attribute.type $attributeWrapper.unsigned $arrayAttribute)
   #set($typeName = $typeName + $attributeWrapper.shapeBrackets)
 ${indent}    @Override
 ${indent}    public ${typeName} get${property}() {
@@ -134,6 +136,8 @@ ${indent}                .map(${localVar} -> (${typeName})${localVar}.getValues(
   #else
     #if($typeName.startsWith("String"))
 ${indent}                .map(${localVar} -> ${localVar}.getStringValue())
+    #elseif($attributeWrapper.unsigned)
+${indent}                .map(${localVar} -> (${typeName})unsigned(${localVar}.getNumericValue()))
     #else
 ${indent}                .map(${localVar} -> (${typeName})${localVar}.getNumericValue())
     #end
@@ -151,8 +155,8 @@ ${indent}    }
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
   #set($className = $varWrapper.typeName + "Wrapper")
   #set($intfName = $varWrapper.typeName + "Variable")
-  #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-  #findType($varWrapper.scaledType $arrayVariable)
+  #set($arrayVariable = !$varWrapper.scalar)
+  #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
     private class ${className} implements ${intfName}<${typeName}> {
 
         private final Variable variable;
@@ -186,7 +190,8 @@ ${indent}    }
         }
 
         public List<Dimension> getDimensions() {
-            return Collections.emptyList();
+## if shape="1" is treated as scalar, this variable will have a dimension 
+            return Optional.ofNullable(variable.getDimensions()).orElse(Collections.emptyList());
         }
 
         public void setDimensions(List<Dimension> dimensions) {
@@ -201,8 +206,8 @@ ${indent}    }
 #macro(declareArrayVariable $varWrapper)
   #set($property = ${varWrapper.camelCase($varWrapper.name)})
   #set($wrapperName = $varWrapper.typeName + "Wrapper")
-  #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-  #findType($varWrapper.scaledType $arrayVariable)
+  #set($arrayVariable = !$varWrapper.scalar)
+  #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
   #set($intfName = $varWrapper.typeName + "Variable")
     private class ${wrapperName} implements ${intfName}<${typeName}${varWrapper.shapeBrackets}> {
 
@@ -243,8 +248,8 @@ ${indent}    }
 #end
 
 #foreach($varWrapper in $group.variables)
-  #if(!$varWrapper.attributes.empty || !$varWrapper.shapeBrackets.empty)
-    #if(${varWrapper.shapeBrackets.empty})
+  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
+    #if($varWrapper.dimensions.empty)## shape="1" as scalar still has a dimension
       #declareScalarVariable($varWrapper)
     #else
       #declareArrayVariable($varWrapper)
@@ -261,14 +266,15 @@ ${indent}    }
     private ConvertUtils convertUtils = ConvertUtils.getInstance();
     private Map<String, Object> variableCache = new HashMap<String,Object>();
     
-    // additionalFields >>$!{customContent.additionalFields}
+    // additionalFields >>
+$!{customContent.additionalFields}##
     // << additionalFields
 
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
-    #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-    #if($varWrapper.attributes.empty && $varWrapper.shapeBrackets.empty)
-      #findType($varWrapper.scaledType $arrayVariable)
+    #set($arrayVariable = !$varWrapper.scalar)
+    #if($varWrapper.attributes.empty && $varWrapper.dimensions.empty)
+      #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
       #if($varWrapper.mapped)
     @SuppressWarnings("unchecked")
     public Map<String, ${typeName}> get${property}() {
@@ -324,10 +330,8 @@ ${indent}    }
     #else
       #set($className = $varWrapper.typeName + "Wrapper")
       #set($intfName = $varWrapper.typeName + "Variable")
-      #findType($varWrapper.scaledType $arrayVariable)
-      #if(!$varWrapper.shapeBrackets.empty)
-        #set($typeName = $typeName + $varWrapper.shapeBrackets)
-      #end
+      #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
+      #set($typeName = $typeName + $varWrapper.shapeBrackets)
       #if($varWrapper.mapped)
     public Map<String, ${intfName}<${typeName}>> get${property}() {
         return (Map<String, ${intfName}<${typeName}>>) variableCache.computeIfAbsent("${varWrapper.variable.name}", varName -> {
@@ -353,6 +357,14 @@ ${indent}    }
     public ${intfName}<${typeName}> get${property}() {
         return (${intfName}<${typeName}>) variableCache.computeIfAbsent("${varWrapper.variable.name}",
                 varName -> Optional.ofNullable(group.findVariable(runtimeConfiguration.getRuntimeName(group, varName)))
+                        .filter(var -> {
+                            for (int length : var.getShape()) {
+                                if (length == 0) {
+                                    return false;
+                                }
+                            }
+                            return true;
+                        })
                         .map(${className}::new)
                         .orElse(null));
     }
@@ -411,7 +423,8 @@ ${indent}    }
 
   #end
 #end
-    // additionalMethods >>$!{customContent.additionalMethods}
+    // additionalMethods >>
+$!{customContent.additionalMethods}##
     // << additionalMethods
 
 }
