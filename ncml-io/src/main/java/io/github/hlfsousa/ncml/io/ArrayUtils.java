@@ -39,6 +39,29 @@ import java.util.stream.Collector;
 
 public class ArrayUtils {
 
+    public static boolean isEmpty(Object array) {
+        if (array == null) {
+            return true;
+        }
+        if (!array.getClass().isArray()) {
+            return false;
+        }
+        int[] shape = shapeOf(array);
+        for (int length : shape) {
+            if (length == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Class<?> getComponentType(Class<?> type) {
+        while (type.isArray()) {
+            type = type.getComponentType();
+        }
+        return type;
+    }
+    
     public static int[] shapeOf(Object array) {
         assert array != null;
         int[] shape = new int[0];

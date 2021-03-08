@@ -58,6 +58,11 @@ public class VariableWrapper extends AbstractAttributeContainer {
         return mapped;
     }
 
+    public boolean isUnsigned() {
+        return variable.getType().startsWith("u") || variable.getAttribute().stream()
+                .filter(att -> att.getName().equals("_Unsigned")).findAny().isPresent();
+    }
+
     public Variable getVariable() {
         return variable;
     }
@@ -121,9 +126,15 @@ public class VariableWrapper extends AbstractAttributeContainer {
             if (dimensions.size() == 1) {
                 Dimension dim = dimensions.get(0);
                 if (!dim.isIsUnlimited() && !dim.isIsVariableLength()) {
-                    int length = Integer.parseInt(dim.getLength());
-                    if (length == 1) {
-                        return "";
+                    try {
+                        int length = Integer.parseInt(dim.getLength());
+                        if (length == 1) {
+                            return "";
+                        }
+                    } catch (NumberFormatException | NullPointerException e) {
+                        // unable to parse length (comment or undeclared), assume not 1
+                        logger.debug("Unparseable length {} for dimension {} at {}",
+                                dim.getLength(), dim.getName(), getFullName());
                     }
                 }
             }
@@ -155,15 +166,13 @@ public class VariableWrapper extends AbstractAttributeContainer {
     }
 
     public boolean isScalar() {
-        if (getAttributes().isEmpty()) {
-            if (getDimensions().isEmpty()) {
+        if (getDimensions().isEmpty()) {
+            return true;
+        } else if (getDimensions().size() == 1) {
+            Dimension singleDimension = getDimensions().get(0);
+            if ("1".equals(singleDimension.getLength()) && !singleDimension.isIsUnlimited() && !singleDimension.isIsVariableLength()
+                    && Boolean.parseBoolean(properties.getProperty(NCMLCodeGenerator.SCALAR_DIMENSION))) {
                 return true;
-            } else if (getDimensions().size() == 1) {
-                Dimension singleDimension = getDimensions().get(0);
-                if ("1".equals(singleDimension.getLength()) && !singleDimension.isIsUnlimited() && !singleDimension.isIsVariableLength()
-                        && Boolean.parseBoolean(properties.getProperty(NCMLCodeGenerator.SCALAR_DIMENSION))) {
-                    return true;
-                }
             }
         }
         return false;

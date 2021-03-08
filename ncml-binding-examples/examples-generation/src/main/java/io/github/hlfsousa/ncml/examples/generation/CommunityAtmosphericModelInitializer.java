@@ -63,6 +63,177 @@ public class CommunityAtmosphericModelInitializer {
             if (model.getMakeRoss() == null) {
                 model.setMakeRoss("true");
             }
+            if (model.getLatitudes() != null) {
+                LatitudesInitializer.initialize(model.getLatitudes());
+            }
+            if (model.getLongitudes() != null) {
+                LongitudesInitializer.initialize(model.getLongitudes());
+            }
+            if (model.getLev() != null) {
+                LevInitializer.initialize(model.getLev());
+            }
+            if (model.getIlev() != null) {
+                IlevInitializer.initialize(model.getIlev());
+            }
+            if (model.getTime() != null) {
+                TimeInitializer.initialize(model.getTime());
+            }
+            if (model.getHyai() != null) {
+                HyaiInitializer.initialize(model.getHyai());
+            }
+            if (model.getHybi() != null) {
+                HybiInitializer.initialize(model.getHybi());
+            }
+            if (model.getHyam() != null) {
+                HyamInitializer.initialize(model.getHyam());
+            }
+            if (model.getHybm() != null) {
+                HybmInitializer.initialize(model.getHybm());
+            }
+            if (model.getGw() != null) {
+                GwInitializer.initialize(model.getGw());
+            }
+            if (model.getReferencePressure() != null) {
+                ReferencePressureInitializer.initialize(model.getReferencePressure());
+            }
+            if (model.getDateWritten() != null) {
+                DateWrittenInitializer.initialize(model.getDateWritten());
+            }
+            if (model.getTimeWritten() != null) {
+                TimeWrittenInitializer.initialize(model.getTimeWritten());
+            }
+            if (model.getNtrm() != null) {
+                NtrmInitializer.initialize(model.getNtrm());
+            }
+            if (model.getNtrn() != null) {
+                NtrnInitializer.initialize(model.getNtrn());
+            }
+            if (model.getNtrk() != null) {
+                NtrkInitializer.initialize(model.getNtrk());
+            }
+            if (model.getNdbase() != null) {
+                NdbaseInitializer.initialize(model.getNdbase());
+            }
+            if (model.getNsbase() != null) {
+                NsbaseInitializer.initialize(model.getNsbase());
+            }
+            if (model.getNbdate() != null) {
+                NbdateInitializer.initialize(model.getNbdate());
+            }
+            if (model.getNbsec() != null) {
+                NbsecInitializer.initialize(model.getNbsec());
+            }
+            if (model.getMdt() != null) {
+                MdtInitializer.initialize(model.getMdt());
+            }
+            if (model.getNdcur() != null) {
+                NdcurInitializer.initialize(model.getNdcur());
+            }
+            if (model.getNscur() != null) {
+                NscurInitializer.initialize(model.getNscur());
+            }
+            if (model.getDate() != null) {
+                DateInitializer.initialize(model.getDate());
+            }
+            if (model.getDatesec() != null) {
+                DatesecInitializer.initialize(model.getDatesec());
+            }
+            if (model.getNsteph() != null) {
+                NstephInitializer.initialize(model.getNsteph());
+            }
+            if (model.getU() != null) {
+                UInitializer.initialize(model.getU());
+            }
+            if (model.getV() != null) {
+                VInitializer.initialize(model.getV());
+            }
+            if (model.getTemperature() != null) {
+                TemperatureInitializer.initialize(model.getTemperature());
+            }
+            if (model.getQ() != null) {
+                QInitializer.initialize(model.getQ());
+            }
+            if (model.getPS() != null) {
+                PSInitializer.initialize(model.getPS());
+            }
+            if (model.getPHIS() != null) {
+                PHISInitializer.initialize(model.getPHIS());
+            }
+            if (model.getSGH() != null) {
+                SGHInitializer.initialize(model.getSGH());
+            }
+            if (model.getLANDM() != null) {
+                LANDMInitializer.initialize(model.getLANDM());
+            }
+            if (model.getPBLH() != null) {
+                PBLHInitializer.initialize(model.getPBLH());
+            }
+            if (model.getTPERT() != null) {
+                TPERTInitializer.initialize(model.getTPERT());
+            }
+            if (model.getQPERT() != null) {
+                QPERTInitializer.initialize(model.getQPERT());
+            }
+            if (model.getCLOUD() != null) {
+                CLOUDInitializer.initialize(model.getCLOUD());
+            }
+            if (model.getQCWAT() != null) {
+                QCWATInitializer.initialize(model.getQCWAT());
+            }
+            if (model.getTCWAT() != null) {
+                TCWATInitializer.initialize(model.getTCWAT());
+            }
+            if (model.getLCWAT() != null) {
+                LCWATInitializer.initialize(model.getLCWAT());
+            }
+            if (model.getTSICERAD() != null) {
+                TSICERADInitializer.initialize(model.getTSICERAD());
+            }
+            if (model.getTS() != null) {
+                TSInitializer.initialize(model.getTS());
+            }
+            if (model.getTSICE() != null) {
+                TSICEInitializer.initialize(model.getTSICE());
+            }
+            if (model.getTS1() != null) {
+                TS1Initializer.initialize(model.getTS1());
+            }
+            if (model.getTS2() != null) {
+                TS2Initializer.initialize(model.getTS2());
+            }
+            if (model.getTS3() != null) {
+                TS3Initializer.initialize(model.getTS3());
+            }
+            if (model.getTS4() != null) {
+                TS4Initializer.initialize(model.getTS4());
+            }
+            if (model.getSNOWHICE() != null) {
+                SNOWHICEInitializer.initialize(model.getSNOWHICE());
+            }
+            if (model.getLANDFRAC() != null) {
+                LANDFRACInitializer.initialize(model.getLANDFRAC());
+            }
+            if (model.getTBOT() != null) {
+                TBOTInitializer.initialize(model.getTBOT());
+            }
+            if (model.getICEFRAC() != null) {
+                ICEFRACInitializer.initialize(model.getICEFRAC());
+            }
+            if (model.getSICTHK() != null) {
+                SICTHKInitializer.initialize(model.getSICTHK());
+            }
+            if (model.getTSOCN() != null) {
+                TSOCNInitializer.initialize(model.getTSOCN());
+            }
+            if (model.getCLDLIQ() != null) {
+                CLDLIQInitializer.initialize(model.getCLDLIQ());
+            }
+            if (model.getCLDICE() != null) {
+                CLDICEInitializer.initialize(model.getCLDICE());
+            }
+            if (model.getLANDMCOSLAT() != null) {
+                LANDMCOSLATInitializer.initialize(model.getLANDMCOSLAT());
+            }
             // customGroupInit >>
             // << customGroupInit
         });
@@ -517,6 +688,72 @@ public class CommunityAtmosphericModelInitializer {
         public static ReferencePressureVariable<Double> initialize(String key, ReferencePressureVariable<Double> value) {
             if (value == null) {
                 value = new ReferencePressureVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class DateWrittenInitializer {
+        
+        private static final Map<String, Consumer<DateWrittenVariable<char[][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("chars", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                }
+                // customInit_date_written >>
+                // << customInit_date_written
+            });
+            // userInitializers_date_written >>
+            // << userInitializers_date_written
+        }
+
+        public static DateWrittenVariable<char[][]> initialize(DateWrittenVariable<char[][]> value) {
+            return initialize(null, value);
+        }
+
+        public static DateWrittenVariable<char[][]> initialize(String key, DateWrittenVariable<char[][]> value) {
+            if (value == null) {
+                value = new DateWrittenVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class TimeWrittenInitializer {
+        
+        private static final Map<String, Consumer<TimeWrittenVariable<char[][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("chars", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                }
+                // customInit_time_written >>
+                // << customInit_time_written
+            });
+            // userInitializers_time_written >>
+            // << userInitializers_time_written
+        }
+
+        public static TimeWrittenVariable<char[][]> initialize(TimeWrittenVariable<char[][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TimeWrittenVariable<char[][]> initialize(String key, TimeWrittenVariable<char[][]> value) {
+            if (value == null) {
+                value = new TimeWrittenVO();
             }
             INITIALIZERS.get(key).accept(value);
             return value;
@@ -1448,6 +1685,152 @@ public class CommunityAtmosphericModelInitializer {
         }
 
     }
+    public static class QCWATInitializer {
+        
+        private static final Map<String, Consumer<QCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
+                }
+                // customInit_QCWAT >>
+                // << customInit_QCWAT
+            });
+            // userInitializers_QCWAT >>
+            // << userInitializers_QCWAT
+        }
+
+        public static QCWATVariable<double[][][][]> initialize(QCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static QCWATVariable<double[][][][]> initialize(String key, QCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new QCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class TCWATInitializer {
+        
+        private static final Map<String, Consumer<TCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
+                }
+                // customInit_TCWAT >>
+                // << customInit_TCWAT
+            });
+            // userInitializers_TCWAT >>
+            // << userInitializers_TCWAT
+        }
+
+        public static TCWATVariable<double[][][][]> initialize(TCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TCWATVariable<double[][][][]> initialize(String key, TCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new TCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class LCWATInitializer {
+        
+        private static final Map<String, Consumer<LCWATVariable<double[][][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lev", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 3), true, false, false));
+                }
+                // customInit_LCWAT >>
+                // << customInit_LCWAT
+            });
+            // userInitializers_LCWAT >>
+            // << userInitializers_LCWAT
+        }
+
+        public static LCWATVariable<double[][][][]> initialize(LCWATVariable<double[][][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static LCWATVariable<double[][][][]> initialize(String key, LCWATVariable<double[][][][]> value) {
+            if (value == null) {
+                value = new LCWATVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class TSICERADInitializer {
+        
+        private static final Map<String, Consumer<TSICERADVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                }
+                // customInit_TSICERAD >>
+                // << customInit_TSICERAD
+            });
+            // userInitializers_TSICERAD >>
+            // << userInitializers_TSICERAD
+        }
+
+        public static TSICERADVariable<double[][][]> initialize(TSICERADVariable<double[][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TSICERADVariable<double[][][]> initialize(String key, TSICERADVariable<double[][][]> value) {
+            if (value == null) {
+                value = new TSICERADVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
     public static class TSInitializer {
         
         private static final Map<String, Consumer<TSVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
@@ -1899,6 +2282,41 @@ public class CommunityAtmosphericModelInitializer {
         public static SICTHKVariable<double[][][]> initialize(String key, SICTHKVariable<double[][][]> value) {
             if (value == null) {
                 value = new SICTHKVO();
+            }
+            INITIALIZERS.get(key).accept(value);
+            return value;
+        }
+
+    }
+    public static class TSOCNInitializer {
+        
+        private static final Map<String, Consumer<TSOCNVariable<double[][][]>>> INITIALIZERS = new HashMap<>(); // true
+
+        static {
+            INITIALIZERS.put(null, model -> {
+                if (model.getValue() != null && model.getDimensions() == null) {
+                    model.setDimensions(new ArrayList<>());
+                    model.getDimensions().add(new Dimension("time", 
+                            ArrayUtils.getLength(model.getValue(), 0), true, true, false));
+                    model.getDimensions().add(new Dimension("lat", 
+                            ArrayUtils.getLength(model.getValue(), 1), true, false, false));
+                    model.getDimensions().add(new Dimension("lon", 
+                            ArrayUtils.getLength(model.getValue(), 2), true, false, false));
+                }
+                // customInit_TSOCN >>
+                // << customInit_TSOCN
+            });
+            // userInitializers_TSOCN >>
+            // << userInitializers_TSOCN
+        }
+
+        public static TSOCNVariable<double[][][]> initialize(TSOCNVariable<double[][][]> value) {
+            return initialize(null, value);
+        }
+
+        public static TSOCNVariable<double[][][]> initialize(String key, TSOCNVariable<double[][][]> value) {
+            if (value == null) {
+                value = new TSOCNVO();
             }
             INITIALIZERS.get(key).accept(value);
             return value;

@@ -26,11 +26,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.ucar.unidata.netcdf.ncml.Attribute;
 import edu.ucar.unidata.netcdf.ncml.Dimension;
 
 public abstract class AbstractAttributeContainer extends AbstractNode {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected String typeName;
     
     public AbstractAttributeContainer(AbstractAttributeContainer parent, Properties properties) {

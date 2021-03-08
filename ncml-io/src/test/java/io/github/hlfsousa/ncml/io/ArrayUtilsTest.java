@@ -32,6 +32,13 @@ import io.github.hlfsousa.ncml.io.ArrayUtils;
 public class ArrayUtilsTest {
 
     @Test
+    public void testGetComponentType() throws Exception {
+        assertThat(ArrayUtils.getComponentType(int[].class), is(int.class));
+        assertThat(ArrayUtils.getComponentType(String[][].class), is(String.class));
+        assertThat(ArrayUtils.getComponentType(byte[][][][].class), is(byte.class));
+    }
+
+    @Test
     public void testShapeOfD1() {
         int[] array1 = new int[100];
         assertThat(ArrayUtils.shapeOf(array1), is(new int[] { array1.length }));

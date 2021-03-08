@@ -38,53 +38,54 @@ import ${group.packageName}.${group.typeName}VO.*;
 
 public class ${group.typeName}Initializer {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
-#macro(findType $type $isArray)
-  #set($unsigned = false)
-  #set($primitive = false)
+#macro(findType $type $unsigned $isArray)
+  #set($primitive = $isArray)
   #if($type == "string" || $type == "String")
     #set($typeName = "String")
+    #set($primitive = false)
   #elseif($type == "byte" || $type == "ubyte")
-    #set($typeName = "Byte")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "Short")
+    #else
+      #set($typeName = "Byte")
+    #end
   #elseif($type == "char")
     #if ($isArray)
-      #set($primitive = true)
       #set($typeName = "char")
     #else
       #set($typeName = "Character")
     #end
-    #set($primitive = true)
   #elseif($type == "short" || $type == "ushort")
-    #set($typeName = "Short")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
+    #else
+      #set($typeName = "Short")
+    #end
   #elseif($type == "int" || $type == "uint")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "int")
+    #if($unsigned)
+      #set($typeName = "Long")
     #else
-      #set($typeName = "Integer")
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
     #end
-    #set($unsigned = $type.charAt(0) == 'u')
   #elseif($type == "long" || $type == "ulong")
-    #set($typeName = "Long")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "BigInteger")
+      #set($primitive = false)
+    #else
+      #set($typeName = "Long")
+    #end
   #elseif($type == "float")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "float")
-    #else
       #set($typeName = "Float")
-    #end
   #elseif($type == "double")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "double")
-    #else
       #set($typeName = "Double")
-    #end
   #elseif($type == "Structure")
     #set($typeName = "Object") // TODO locate type
   #elseif($type == "Sequence")
@@ -117,13 +118,40 @@ public class ${group.typeName}Initializer {
       #set($localVar = "_" + $localVar)
     #end
     #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-    #findType($attribute.type $arrayAttribute)
+    #findType($attribute.type $attributeWrapper.unsigned true)
             if (model.${accessor}() == null) {
     #if($typeName == "String")
                 model.${modifier}("${attributeWrapper.escapeLineBreaks($attribute.value)}");
     #else
-                model.${modifier}((${attribute.type})${attribute.value});
+                model.${modifier}((${typeName})${attribute.value});
     #end
+            }
+  #end
+#end
+#foreach($varWrapper in $group.variables)
+  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
+    #set($variable = $varWrapper.variable)
+    #set($property = ${varWrapper.camelCase($varWrapper.name)})
+    #if($varWrapper.mapped)
+            if (model.get${property}() != null) {
+                model.get${property}().forEach((key, value) -> ${varWrapper.typeName}Initializer.initialize(value));
+            }
+    #else
+            if (model.get${property}() != null) {
+                ${varWrapper.typeName}Initializer.initialize(model.get${property}());
+            }
+    #end
+  #end
+#end
+#foreach($groupWrapper in $group.groups)
+  #set($property = ${groupWrapper.camelCase($groupWrapper.name)})
+  #if($groupWrapper.mapped)
+            if (model.get${property}() != null) {
+                model.get${property}().forEach((key, value) -> ${groupWrapper.typeName}Initializer.initialize(value));
+            }
+  #else
+            if (model.get${property}() != null) {
+                ${groupWrapper.typeName}Initializer.initialize(model.get${property}());
             }
   #end
 #end
@@ -150,14 +178,13 @@ $!{customContent.userGroupInitializers}##
         INITIALIZERS.get(key).accept(value);
         return value;
     }
-
 #foreach($varWrapper in $group.variables)
-  #if(!$varWrapper.attributes.empty)
+  #if(!$varWrapper.attributes.empty || !$varWrapper.dimensions.empty)
     #set($className = $varWrapper.typeName + "Initializer")
     #set($intfName = $varWrapper.typeName + "Variable")
     #set($voName = $varWrapper.typeName + "VO")
     #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-    #findType($varWrapper.scaledType $arrayVariable)
+    #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
     public static class ${className} {
         
         private static final Map<String, Consumer<${intfName}<${typeName}${varWrapper.shapeBrackets}>>> INITIALIZERS = new HashMap<>(); // $arrayVariable
@@ -174,25 +201,31 @@ $!{customContent.userGroupInitializers}##
           #set($localVar = "_" + $localVar)
         #end
         #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-        #findType($attribute.type $arrayAttribute)
+        #findType($attribute.type $attributeWrapper.unsigned true)
                 if (model.${accessor}() == null) {
         #if($typeName == "String")
                     model.${modifier}("${attributeWrapper.escapeLineBreaks($attribute.value)}");
         #else
-                    model.${modifier}((${attribute.type})${attribute.value});
+                    model.${modifier}((${typeName})${attribute.value}); 
         #end
                 }
       #end
     #end
-    #if(!$varWrapper.shapeBrackets.empty)
+    #if(!$varWrapper.dimensions.empty)
                 if (model.getValue() != null && model.getDimensions() == null) {
                     model.setDimensions(new ArrayList<>());
       #set($maxRank = $varWrapper.dimensions.size())
       #set($maxRank = $maxRank - 1)
       #foreach($rank in [0..$maxRank])
         #set($dimension = $varWrapper.dimensions[$rank])
+        #if($dimension.isVariableLength)
+                    model.getDimensions().add(new Dimension("${dimension.name}", -1, false, ${dimension.isUnlimited}, ${dimension.isVariableLength}));
+        #elseif($varWrapper.scalar)
+                    model.getDimensions().add(new Dimension("${dimension.name}", 1, true, false, false));
+        #else
                     model.getDimensions().add(new Dimension("${dimension.name}", 
                             ArrayUtils.getLength(model.getValue(), ${rank}), true, ${dimension.isUnlimited}, ${dimension.isVariableLength}));
+        #end
       #end
                 }
     #end
@@ -206,7 +239,7 @@ $!{customContent[$customizationKey]}##
 $!{customContent[$initializerKey]}##
             // << ${initializerKey}
         }
-    #findType($varWrapper.scaledType $arrayVariable)## might have been ovewritten
+    #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)## might have been ovewritten
 
         public static ${intfName}<${typeName}${varWrapper.shapeBrackets}> initialize(${intfName}<${typeName}${varWrapper.shapeBrackets}> value) {
             return initialize(null, value);
@@ -221,6 +254,7 @@ $!{customContent[$initializerKey]}##
         }
 
     }
+
   #end
 #end
 }

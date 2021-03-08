@@ -52,6 +52,7 @@
   
   <!-- Issue #36 -->
   <variable name="someString" type="string" shape="scalar" />
+  <!-- this is declared as scalar, even though there is one dimension. Create interface: locate ".scaled", replace by check of dimensions and attributes where appropriate -->
   <variable name="stringArray" type="string" shape="number_of_items" />
 
 </netcdf>

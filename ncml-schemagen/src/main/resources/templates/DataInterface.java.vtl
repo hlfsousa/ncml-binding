@@ -28,6 +28,7 @@ ${customContent.imports}##
 #else
 import io.github.hlfsousa.ncml.annotation.*;
 import io.github.hlfsousa.ncml.declaration.*;
+import java.math.BigInteger;
 import java.util.*;
 import ucar.ma2.Array;
 #end
@@ -42,58 +43,59 @@ import ucar.ma2.Array;
   #if($dimension.length)
     #set($dimLength = $dimension.length)
   #end
-        @CDLDimension(name = "${escapeString.apply($dimension.name)}"#if($dimLength > 0), length = ${dimLength}#end#if($dimension.isUnlimited), unlimited = true#end)#if($foreach.hasNext),#end
+        @CDLDimension(name = "${escapeString.apply($dimension.name)}"#if($dimLength > 0), length = ${dimLength}#end#if($dimension.isUnlimited), unlimited = true#end#if($dimension.isVariableLength), variableLength = true#end)#if($foreach.hasNext),#end
 #end
 })
 public interface ${group.typeName} {
 #set($reservedWords = [ "case", "switch", "enum", "if", "class", "interface" ])
-#macro(findType $type $isArray)
-  #set($unsigned = false)
-  #set($primitive = false)
+#macro(findType $type  $unsigned $isArray)
+  #set($primitive = $isArray)
   #if($type == "string" || $type == "String")
     #set($typeName = "String")
+    #set($primitive = false)
   #elseif($type == "byte" || $type == "ubyte")
-    #set($typeName = "Byte")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "Short")
+    #else
+      #set($typeName = "Byte")
+    #end
   #elseif($type == "char")
     #if ($isArray)
-      #set($primitive = true)
       #set($typeName = "char")
     #else
       #set($typeName = "Character")
     #end
-    #set($primitive = true)
   #elseif($type == "short" || $type == "ushort")
-    #set($typeName = "Short")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
+    #else
+      #set($typeName = "Short")
+    #end
   #elseif($type == "int" || $type == "uint")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "int")
+    #if($unsigned)
+      #set($typeName = "Long")
     #else
-      #set($typeName = "Integer")
+      #if ($primitive)
+        #set($typeName = "int")
+      #else
+        #set($typeName = "Integer")
+      #end
     #end
-    #set($unsigned = $type.charAt(0) == 'u')
   #elseif($type == "long" || $type == "ulong")
-    #set($typeName = "Long")
-    #set($unsigned = $type.charAt(0) == 'u')
-    #set($primitive = true)
+    #if($unsigned)
+      #set($typeName = "BigInteger")
+      #set($primitive = false)
+    #else
+      #set($typeName = "Long")
+    #end
   #elseif($type == "float")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "float")
-    #else
       #set($typeName = "Float")
-    #end
   #elseif($type == "double")
-    #if ($isArray)
-      #set($primitive = true)
-      #set($typeName = "double")
-    #else
       #set($typeName = "Double")
-    #end
   #elseif($type == "Structure")
     #set($typeName = "Object") // TODO locate type
   #elseif($type == "Sequence")
@@ -113,7 +115,7 @@ public interface ${group.typeName} {
 #end
 ## INNER INTERFACE (VARIABLES WITH ATTRIBUTES)
 #foreach($variable in $group.variables)
-  #if(!$variable.shapeBrackets.empty || !$variable.attributes.empty)
+  #if(!$variable.dimensions.empty || !$variable.attributes.empty)
     interface ${variable.typeName}Variable<T> extends Variable<T> {
 
     #foreach($attributeWrapper in $variable.attributes)
@@ -125,8 +127,8 @@ public interface ${group.typeName} {
         #set($localVar = "_" + $localVar)
       #end
       #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-      #findType($attribute.type $arrayAttribute)
-        @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
+      #findType($attribute.type $attributeWrapper.unsigned $arrayAttribute)
+        @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}", unsigned = ${attributeWrapper.unsigned}#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
         ${typeName}${attributeWrapper.shapeBrackets} ${accessor}();
 
         void ${modifier}(${typeName}${attributeWrapper.shapeBrackets} ${localVar});
@@ -146,8 +148,8 @@ public interface ${group.typeName} {
     #set($localVar = "_" + $localVar)
   #end
   #set($arrayAttribute = !$attributeWrapper.shapeBrackets.empty)
-  #findType($attribute.type $arrayAttribute)
-    @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}"#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
+  #findType($attribute.type $attributeWrapper.unsigned $arrayAttribute)
+    @CDLAttribute(name = "${escapeString.apply($attribute.name)}", dataType = "${attribute.type}", unsigned = ${attributeWrapper.unsigned}#if($attribute.value), defaultValue = "${escapeString.apply($attribute.value)}"#end)
     ${typeName}${attributeWrapper.shapeBrackets} ${accessor}();
 
     void ${modifier}(${typeName}${attributeWrapper.shapeBrackets} ${localVar});
@@ -160,38 +162,22 @@ public interface ${group.typeName} {
   #set($modifier = "set" + $varWrapper.camelCase($varWrapper.name))
   #set($localVar = $varWrapper.dromedaryCase($varWrapper.name))
   #set($arrayVariable = !$varWrapper.shapeBrackets.empty)
-  #findType($variable.type $arrayVariable)
+  #findType($variable.type $varWrapper.unsigned $arrayVariable)
   #set($rawType = $typeName)
-  #findType($varWrapper.scaledType $arrayVariable)
+  #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
   #set($propType = $typeName)
-    @CDLVariable(name = "${escapeString.apply($variable.name)}", type = ${rawType}.class, unsigned = ${unsigned}#if($variable.shape), shape = { #foreach($dimension in $variable.shape.split(" "))"${dimension}"#if($foreach.hasNext), #end#end }#end)
-  #if(!$variable.attribute.empty || !$varWrapper.shapeBrackets.empty)
+    @CDLVariable(name = "${escapeString.apply($variable.name)}", dataType = "${variable.type}", unsigned = ${varWrapper.unsigned}#if($variable.shape), shape = { #foreach($dimension in $variable.shape.split(" "))"${dimension}"#if($foreach.hasNext), #end#end }#end)
+  #if(!$variable.attribute.empty || !$varWrapper.dimensions.empty)
     #if($varWrapper.mapped)
-      #if($variable.shape)
-        #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")
-      #else
-        #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + ">>")
-      #end
+      #set($propType = "Map<String, " + $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets + ">>")
     #else
-      #if($variable.shape)
-        #set($propType = $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets +">")
-      #else
-        #set($propType = $varWrapper.typeName + "Variable<" + $typeName + ">")
-      #end
+      #set($propType = $varWrapper.typeName + "Variable<" + $typeName + $varWrapper.shapeBrackets +">")
     #end
   #else
     #if($varWrapper.mapped)
-      #if($variable.shape)
-        #set($propType = "Map<String, " + $typeName + $varWrapper.shapeBrackets + ">")
-      #else
-        #set($propType = "Map<String, " + $typeName + ">")
-      #end
+      #set($propType = "Map<String, " + $typeName + $varWrapper.shapeBrackets + ">")
     #else
-      #if($variable.shape)
-        #set($propType = $typeName + $varWrapper.shapeBrackets)
-      #else
-        #set($propType = $typeName)
-      #end
+      #set($propType = $typeName + $varWrapper.shapeBrackets)
     #end
   #end
     ${propType} ${accessor}();

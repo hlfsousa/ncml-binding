@@ -42,7 +42,8 @@ public class ScalarNumberConverter implements Converter<Number> {
     }
 
     private Array toArray(Number value, boolean unsigned, boolean scalar) {
-        DataType dataType = DataType.getType(value.getClass());
+        DataType dataType = unsigned ? ArrayNumberConverter.getUnsignedType(value.getClass())
+                : DataType.getType(value.getClass());
         Array numericArray;
         if (scalar) {
             numericArray = Array.factory(dataType, new int[0]);
@@ -57,11 +58,10 @@ public class ScalarNumberConverter implements Converter<Number> {
     @Override
     public Number toJavaObject(Array array, Class<? extends Number> toType) {
         Number value = (Number) array.getObject(Index.scalarIndexImmutable);
-        /*
-         * For now, we are assuming that value and toType are compatible. Value is necessarily not a primitive. toType
-         * can be a primitive. What if the value is not compatible with toType? We will eventually get a
-         * ClassCastException.
-         */
+        boolean assumeUnsigned = !toType.isInstance(value);
+        if (assumeUnsigned) {
+            value = (Number) ArrayNumberConverter.toUnsigned(value);
+        }
         return value;
     }
 

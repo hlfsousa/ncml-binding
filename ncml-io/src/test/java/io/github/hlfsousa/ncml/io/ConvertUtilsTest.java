@@ -41,10 +41,13 @@ public class ConvertUtilsTest {
 
     private static interface TestNetcdf {
 
-        @CDLVariable(type = Long.class, unsigned = false)
+        @CDLVariable(dataType = "long", unsigned = false)
         Long getScalarLong();
         
-        @CDLVariable(type = String.class)
+        @CDLVariable(dataType = "int", unsigned = true)
+        Long getUnsignedInt();
+        
+        @CDLVariable(dataType = "string")
         String getScalarString();
 
     }
@@ -96,6 +99,34 @@ public class ConvertUtilsTest {
 
     }
 
+    @Test
+    public void testUnsignedArray() throws Exception {
+        long value = 2l * Integer.MAX_VALUE;
+        long[] javaArray = new long[100];
+        Arrays.fill(javaArray, value);
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getUnsignedInt").getAnnotation(CDLVariable.class);
+
+        Array ncArray = convertUtils.toArray(javaArray, variableDecl);
+        assertThat(ncArray.getDataType(), is(DataType.INT));
+        assertThat(ncArray.getShape(), is(new int[] { javaArray.length }));
+
+        long[] revertedValue = convertUtils.toJavaObject(ncArray, long[].class);
+        assertThat(revertedValue, is(javaArray));
+
+    }
+
+    @Test
+    public void testUnsignedScalar() throws Exception {
+        Long value = 2l * Integer.MAX_VALUE;
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getUnsignedInt").getAnnotation(CDLVariable.class);
+        
+        Array scalarArray = convertUtils.toArray(value, variableDecl);
+        assertThat(scalarArray.getObject(Index.scalarIndexImmutable), is(value.intValue()));
+
+        Long revertedValue = convertUtils.toJavaObject(scalarArray, Long.class);
+        assertThat(revertedValue, is(value));
+    }
+    
     @Test
     public void testArrayString() throws Exception {
         String[] javaArray = new String[100];
