@@ -41,17 +41,17 @@ import ucar.ma2.Array;
 public interface CommunityAtmosphericModel {
     interface LatitudeVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "latitude")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "latitude")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "degrees_north")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "degrees_north")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -60,17 +60,17 @@ public interface CommunityAtmosphericModel {
 
     interface LongitudeVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "longitude")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "longitude")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "degrees_east")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "degrees_east")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -79,32 +79,32 @@ public interface CommunityAtmosphericModel {
 
     interface HybridLevelVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false)
+        @CDLAttribute(name = "long_name", dataType = "String")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "level")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "level")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "positive", dataType = "String", unsigned = false, defaultValue = "down")
+        @CDLAttribute(name = "positive", dataType = "String", defaultValue = "down")
         String getPositive();
 
         void setPositive(String positive);
 
-        @CDLAttribute(name = "standard_name", dataType = "String", unsigned = false, defaultValue = "atmosphere_hybrid_sigma_pressure_coordinate")
+        @CDLAttribute(name = "standard_name", dataType = "String", defaultValue = "atmosphere_hybrid_sigma_pressure_coordinate")
         String getStandardName();
 
         void setStandardName(String standardName);
 
-        @CDLAttribute(name = "formula_terms", dataType = "String", unsigned = false)
+        @CDLAttribute(name = "formula_terms", dataType = "String")
         String getFormulaTerms();
 
         void setFormulaTerms(String formulaTerms);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -113,22 +113,22 @@ public interface CommunityAtmosphericModel {
 
     interface TimeVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "time")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "time")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "days since 0000-08-29 00:00:00")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "days since 0000-08-29 00:00:00")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "calendar", dataType = "String", unsigned = false, defaultValue = "noleap")
+        @CDLAttribute(name = "calendar", dataType = "String", defaultValue = "noleap")
         String getCalendar();
 
         void setCalendar(String calendar);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -137,12 +137,12 @@ public interface CommunityAtmosphericModel {
 
     interface HybridACoefficientAtLayerInterfacesVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "hybrid A coefficient at layer interfaces")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "hybrid A coefficient at layer interfaces")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -151,12 +151,12 @@ public interface CommunityAtmosphericModel {
 
     interface HybridBCoefficientAtLayerInterfacesVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "hybrid B coefficient at layer interfaces")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "hybrid B coefficient at layer interfaces")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -165,12 +165,12 @@ public interface CommunityAtmosphericModel {
 
     interface HybridACoefficientAtLayerMidpointsVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "hybrid A coefficient at layer midpoints")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "hybrid A coefficient at layer midpoints")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -179,12 +179,12 @@ public interface CommunityAtmosphericModel {
 
     interface HybridBCoefficientAtLayerMidpointsVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "hybrid B coefficient at layer midpoints")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "hybrid B coefficient at layer midpoints")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -193,12 +193,12 @@ public interface CommunityAtmosphericModel {
 
     interface GaussWeightsVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "gauss weights")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "gauss weights")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "9.99999961690316e+35")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "9.99999961690316e+35")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
@@ -207,12 +207,12 @@ public interface CommunityAtmosphericModel {
 
     interface ReferencePressureVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "reference pressure")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "reference pressure")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "Pa")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "Pa")
         String getUnits();
 
         void setUnits(String units);
@@ -229,7 +229,7 @@ public interface CommunityAtmosphericModel {
 
     interface SpectralTruncationParameterMVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "spectral truncation parameter M")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "spectral truncation parameter M")
         String getLongName();
 
         void setLongName(String longName);
@@ -238,7 +238,7 @@ public interface CommunityAtmosphericModel {
 
     interface SpectralTruncationParameterNVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "spectral truncation parameter N")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "spectral truncation parameter N")
         String getLongName();
 
         void setLongName(String longName);
@@ -247,7 +247,7 @@ public interface CommunityAtmosphericModel {
 
     interface SpectralTruncationParameterKVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "spectral truncation parameter K")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "spectral truncation parameter K")
         String getLongName();
 
         void setLongName(String longName);
@@ -256,7 +256,7 @@ public interface CommunityAtmosphericModel {
 
     interface BaseDayVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "base day")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "base day")
         String getLongName();
 
         void setLongName(String longName);
@@ -265,7 +265,7 @@ public interface CommunityAtmosphericModel {
 
     interface SecondsOfBaseDayVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "seconds of base day")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "seconds of base day")
         String getLongName();
 
         void setLongName(String longName);
@@ -274,7 +274,7 @@ public interface CommunityAtmosphericModel {
 
     interface BaseDateVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "base date (YYYYMMDD)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "base date (YYYYMMDD)")
         String getLongName();
 
         void setLongName(String longName);
@@ -283,7 +283,7 @@ public interface CommunityAtmosphericModel {
 
     interface SecondsOfBaseDateVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "seconds of base date")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "seconds of base date")
         String getLongName();
 
         void setLongName(String longName);
@@ -292,12 +292,12 @@ public interface CommunityAtmosphericModel {
 
     interface TimestepVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "timestep")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "timestep")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "s")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "s")
         String getUnits();
 
         void setUnits(String units);
@@ -306,7 +306,7 @@ public interface CommunityAtmosphericModel {
 
     interface CurrentDayVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "current day (from base day)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "current day (from base day)")
         String getLongName();
 
         void setLongName(String longName);
@@ -315,7 +315,7 @@ public interface CommunityAtmosphericModel {
 
     interface CurrentSecondsOfCurrentDayVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "current seconds of current day")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "current seconds of current day")
         String getLongName();
 
         void setLongName(String longName);
@@ -324,7 +324,7 @@ public interface CommunityAtmosphericModel {
 
     interface CurrentDateVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "current date (YYYYMMDD)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "current date (YYYYMMDD)")
         String getLongName();
 
         void setLongName(String longName);
@@ -333,7 +333,7 @@ public interface CommunityAtmosphericModel {
 
     interface CurrentSecondsOfCurrentDateVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "current seconds of current date")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "current seconds of current date")
         String getLongName();
 
         void setLongName(String longName);
@@ -342,7 +342,7 @@ public interface CommunityAtmosphericModel {
 
     interface CurrentTimestepVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "current timestep")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "current timestep")
         String getLongName();
 
         void setLongName(String longName);
@@ -351,12 +351,12 @@ public interface CommunityAtmosphericModel {
 
     interface WindVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false)
+        @CDLAttribute(name = "long_name", dataType = "String")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "m/s")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "m/s")
         String getUnits();
 
         void setUnits(String units);
@@ -365,12 +365,12 @@ public interface CommunityAtmosphericModel {
 
     interface TemperatureVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Temperature")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Temperature")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "K")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "K")
         String getUnits();
 
         void setUnits(String units);
@@ -379,12 +379,12 @@ public interface CommunityAtmosphericModel {
 
     interface SpecificHumidityVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Specific humidity")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Specific humidity")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "kg/kg")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "kg/kg")
         String getUnits();
 
         void setUnits(String units);
@@ -393,12 +393,12 @@ public interface CommunityAtmosphericModel {
 
     interface SurfacePressureVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Surface pressure")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Surface pressure")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "Pa")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "Pa")
         String getUnits();
 
         void setUnits(String units);
@@ -407,22 +407,22 @@ public interface CommunityAtmosphericModel {
 
     interface SurfaceGeopotentialVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "surface geopotential")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "surface geopotential")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "M2/S2")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "M2/S2")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "1.e+36")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "1.e+36")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
 
-        @CDLAttribute(name = "from_hires", dataType = "String", unsigned = false, defaultValue = "true")
+        @CDLAttribute(name = "from_hires", dataType = "String", defaultValue = "true")
         String getFromHires();
 
         void setFromHires(String fromHires);
@@ -431,22 +431,22 @@ public interface CommunityAtmosphericModel {
 
     interface OrographyStandardDeviationVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "orography standard deviation")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "orography standard deviation")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "M")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "M")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "1.e+36")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "1.e+36")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
 
-        @CDLAttribute(name = "from_hires", dataType = "String", unsigned = false, defaultValue = "true")
+        @CDLAttribute(name = "from_hires", dataType = "String", defaultValue = "true")
         String getFromHires();
 
         void setFromHires(String fromHires);
@@ -455,22 +455,22 @@ public interface CommunityAtmosphericModel {
 
     interface LandOceanTransitionMaskVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "land ocean transition mask: ocean (0), continent (1), transition (0-1)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "land ocean transition mask: ocean (0), continent (1), transition (0-1)")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "none")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "none")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "1.e+36")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "1.e+36")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
 
-        @CDLAttribute(name = "from_hires", dataType = "String", unsigned = false, defaultValue = "true")
+        @CDLAttribute(name = "from_hires", dataType = "String", defaultValue = "true")
         String getFromHires();
 
         void setFromHires(String fromHires);
@@ -479,12 +479,12 @@ public interface CommunityAtmosphericModel {
 
     interface PblHeightVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "PBL height")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "PBL height")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "m")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "m")
         String getUnits();
 
         void setUnits(String units);
@@ -493,12 +493,12 @@ public interface CommunityAtmosphericModel {
 
     interface PerturbationTemperatureVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Perturbation temperature (eddies in PBL)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Perturbation temperature (eddies in PBL)")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "K")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "K")
         String getUnits();
 
         void setUnits(String units);
@@ -507,12 +507,12 @@ public interface CommunityAtmosphericModel {
 
     interface PerturbationSpecificHumidityVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Perturbation specific humidity (eddies in PBL)")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Perturbation specific humidity (eddies in PBL)")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "kg/kg")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "kg/kg")
         String getUnits();
 
         void setUnits(String units);
@@ -521,12 +521,12 @@ public interface CommunityAtmosphericModel {
 
     interface CloudFractionVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Cloud fraction")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Cloud fraction")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "fraction")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "fraction")
         String getUnits();
 
         void setUnits(String units);
@@ -551,12 +551,12 @@ public interface CommunityAtmosphericModel {
 
     interface SecondaryTemperatureVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false)
+        @CDLAttribute(name = "long_name", dataType = "String")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "K")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "K")
         String getUnits();
 
         void setUnits(String units);
@@ -565,12 +565,12 @@ public interface CommunityAtmosphericModel {
 
     interface WaterEquivalentSnowDepthVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Water equivalent snow depth")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Water equivalent snow depth")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "m")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "m")
         String getUnits();
 
         void setUnits(String units);
@@ -579,22 +579,22 @@ public interface CommunityAtmosphericModel {
 
     interface GridboxLandFractionVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "gridbox land fraction")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "gridbox land fraction")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "FRAC")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "FRAC")
         String getUnits();
 
         void setUnits(String units);
 
-        @CDLAttribute(name = "_FillValue", dataType = "double", unsigned = false, defaultValue = "1.e+36")
+        @CDLAttribute(name = "_FillValue", dataType = "double", defaultValue = "1.e+36")
         Double getFillValue();
 
         void setFillValue(Double fillValue);
 
-        @CDLAttribute(name = "from_hires", dataType = "String", unsigned = false, defaultValue = "true")
+        @CDLAttribute(name = "from_hires", dataType = "String", defaultValue = "true")
         String getFromHires();
 
         void setFromHires(String fromHires);
@@ -603,12 +603,12 @@ public interface CommunityAtmosphericModel {
 
     interface FractionOfSfcAreaCoveredBySeaIceVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Fraction of sfc area covered by sea-ice")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Fraction of sfc area covered by sea-ice")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "fraction")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "fraction")
         String getUnits();
 
         void setUnits(String units);
@@ -617,12 +617,12 @@ public interface CommunityAtmosphericModel {
 
     interface SeaIceThicknessVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false, defaultValue = "Sea ice thickness")
+        @CDLAttribute(name = "long_name", dataType = "String", defaultValue = "Sea ice thickness")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "m")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "m")
         String getUnits();
 
         void setUnits(String units);
@@ -635,54 +635,54 @@ public interface CommunityAtmosphericModel {
 
     interface GridBoxAveragedCondensateAmountVariable<T> extends Variable<T> {
 
-        @CDLAttribute(name = "long_name", dataType = "String", unsigned = false)
+        @CDLAttribute(name = "long_name", dataType = "String")
         String getLongName();
 
         void setLongName(String longName);
 
-        @CDLAttribute(name = "units", dataType = "String", unsigned = false, defaultValue = "kg/kg")
+        @CDLAttribute(name = "units", dataType = "String", defaultValue = "kg/kg")
         String getUnits();
 
         void setUnits(String units);
 
     }
 
-    @CDLAttribute(name = "Conventions", dataType = "String", unsigned = false, defaultValue = "CF-1.0")
+    @CDLAttribute(name = "Conventions", dataType = "String", defaultValue = "CF-1.0")
     String getConventions();
 
     void setConventions(String conventions);
 
-    @CDLAttribute(name = "logname", dataType = "String", unsigned = false, defaultValue = "olson")
+    @CDLAttribute(name = "logname", dataType = "String", defaultValue = "olson")
     String getLogname();
 
     void setLogname(String logname);
 
-    @CDLAttribute(name = "host", dataType = "String", unsigned = false, defaultValue = "bb0001en")
+    @CDLAttribute(name = "host", dataType = "String", defaultValue = "bb0001en")
     String getHost();
 
     void setHost(String host);
 
-    @CDLAttribute(name = "source", dataType = "String", unsigned = false, defaultValue = "Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::CAM")
+    @CDLAttribute(name = "source", dataType = "String", defaultValue = "Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::CAM")
     String getSource();
 
     void setSource(String source);
 
-    @CDLAttribute(name = "case", dataType = "String", unsigned = false, defaultValue = "cam2run")
+    @CDLAttribute(name = "case", dataType = "String", defaultValue = "cam2run")
     String getCase();
 
     void setCase(String _case);
 
-    @CDLAttribute(name = "title", dataType = "String", unsigned = false, defaultValue = "Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::atm ver atm, eul ver v013, case newICeul")
+    @CDLAttribute(name = "title", dataType = "String", defaultValue = "Interpolated from:/fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc::atm ver atm, eul ver v013, case newICeul")
     String getTitle();
 
     void setTitle(String title);
 
-    @CDLAttribute(name = "history", dataType = "String", unsigned = false, defaultValue = "\n05/07/03 12:15:34 olson:chinookfe:interpic -t SEP1.T42L26.gaussian.template.nc /fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam1/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo-usgs-10min.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc -l cami_0000-09-01_64x128_L26_c030624.nc.new")
+    @CDLAttribute(name = "history", dataType = "String", defaultValue = "\n05/07/03 12:15:34 olson:chinookfe:interpic -t SEP1.T42L26.gaussian.template.nc /fs/cgd/data0/olson/inputIC/newICeul.cam2.i.0000-09-01-00000.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam1/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo-usgs-10min.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc cami_0000-09-01_64x128_L26_c030507.nc\ndefinesurf -t /fs/cgd/csm/inputdata/atm/cam2/hrtopo/topo10min.merged_c030506.nc -l cami_0000-09-01_64x128_L26_c030624.nc.new")
     String getHistory();
 
     void setHistory(String history);
 
-    @CDLAttribute(name = "make_ross", dataType = "String", unsigned = false, defaultValue = "true")
+    @CDLAttribute(name = "make_ross", dataType = "String", defaultValue = "true")
     String getMakeRoss();
 
     void setMakeRoss(String makeRoss);
@@ -732,7 +732,7 @@ public interface CommunityAtmosphericModel {
 
     void setGaussWeights(GaussWeightsVariable<double[]> gaussWeights);
 
-    @CDLVariable(name = "P0", dataType = "double", unsigned = false)
+    @CDLVariable(name = "P0", dataType = "Double", unsigned = false)
     ReferencePressureVariable<Double> getReferencePressure();
 
     void setReferencePressure(ReferencePressureVariable<Double> referencePressure);
