@@ -137,6 +137,7 @@ public class NetcdfWriter {
         LOGGER.debug("Creating structure");
         createStructure(writer, rootGroup, model, declaredDimensions);
         writer.create();
+        LOGGER.debug("Created structure:\n{}", writer.getNetcdfFile());
         LOGGER.debug("Writing content");
         writeContent(writer, rootGroup, model);
         LOGGER.debug("All done");
@@ -156,8 +157,13 @@ public class NetcdfWriter {
             Optional.ofNullable(type.getAnnotation(CDLDimension.class)).ifPresent(dimensionsList::add);
             for (CDLDimension localDimension : dimensionsList) {
                 declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>())
-                        .add(new Dimension(localDimension.name(), localDimension.length(), true,
-                                localDimension.unlimited(), localDimension.variableLength()));
+                        .add(Dimension.builder()
+                                .setName(localDimension.name())
+                                .setIsUnlimited(localDimension.unlimited())
+                                .setIsVariableLength(localDimension.variableLength())
+                                .setIsShared(!localDimension.variableLength())
+                                .setLength(localDimension.variableLength() ? -1 : Math.max(localDimension.length(), 1))
+                                .build());
             }
         }
         
@@ -323,7 +329,7 @@ public class NetcdfWriter {
         }
         List<Dimension> dimensions = declaredDimensions.get(fullName);
         if (dimensions != null) {
-            dimensions.forEach(group::addDimension);
+            dimensions.stream().filter(Dimension::isShared).forEach(group::addDimension);
         }
     }
 
@@ -445,9 +451,13 @@ public class NetcdfWriter {
         String[] shape = variableDecl.shape();
         if (varModel instanceof io.github.hlfsousa.ncml.declaration.Variable) {
             List<Dimension> dimensions = ((io.github.hlfsousa.ncml.declaration.Variable<?>)varModel).getDimensions();
-            if (dimensions  != null) {
-                shape = dimensions.stream().map(d -> d.getShortName()).collect(toList()).toArray(new String[0]);
+            if (dimensions != null) {
+                shape = dimensions.stream().map(Dimension::getShortName).collect(toList())
+                        .toArray(new String[0]);
             }
+        }
+        if (shape.length > 1 && group.findDimension(shape[shape.length - 1]) == null) {
+            shape[shape.length - 1] = "*";
         }
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
