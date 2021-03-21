@@ -23,6 +23,7 @@ importPackage(Packages.io.github.hlfsousa.ncml.io.test);
 importPackage(Packages.ucar.ma2);
 
 var IntArray = Java.type("int[]");
+var IntArray2 = Java.type("int[][]");
 
 function createModel(model) {
     model = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO();
@@ -66,6 +67,42 @@ function createModel(model) {
     model.intMap.put("int_A", 1);
     model.intMap.put("int_B", 2);
 
+    /* Variable length dimensions are not working. We're writing them the same way they seem to be represented in any
+     * value that we read using netcdf-java: the variable length is represented by individual arrays of the declared
+     * data type, and they are added to a fixed-dimension array of type object. The value is written to a variable of
+     * the declared data type, and the variable length dimension is expressed as an asterisk in the variable shape 
+     * without a shared dimension or type declaration in the group:
+     * 
+     *   dimensions:
+     *     number_of_items = 20;
+     *   variables:
+     *     int varLength(number_of_items=20, *);
+     * 
+     * With this setup, we get an HDF error when trying to write the first variable, whatever it is.
+     * In 2016, we find this: https://www.unidata.ucar.edu/mailing_lists/archives/netcdf-java/2016/msg00115.html
+     * "In a future release of the netcdf java code I plan to get rid of the variable-length dimension (e..g '*') in CDM
+     * and replace it with ArraySequence."
+     * See also https://www.unidata.ucar.edu/software/netcdf-java/v4.6/reference/StructureData.html
+     */
+    /**/
+    model.varLength = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.VarLengthVO();
+    model.varLength.value = function() {
+	    var outerArray = new IntArray2(numberOfItems);
+        for (var i = 0; i < numberOfItems; i++) {
+	        var innerLength = Math.round(random(10, 20));
+            var innerArray = new IntArray(innerLength);
+            for (var j = 0; j < innerLength; j++) {
+	            innerArray[j] = Math.round(random(1000, 5000));
+            }
+            outerArray[i] = innerArray;
+        }
+        return outerArray;
+    }();
+    /**/
+
+    Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfInitializer.initialize(model);
+    assertEquals(group.items.hasDefaultValue, "set by initializer", "/groupMap[g01]/items/has_default_value");
+
     return model;
 }
 
@@ -103,12 +140,12 @@ function verifyCreatedFile(netcdf, model) {
         assertEquals(actualIntMap[key], expectedIntMap[key], key);
 	}
 
-    /*
+    /**/
     var expectedVarLength = model.varLength;
     var actualVarLength = netcdf.varLength;
     assertNotNull(actualVarLength, "/varLength");
     assertTrue(arrayEquals(expectedVarLength.value, actualVarLength.value, true), "/varLength content");
-    */
+    /**/
 }
 
 function editModel(netcdf) {

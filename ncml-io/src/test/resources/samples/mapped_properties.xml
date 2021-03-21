@@ -26,12 +26,15 @@
     xsi:schemaLocation="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2
                       https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
   <dimension name="number_of_items" length="10" />
+  <dimension name="variable_length" isVariableLength="true" />
   
   <attribute name="title" type="string" value="Mapped Properties Test" />
 
   <group name="groupMap:g\d+">
     <attribute name="name" type="string" />
-    <variable name="items" shape="number_of_items" type="int" />
+    <variable name="items" shape="number_of_items" type="int">
+      <attribute name="has_default_value" type="string" value="set by initializer" />
+    </variable>
   </group>
   
   <variable name="temperatureMap:temp_.*" type="float">
@@ -40,5 +43,7 @@
   </variable>
   
   <variable name="intMap:int_.*" type="int" />
+
+  <variable name="varLength" type="int" shape="number_of_items variable_length" />
 
 </netcdf>
