@@ -24,58 +24,124 @@ package io.github.hlfsousa.ncml.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import edu.ucar.unidata.netcdf.ncml.Attribute;
 import edu.ucar.unidata.netcdf.ncml.Dimension;
+import edu.ucar.unidata.netcdf.ncml.EnumTypedef;
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Netcdf;
+import edu.ucar.unidata.netcdf.ncml.ObjectFactory;
 import edu.ucar.unidata.netcdf.ncml.Variable;
 import ucar.ma2.IndexIterator;
 import ucar.nc2.NetcdfFile;
 
+/**
+ * Extracts a NetCDF header as XML (NcML) from a file. Tool <a href="">ncgen</a> is only able to extract an XML header
+ * from NetCDF classic model. Use this tool if {@code ncgen} is not a feasible way to get a header.
+ * 
+ * @author Henrique Sousa
+ */
 public class NcmlFromFile {
 
+    private final ObjectFactory objectFactory = new ObjectFactory();
+    
+    /**
+     * Does the extraction from file to XML (JAX-B classes). The result can be further customized before writing to
+     * file.
+     * 
+     * @param netcdfFile the file from which to extract the XML header
+     * @return the header
+     */
     public Netcdf extractHeader(NetcdfFile netcdfFile) {
-        
+
         Netcdf netcdf = new Netcdf();
-        netcdf.getEnumTypedefOrGroupOrDimension().addAll(readAttributes(netcdfFile.getRootGroup()));
+        netcdf.getEnumTypedefOrGroupOrDimension().addAll(readEnumTypeDefs(netcdfFile.getRootGroup()));
+        netcdf.getEnumTypedefOrGroupOrDimension().addAll(readAttributes(netcdfFile.getRootGroup().getAttributes()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readDimensions(netcdfFile.getRootGroup()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readVariables(netcdfFile.getRootGroup()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readGroups(netcdfFile.getRootGroup()));
-        
+
         return netcdf;
     }
-    
+
+    private List<EnumTypedef> readEnumTypeDefs(ucar.nc2.Group group) {
+        List<ucar.nc2.EnumTypedef> enumTypedefs = group.getEnumTypedefs();
+        ArrayList<EnumTypedef> result = new ArrayList<>();
+        for (ucar.nc2.EnumTypedef ncTypedef : enumTypedefs) {
+            EnumTypedef typedef = new EnumTypedef();
+            typedef.setName(ncTypedef.getShortName());
+            typedef.setType(ncTypedef.getBaseType().toString());
+            for (Entry<Integer, String> ncItem : ncTypedef.getMap().entrySet()) {
+                EnumTypedef.Enum item = new EnumTypedef.Enum();
+                item.setKey(ncItem.getKey());
+                item.setContent(ncItem.getValue());
+                typedef.getContent().add(objectFactory.createEnumTypedefEnum(item));
+            }
+        }
+        return result;
+    }
+
     private List<Dimension> readDimensions(ucar.nc2.Group group) {
-        return new ArrayList<>();
+        ArrayList<Dimension> dimensionList = new ArrayList<>();
+        for (ucar.nc2.Dimension ncDimension : group.getDimensions()) {
+            Dimension dimension = new Dimension();
+            dimensionList.add(dimension);
+            dimension.setName(ncDimension.getShortName());
+            if (ncDimension.isUnlimited()) {
+                dimension.setIsUnlimited(true);
+            }
+            if (ncDimension.isVariableLength()) {
+                dimension.setIsVariableLength(true);
+            } else {
+                dimension.setLength(String.valueOf(ncDimension.getLength()));
+            }
+        }
+        return dimensionList;
     }
-    
+
     private List<Variable> readVariables(ucar.nc2.Group group) {
-        return new ArrayList<>();
+        ArrayList<Variable> variableList = new ArrayList<>();
+        for (ucar.nc2.Variable ncVar : group.getVariables()) {
+            ncVar.setCaching(false);
+            Variable variable = new Variable();
+            variableList.add(variable);
+            variable.setName(ncVar.getShortName());
+            variable.setType(ncVar.getDataType().toString());
+            variable.setShape(ncVar.getDimensionsString());
+            variable.getAttribute().addAll(readAttributes(ncVar.getAttributes()));
+        }
+        return variableList;
     }
-    
+
     private List<Group> readGroups(ucar.nc2.Group parentGroup) {
         ArrayList<Group> groups = new ArrayList<>();
         for (ucar.nc2.Group ncGroup : parentGroup.getGroups()) {
             Group group = new Group();
             groups.add(group);
-            group.getEnumTypedefOrDimensionOrVariable().addAll(readAttributes(ncGroup));
+            group.setName(ncGroup.getShortName());
+            group.getEnumTypedefOrDimensionOrVariable().addAll(readAttributes(ncGroup.getAttributes()));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readDimensions(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readVariables(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readGroups(ncGroup));
+            group.getEnumTypedefOrDimensionOrVariable().addAll(readEnumTypeDefs(ncGroup));
         }
         return groups;
     }
 
-    private List<Attribute> readAttributes(ucar.nc2.Group group) {
+    private List<Attribute> readAttributes(Iterable<ucar.nc2.Attribute> ncAttributes) {
         List<Attribute> attributes = new ArrayList<>();
-        for (ucar.nc2.Attribute ncAttribute : group.getAttributes()) {
+        for (ucar.nc2.Attribute ncAttribute : ncAttributes) {
             Attribute attribute = new Attribute();
-            attribute.setIsUnsigned(ncAttribute.isUnsigned());
+            attribute.setName(ncAttribute.getShortName());
+            attributes.add(attribute);
+            if (ncAttribute.isUnsigned()) {
+                attribute.setIsUnsigned(true);
+            }
             attribute.setType(ncAttribute.getDataType().toString());
             if (ncAttribute.getValues() != null && ncAttribute.getValues().getSize() > 0) {
                 if (!ncAttribute.isUnsigned()) {
-                    attribute.setValue(ncAttribute.getValues().toString());
+                    attribute.setValue(ncAttribute.getValues().toString().trim());
                 } else {
                     StringBuilder str = new StringBuilder();
                     IndexIterator idxIterator = ncAttribute.getValues().getIndexIterator();
@@ -86,6 +152,7 @@ public class NcmlFromFile {
                         Long item = idxIterator.getLongNext();
                         str.append(item == null ? null : Long.toUnsignedString(item));
                     }
+                    attribute.setValue(str.toString());
                 }
             }
         }
