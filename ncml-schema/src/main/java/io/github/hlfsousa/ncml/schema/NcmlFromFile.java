@@ -24,22 +24,40 @@ package io.github.hlfsousa.ncml.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import edu.ucar.unidata.netcdf.ncml.Attribute;
 import edu.ucar.unidata.netcdf.ncml.Dimension;
+import edu.ucar.unidata.netcdf.ncml.EnumTypedef;
 import edu.ucar.unidata.netcdf.ncml.Group;
 import edu.ucar.unidata.netcdf.ncml.Netcdf;
+import edu.ucar.unidata.netcdf.ncml.ObjectFactory;
 import edu.ucar.unidata.netcdf.ncml.Variable;
 import ucar.ma2.DataType.Signedness;
 import ucar.ma2.IndexIterator;
-import ucar.nc2.AttributeContainer;
 import ucar.nc2.NetcdfFile;
 
+/**
+ * Extracts a NetCDF header as XML (NcML) from a file. Tool <a href="">ncgen</a> is only able to extract an XML header
+ * from NetCDF classic model. Use this tool if {@code ncgen} is not a feasible way to get a header.
+ * 
+ * @author Henrique Sousa
+ */
 public class NcmlFromFile {
 
+    private final ObjectFactory objectFactory = new ObjectFactory();
+    
+    /**
+     * Does the extraction from file to XML (JAX-B classes). The result can be further customized before writing to
+     * file.
+     * 
+     * @param netcdfFile the file from which to extract the XML header
+     * @return the header
+     */
     public Netcdf extractHeader(NetcdfFile netcdfFile) {
 
         Netcdf netcdf = new Netcdf();
+        netcdf.getEnumTypedefOrGroupOrDimension().addAll(readEnumTypeDefs(netcdfFile.getRootGroup()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readAttributes(netcdfFile.getRootGroup().attributes()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readDimensions(netcdfFile.getRootGroup()));
         netcdf.getEnumTypedefOrGroupOrDimension().addAll(readVariables(netcdfFile.getRootGroup()));
@@ -48,12 +66,29 @@ public class NcmlFromFile {
         return netcdf;
     }
 
+    private List<EnumTypedef> readEnumTypeDefs(ucar.nc2.Group group) {
+        List<ucar.nc2.EnumTypedef> enumTypedefs = group.getEnumTypedefs();
+        ArrayList<EnumTypedef> result = new ArrayList<>();
+        for (ucar.nc2.EnumTypedef ncTypedef : enumTypedefs) {
+            EnumTypedef typedef = new EnumTypedef();
+            typedef.setName(ncTypedef.getShortName());
+            typedef.setType(ncTypedef.getBaseType().toString());
+            for (Entry<Integer, String> ncItem : ncTypedef.getMap().entrySet()) {
+                EnumTypedef.Enum item = new EnumTypedef.Enum();
+                item.setKey(ncItem.getKey());
+                item.setContent(ncItem.getValue());
+                typedef.getContent().add(objectFactory.createEnumTypedefEnum(item));
+            }
+        }
+        return result;
+    }
+
     private List<Dimension> readDimensions(ucar.nc2.Group group) {
         ArrayList<Dimension> dimensionList = new ArrayList<>();
         for (ucar.nc2.Dimension ncDimension : group.getDimensions()) {
             Dimension dimension = new Dimension();
             dimensionList.add(dimension);
-            dimension.setName(ncDimension.getName());
+            dimension.setName(ncDimension.getShortName());
             if (ncDimension.isUnlimited()) {
                 dimension.setIsUnlimited(true);
             }
@@ -90,6 +125,7 @@ public class NcmlFromFile {
             group.getEnumTypedefOrDimensionOrVariable().addAll(readDimensions(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readVariables(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readGroups(ncGroup));
+            group.getEnumTypedefOrDimensionOrVariable().addAll(readEnumTypeDefs(ncGroup));
         }
         return groups;
     }
