@@ -273,7 +273,7 @@ $!{customContent.additionalFields}##
   #foreach($varWrapper in $group.variables)
     #set($property = ${varWrapper.camelCase($varWrapper.name)})
     #set($arrayVariable = !$varWrapper.scalar)
-    #if($varWrapper.attributes.empty && $varWrapper.shapeBrackets.empty)
+    #if($varWrapper.attributes.empty && $varWrapper.dimensions.empty)
       #findType($varWrapper.scaledType $varWrapper.unsigned $arrayVariable)
       #if($varWrapper.mapped)
     @SuppressWarnings("unchecked")
