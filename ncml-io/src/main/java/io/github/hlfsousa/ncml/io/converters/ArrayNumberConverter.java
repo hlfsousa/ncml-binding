@@ -123,12 +123,12 @@ public class ArrayNumberConverter implements Converter<Object> {
 
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
+        Class<?> componentType = ArrayUtils.getComponentType(toType);
+        boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType;
         // shape=1 to scalar
         if (toType.isArray()) {
             int[] shape = array.getShape();
-            Class<?> componentType = ArrayUtils.getComponentType(toType);
             Object javaArray = ArrayUtils.createArray(shape, componentType);
-            boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType;
             int[] address = new int[shape.length];
             IndexIterator idxIterator = array.getIndexIterator();
             do {
@@ -141,7 +141,11 @@ public class ArrayNumberConverter implements Converter<Object> {
             return javaArray;
         } else {
             assert array.getSize() == 1 : array.shapeToString();
-            return array.getObject(0);
+            Object scalarValue = array.getObject(0);
+            if (assumeUnsigned) {
+                scalarValue = toUnsigned(scalarValue);
+            }
+            return scalarValue;
         }
     }
 
