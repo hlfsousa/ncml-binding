@@ -121,10 +121,22 @@ public class ArrayNumberConverter implements Converter<Object> {
         }
     }
 
+    private Class<?> primitive(Class<?> type) {
+        if (type.isPrimitive()) {
+            return type;
+        }
+        try {
+            return (Class<?>) type.getField("TYPE").get(null);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            throw new IllegalStateException("Unable to get TYPE field from " + type + ". Expected Number.", e);
+        }
+    }
+
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
         Class<?> componentType = ArrayUtils.getComponentType(toType);
-        boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType;
+        boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType
+                && array.getDataType().getPrimitiveClassType() != primitive(componentType);
         // shape=1 to scalar
         if (toType.isArray()) {
             int[] shape = array.getShape();
