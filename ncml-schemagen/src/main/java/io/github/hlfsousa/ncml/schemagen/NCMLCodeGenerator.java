@@ -209,8 +209,10 @@ public class NCMLCodeGenerator {
         AbstractGroupWrapper rootGroup = new SchemaWrapper(schema, modelPackage, rootGroupName, properties);
         rootGroup.initializeConfiguration(initialConfiguration);
         generate(rootGroup, destination);
-        try (FileWriter writer = new FileWriter(properties.getProperty(
-                CFG_PROPERTIES_LOCATION, DEFAULT_PROPERTIES_LOCATION))) {
+        File configFile = new File(properties.getProperty(
+                CFG_PROPERTIES_LOCATION, DEFAULT_PROPERTIES_LOCATION));
+        configFile.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(configFile)) {
             initialConfiguration.store(writer, "Initial configuration");
         }
         initialConfiguration = null;
