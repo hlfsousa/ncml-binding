@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.function.BiFunction;
@@ -211,7 +212,9 @@ public class NCMLCodeGenerator {
         generate(rootGroup, destination);
         File configFile = new File(properties.getProperty(
                 CFG_PROPERTIES_LOCATION, DEFAULT_PROPERTIES_LOCATION));
-        configFile.getParentFile().mkdirs();
+        Optional.ofNullable(configFile)
+                .map(f -> f.getParentFile())
+                .ifPresent(File::mkdirs);
         try (FileWriter writer = new FileWriter(configFile)) {
             initialConfiguration.store(writer, "Initial configuration");
         }
