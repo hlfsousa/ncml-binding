@@ -4,7 +4,7 @@
 
   <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
-  <version>0.5.1-downgraded-SNAPSHOT</version>
+  <version>0.5.2-downgraded-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>NcML Binding</name>
@@ -196,6 +196,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <doclint>none</doclint>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -245,6 +248,5 @@
     <module>ncml-annotation</module>
     <module>ncml-io</module>
     <module>ncml-schemagen</module>
-    <module>ncml-binding-examples</module>
   </modules>
 </project>
