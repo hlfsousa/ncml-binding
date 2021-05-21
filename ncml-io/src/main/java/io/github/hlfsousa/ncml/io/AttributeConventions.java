@@ -79,17 +79,15 @@ public class AttributeConventions {
     public static enum ArrayScaling {
         TO_RAW {
             @Override
-            public Array transform(Array scaledArray, Number scaleFactor, Number addOffset, Number missingValue) {
-                Array rawArray = Array.factory(
-                        missingValue != null ? DataType.getType(missingValue.getClass()) : DataType.SHORT,
-                        scaledArray.getShape());
+            public Array transform(DataType dataType, Array scaledArray, Number scaleFactor, Number addOffset, Number missingValue) {
+                Array rawArray = Array.factory(dataType, scaledArray.getShape());
                 for (IndexIterator writeIt = rawArray.getIndexIterator(), readIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
                     double scaledValue = readIt.getDoubleNext();
                     if (missingValue != null && Double.isNaN(scaledValue)) {
                         writeIt.setShortNext(missingValue.shortValue());
                     } else {
-                        writeIt.setIntNext((int) Math.round(
+                        writeIt.setLongNext(Math.round(
                                 (scaledValue - addOffset.doubleValue()) / scaleFactor.doubleValue()));
                     }
                 }
@@ -98,7 +96,7 @@ public class AttributeConventions {
         },
         TO_SCALED {
             @Override
-            public Array transform(Array rawArray, Number scaleFactor, Number addOffset, Number missingValue) {
+            public Array transform(DataType dataType, Array rawArray, Number scaleFactor, Number addOffset, Number missingValue) {
                 Array scaledArray = Array.factory(DataType.getType(scaleFactor.getClass()), rawArray.getShape());
                 for (IndexIterator readIt = rawArray.getIndexIterator(), writeIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
@@ -113,7 +111,7 @@ public class AttributeConventions {
             }
         };
 
-        public abstract Array transform(Array arrayValue, Number scaleFactor, Number addOffset, Number missingValue);
+        public abstract Array transform(DataType dataType, Array arrayValue, Number scaleFactor, Number addOffset, Number missingValue);
 
     }
 
@@ -166,7 +164,8 @@ public class AttributeConventions {
                             + " must be numeric";
                     addOffset = addOffsetAttribute.getNumericValue();
                 }
-                value = scaling.transform(value, scaleFactor, addOffset, missingValue);
+                DataType dataType = variable.getDataType();
+                value = scaling.transform(dataType, value, scaleFactor, addOffset, missingValue);
             }
             return value;
         } catch (IOException e) {

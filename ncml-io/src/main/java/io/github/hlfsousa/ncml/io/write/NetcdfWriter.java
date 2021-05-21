@@ -85,8 +85,8 @@ public class NetcdfWriter {
     
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
-    private ConvertUtils convertUtils = ConvertUtils.getInstance();
-    private RuntimeConfiguration runtimeConfiguration;
+    protected ConvertUtils convertUtils = ConvertUtils.getInstance();
+    protected final RuntimeConfiguration runtimeConfiguration;
 
     private boolean defaultAttributeValueUsed;
     private boolean closeAfterCreation;
@@ -600,22 +600,22 @@ public class NetcdfWriter {
         }
         
         try {
-        Array ncArray;
-        if (varValue instanceof Array) {
-            ncArray = (Array)varValue;
-        } else {
-            if (variable.isVariableLength()) {
-                ncArray = new VLenNumberConverter().toArray(varValue, variableDecl);
+            Array ncArray;
+            if (varValue instanceof Array) {
+                ncArray = (Array)varValue;
             } else {
-                ncArray = convertUtils.toArray(varValue, variableDecl);
+                if (variable.isVariableLength()) {
+                    ncArray = new VLenNumberConverter().toArray(varValue, variableDecl);
+                } else {
+                    ncArray = convertUtils.toArray(varValue, variableDecl);
+                }
             }
-        }
-        
-        if (ncArray != null && !variable.isVariableLength()) {
-            ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
-        }
-        
-        writer.write(variable, ncArray);
+
+            if (ncArray != null && !variable.isVariableLength()) {
+                ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
+            }
+
+            writer.write(variable, ncArray);
         } catch (Exception e) {
             throw new IllegalStateException("Error writing variable " + variable.getShortName(), e);
         }

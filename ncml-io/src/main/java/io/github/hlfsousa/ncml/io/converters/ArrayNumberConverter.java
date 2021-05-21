@@ -46,6 +46,14 @@ public class ArrayNumberConverter implements Converter<Object> {
             return DataType.INT;
         } else if (componentType == BigInteger.class) {
             return DataType.LONG;
+        } else if (componentType == Float.class || componentType == float.class) {
+            /* NetCDF does not support BigDecimal as number (at some point we must stop value expansion). We assume here
+             * that declaring unsigned decimal is a matter of semantics, and do not actually do any conversion. This
+             * could cause an overflow, and that would require using a language that supports unsigned types natively.
+             */
+            return DataType.FLOAT;
+        } else if (componentType == Double.class || componentType == double.class) {
+            return DataType.DOUBLE;
         }
         throw new IllegalArgumentException(componentType.getName());
     }
@@ -62,6 +70,9 @@ public class ArrayNumberConverter implements Converter<Object> {
         }
         if (signed instanceof Long) {
             return new BigInteger(Long.toUnsignedString(((Number) signed).longValue()));
+        }
+        if (signed instanceof Float || signed instanceof Double) {
+            return (Number) signed;
         }
         throw new IllegalArgumentException(signed.getClass().getName());
     }

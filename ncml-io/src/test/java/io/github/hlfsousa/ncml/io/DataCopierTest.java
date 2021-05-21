@@ -115,9 +115,7 @@ public class DataCopierTest {
     @Test
     public void testCopyFromHeader() throws Exception {
         File tmpFile = File.createTempFile("cami_header", ".nc");
-        File logFile = File.createTempFile("output", ".log");
         tmpFile.deleteOnExit();
-        logFile.delete();
         ProcessBuilder ncgenBuilder = new ProcessBuilder("ncgen", "-o", tmpFile.getPath(),
                 "../ncml-binding-examples/samples/cami_0000-09-01_64x128_L26_c030918.cdl");
         ncgenBuilder.inheritIO();
