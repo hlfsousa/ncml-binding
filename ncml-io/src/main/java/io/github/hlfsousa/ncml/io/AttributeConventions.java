@@ -93,6 +93,16 @@ public class AttributeConventions {
                 }
                 return rawArray;
             }
+
+            @Override
+            public void substituteMissingValues(Variable variable, Array value, Object missingValue) {
+                IndexIterator iterator = value.getIndexIterator();
+                while (iterator.hasNext()) {
+                    if (iterator.getObjectNext() == null) {
+                        iterator.setObjectCurrent(missingValue);
+                    }
+                }
+            }
         },
         TO_SCALED {
             @Override
@@ -109,9 +119,24 @@ public class AttributeConventions {
                 }
                 return scaledArray;
             }
+
+            @Override
+            public void substituteMissingValues(Variable variable, Array value, Object missingValue) {
+                if (missingValue == null) {
+                    return;
+                }
+                IndexIterator iterator = value.getIndexIterator();
+                while (iterator.hasNext()) {
+                    if (missingValue.equals(iterator.getObjectNext())) {
+                        iterator.setObjectCurrent(null);
+                    }
+                }
+            }
         };
 
         public abstract Array transform(DataType dataType, Array arrayValue, Number scaleFactor, Number addOffset, Number missingValue);
+
+        public abstract void substituteMissingValues(Variable variable, Array value, Object missingValue);
 
     }
 
@@ -145,12 +170,15 @@ public class AttributeConventions {
             if (value == null) {
                 value = variable.read();
             }
-            Number missingValue = null;
             Attribute missingValueAttribute = variable.findAttribute(convention.getMissingValueAttributeName());
+            Number missingValue = null;
             if (missingValueAttribute != null) {
-                assert !missingValueAttribute.isString() : convention.getMissingValueAttributeName()
-                        + " must be numeric";
-                missingValue = missingValueAttribute.getNumericValue();
+                if (!variable.getDataType().isNumeric()) {
+                    scaling.substituteMissingValues(variable, value, missingValueAttribute.getValue(0));
+                    return value;
+                }
+                missingValue = missingValueAttribute.getNumericValue(); // number or numeric string (implicit type)
+                assert missingValue != null : convention.getMissingValueAttributeName() + " must be numeric";
             }
             Attribute scaleFactorAttribute = variable.findAttribute(convention.getScaleFactorAttributeName());
             if (value != null && scaleFactorAttribute != null) {
