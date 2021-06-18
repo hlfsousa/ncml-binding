@@ -4,7 +4,7 @@
 
   <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
-  <version>0.5.2-downgraded-SNAPSHOT</version>
+  <version>0.5.2-downgraded</version>
   <packaging>pom</packaging>
 
   <name>NcML Binding</name>
