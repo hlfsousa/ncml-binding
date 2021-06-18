@@ -69,6 +69,14 @@ function createModel(model) {
     model.someString = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.SomeStringVO();
     model.someString.value = "this is a string";
 
+    model.someOtherString = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.SomeOtherStringVO();
+    model.someOtherString.value = function() {
+	    var value = new StringArray(1);
+	    value[0] = "single value";
+        return value;
+    }();
+    Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfInitializer.SomeOtherStringInitializer.initialize(model.someOtherString);
+
     model.stringArray = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.StringArrayVO();
     model.stringArray.value = function() {
 	    var value = new StringArray(10);
@@ -130,6 +138,15 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
     assertNotNull(actualStringArray, "/stringArray");
     assertNotNull(actualStringArray.value, "/stringArray.value");
     assertTrue(arrayEquals(expectedStringArray.value, actualStringArray.value), "/stringArray.value");
+
+    var expectedOtherString = model.someOtherString;
+    var actualOtherString = netcdf.someOtherString;
+    assertNotNull(actualOtherString, "/someOtherString");
+    assertNotNull(actualOtherString.dimensions, "/someOtherString[dimensions exist]");
+    assertTrue(actualOtherString.dimensions.length > 0, "/someOtherString[dimensions > 0]");
+    assertEquals(actualOtherString.dimensions[0].length, 1, "/someOtherString[dim.length]");
+    assertNotNull(actualOtherString.value, "/someOtherString.value");
+    assertTrue(arrayEquals(expectedOtherString.value, actualOtherString.value), "/someOtherString.value");
 }
 
 function editModel(netcdf) {

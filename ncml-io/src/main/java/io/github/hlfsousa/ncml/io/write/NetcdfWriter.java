@@ -424,6 +424,10 @@ public class NetcdfWriter {
             CDLVariable variableDecl, Object varModel)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         name = runtimeConfiguration.getRuntimeName(group, name);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating variable '{}' from {}.{} {}", name, accessor.getDeclaringClass().getName(),
+                    accessor.getName(), variableDecl);
+        }
         Object varValue;
         Class<?> javaType;
         Class<?> variableType = accessor.getReturnType();
@@ -439,6 +443,7 @@ public class NetcdfWriter {
             final Method getValue = varModel.getClass().getMethod("getValue");
             varValue = getValue.invoke(varModel);
             if (varValue == null) {
+                LOGGER.debug("Variable {} skipped because value is null", name);
                 return;
             }
             javaType = getValue.getReturnType();
@@ -468,6 +473,15 @@ public class NetcdfWriter {
             }
         }
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
+        {
+            Variable duplicate = group.findVariable(name);
+            if (duplicate != null) {
+                LOGGER.warn(
+                        "duplicate variable declaration for {} found, this should not happen. Make sure there are no name clashes at {}",
+                        name, varModel.getClass().getName());
+                return;
+            }
+        }
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
         if (accessor.getReturnType().isInterface()) {
             createVariableStructure(writer, variable, varModel);
