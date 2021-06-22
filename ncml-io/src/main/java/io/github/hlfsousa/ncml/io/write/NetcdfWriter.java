@@ -50,6 +50,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLDimension;
 import io.github.hlfsousa.ncml.annotation.CDLDimensions;
@@ -206,6 +208,7 @@ public class NetcdfWriter {
                         if (!(entryValue instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
                             return;
                         }
+                        LOGGER.debug("Collect dimensions for variable {}{}", localPath, varEntry.getKey());
                         collectVariableDimensions(declaredDimensions, usedDimensions, localPath, variableAnnotation, entryValue);
                     }
                     return;
@@ -213,7 +216,7 @@ public class NetcdfWriter {
                 else if (!(value instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
                     return;
                 }
-                
+                LOGGER.debug("Collect dimensions for variable {}{}", localPath, variableAnnotation.name());
                 collectVariableDimensions(declaredDimensions, usedDimensions, localPath, variableAnnotation, value);
                 return;
             }
@@ -226,9 +229,13 @@ public class NetcdfWriter {
         io.github.hlfsousa.ncml.declaration.Variable<?> variable = (io.github.hlfsousa.ncml.declaration.Variable<?>) value;
         if (variable.getDimensions() != null) {
             for (Dimension dimension : variable.getDimensions()) {
-                updateDimension(declaredDimensions, localPath, dimension);
+                Integer previousLength = updateDimension(declaredDimensions, localPath, dimension);
                 if (variable.getValue() != null) {
-                    usedDimensions.add(dimension.getShortName());
+                    if (!usedDimensions.add(dimension.getShortName()) && previousLength != null && !previousLength.equals(dimension.getLength())) {
+                        throw new IllegalStateException(
+                                "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
+                                        + dimension + ", previously declared as length = " + previousLength);
+                    }
                 }
             }
         } else if (variableAnnotation.shape().length > 0) {
@@ -242,13 +249,18 @@ public class NetcdfWriter {
                             throw new IllegalStateException("Immutable dimension at " + localPath);
                         }
                         Dimension declared = findDimension(name, declaredDimensions, localPath);
-                        usedDimensions.add(declared.getShortName());
+                        boolean newDimension = usedDimensions.add(declared.getShortName());
                         if (declared.isVariableLength()) {
                             continue; // variable length must be -1
                         }
-                        updateDimension(declaredDimensions, localPath, new Dimension(name, length,
+                        Integer previousLength = updateDimension(declaredDimensions, localPath, new Dimension(name, length,
                                 declared.isShared() && !declared.isVariableLength(), declared.isUnlimited(),
                                 declared.isVariableLength()));
+                        if (!newDimension && previousLength != null && !previousLength.equals(length)) {
+                            throw new IllegalStateException(
+                                    "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
+                                            + name + "=" + length + ", previously declared as length = " + previousLength);
+                        }
                         if (varValue.getClass().isArray()) {
                             varValue = java.lang.reflect.Array.get(varValue, 0); // to get next dimension
                         }
@@ -274,9 +286,10 @@ public class NetcdfWriter {
         return null;
     }
     
-    private void updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
+    private Integer updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
             Dimension dimension) {
         String scope = localPath;
+        Integer previousValue = null;
         while (!scope.equals("")) {
             List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
             boolean found = false;
@@ -289,8 +302,9 @@ public class NetcdfWriter {
                         LOGGER.debug("Dropping declared dimension for replacement: {}", existing);
                         dimIterator.remove();
                         found = true;
+                        previousValue = existing.getLength();
                     } else {
-                        return;
+                        return previousValue;
                     }
                 }
             }
@@ -298,7 +312,7 @@ public class NetcdfWriter {
                 // add dimension to list
                 LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
                 dimensionsInScope.add(dimension);
-                return;
+                return previousValue;
             }
             scope = scope.replaceAll("[^/]*+/$", "");
         }
@@ -306,7 +320,7 @@ public class NetcdfWriter {
         List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>());
         LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
         dimensionsInScope.add(dimension);
-
+        return previousValue;
     }
 
     private Set<Class<?>> getFullHierarchy(Object obj) {
