@@ -74,11 +74,18 @@ public class ArrayStringConverter implements Converter<Object> {
         // shape=1 to scalar
         if (toType.isArray()) {
             if (array.getDataType() == DataType.OBJECT) {
-                Object javaArray = ArrayUtils.createArray(array.getShape(), String.class);
+                /* Some people (insert adjectives) think it's okay to declare a 1-dimensional array and remove the
+                 * dimension if there is only one item, making it a scalar value. If we expect an array but get a
+                 * scalar, we work around it by saying the shape is 1. This should hammer things back on track. */
+                int[] shape = array.getShape();
+                if (array.getRank() == 0) {
+                    shape = new int[] { 1 };
+                }
+                Object javaArray = ArrayUtils.createArray(shape, String.class);
                 IndexIterator idx = array.getIndexIterator();
                 while (idx.hasNext()) {
                     String value = (String) idx.getObjectNext();
-                    ArrayUtils.setElement(javaArray, idx.getCurrentCounter(), value);
+                    ArrayUtils.setElement(javaArray, array.getRank() == 0 ? new int[] { 0 } : idx.getCurrentCounter(), value);
                 }
                 return javaArray;
             } else {

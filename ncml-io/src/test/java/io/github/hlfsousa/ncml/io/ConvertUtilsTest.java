@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayInt;
 import ucar.ma2.ArrayObject;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
@@ -147,6 +148,24 @@ public class ConvertUtilsTest {
         }
         revertedValue = convertUtils.toJavaObject(ncArray, String[].class);
         assertThat(revertedValue, is(javaArray));
+    }
+    
+    @Test
+    public void testScalarToArrayString() throws Exception {
+        String scalarValue = "scalarValue";
+        Array ncArray = new ArrayObject.D0(Object.class);
+        ncArray.setObject(Index.scalarIndexImmutable, scalarValue);
+        String[] revertedValue = convertUtils.toJavaObject(ncArray, String[].class);
+        assertThat(revertedValue, is(new String[] { scalarValue }));
+    }
+    
+    @Test
+    public void testScalarToArrayInteger() throws Exception {
+        int scalarValue = 42;
+        Array ncArray = new ArrayInt.D0();
+        ncArray.setObject(Index.scalarIndexImmutable, scalarValue);
+        int[] revertedValue = convertUtils.toJavaObject(ncArray, int[].class);
+        assertThat(revertedValue, is(new int[] { scalarValue }));
     }
     
     @Test

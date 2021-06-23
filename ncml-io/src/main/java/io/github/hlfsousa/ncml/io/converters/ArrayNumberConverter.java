@@ -151,6 +151,12 @@ public class ArrayNumberConverter implements Converter<Object> {
         // shape=1 to scalar
         if (toType.isArray()) {
             int[] shape = array.getShape();
+            /* Some people (insert adjectives) think it's okay to declare a 1-dimensional array and remove the
+             * dimension if there is only one item, making it a scalar value. If we expect an array but get a
+             * scalar, we work around it by saying the shape is 1. This should hammer things back on track. */
+            if (array.getRank() == 0) {
+                shape = new int[] { 1 };
+            }
             Object javaArray = ArrayUtils.createArray(shape, componentType);
             int[] address = new int[shape.length];
             IndexIterator idxIterator = array.getIndexIterator();
@@ -189,7 +195,8 @@ public class ArrayNumberConverter implements Converter<Object> {
 
     @Override
     public boolean isApplicable(Array array) {
-        return array.getRank() > 0 && array.getDataType().isNumeric() || array.getDataType() == DataType.CHAR;
+        // array rank check removed to deal with the shortcomings of client code
+        return array.getDataType().isNumeric() || array.getDataType() == DataType.CHAR;
     }
 
 }
