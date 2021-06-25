@@ -231,7 +231,7 @@ public class NetcdfWriter {
             for (Dimension dimension : variable.getDimensions()) {
                 Integer previousLength = updateDimension(declaredDimensions, localPath, dimension);
                 if (variable.getValue() != null) {
-                    if (!usedDimensions.add(dimension.getShortName()) && previousLength != null && !previousLength.equals(dimension.getLength())) {
+                    if (!usedDimensions.add(getFullName(dimension, localPath, declaredDimensions)) && previousLength != null && !previousLength.equals(dimension.getLength())) {
                         throw new IllegalStateException(
                                 "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
                                         + dimension + ", previously declared as length = " + previousLength);
@@ -249,7 +249,7 @@ public class NetcdfWriter {
                             throw new IllegalStateException("Immutable dimension at " + localPath);
                         }
                         Dimension declared = findDimension(name, declaredDimensions, localPath);
-                        boolean newDimension = usedDimensions.add(declared.getShortName());
+                        boolean newDimension = usedDimensions.add(getFullName(declared, localPath, declaredDimensions));
                         if (declared.isVariableLength()) {
                             continue; // variable length must be -1
                         }
@@ -322,6 +322,22 @@ public class NetcdfWriter {
         dimensionsInScope.add(dimension);
         return previousValue;
     }
+    
+    private String getFullName(Dimension dimension, String localPath, Map<String, List<Dimension>> declaredDimensions) {
+        String scope = localPath;
+        while (!scope.equals("")) {
+            List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
+            boolean found = false;
+            for (Iterator<Dimension> dimIterator = dimensionsInScope.iterator(); dimIterator.hasNext() && !found; ) {
+                Dimension existing = dimIterator.next();
+                if (existing.getShortName().equals(dimension.getShortName())) {
+                    return scope + existing.getShortName();
+                }
+            }
+            scope = scope.replaceAll("[^/]*+/$", "");
+        }
+        return null;
+    }
 
     private Set<Class<?>> getFullHierarchy(Object obj) {
         Set<Class<?>> hierarchy = new LinkedHashSet<>();
@@ -342,14 +358,18 @@ public class NetcdfWriter {
 
     private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model,
             Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
-        String fullName = group.getFullName() + "/";
-        if (!fullName.startsWith("/")) {
-            fullName = '/' + fullName;
+        String groupFullName;
+        {
+            String fullName = group.getFullName() + "/";
+            if (!fullName.startsWith("/")) {
+                fullName = '/' + fullName;
+            }
+            groupFullName = fullName;
         }
-        List<Dimension> dimensions = declaredDimensions.get(fullName);
+        List<Dimension> dimensions = declaredDimensions.get(groupFullName);
         if (dimensions != null) {
             dimensions.stream()
-                    .filter(dim -> usedDimensions.contains(dim.getShortName()))
+                    .filter(dim -> usedDimensions.contains(groupFullName + dim.getShortName()))
                     .filter(dim -> dim.isShared())
                     .forEach(group::addDimension);
         }
