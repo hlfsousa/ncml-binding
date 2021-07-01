@@ -85,7 +85,7 @@ public class AttributeConventions {
                         readIt.hasNext();) {
                     double scaledValue = readIt.getDoubleNext();
                     if (missingValue != null && Double.isNaN(scaledValue)) {
-                        writeIt.setShortNext(missingValue.shortValue());
+                        writeIt.setLongNext(missingValue.longValue());
                     } else {
                         writeIt.setLongNext(Math.round(
                                 (scaledValue - addOffset.doubleValue()) / scaleFactor.doubleValue()));
