@@ -54,11 +54,11 @@ public class NcmlFromFileTest {
 
     @Test
     public void testExtractHeader() throws Exception {
-        try (NetcdfFile testFile = NetcdfFiles.open("src/test/resources/ECMWF_ERA-40_subset.nc")) {
+        try (NetcdfFile testFile = NetcdfFiles.open("../ncml-io/src/test/resources/samples/ECMWF_ERA-40_subset.nc")) {
             NcmlFromFile extractor = new NcmlFromFile();
             Netcdf header = extractor.extractHeader(testFile);
             
-            Netcdf expectedHeader = readHeader("src/test/resources/ECMWF_ERA-40_subset.xml");
+            Netcdf expectedHeader = readHeader("../ncml-io/src/test/resources/samples/ECMWF_ERA-40_subset.xml");
             verifyAttributes("", mapChildren(header.getEnumTypedefOrGroupOrDimension(), Attribute.class, att -> att.getName()),
                     mapChildren(expectedHeader.getEnumTypedefOrGroupOrDimension(), Attribute.class, att -> att.getName()));
             verifyVariables("", mapChildren(header.getEnumTypedefOrGroupOrDimension(), Variable.class, var -> var.getName()),
@@ -114,8 +114,11 @@ public class NcmlFromFileTest {
     private void verify(String path, Attribute actual, Attribute expected) {
         assertThat(path, actual.getName(), is(expected.getName()));
         assertThat(path, actual.getType(), is(expected.getType()));
-        assertThat(path, actual.isIsUnsigned(), expected.isIsUnsigned() != null && expected.isIsUnsigned() ? is(true)
-                : either(is(false)).or(nullValue()));
+        // either(...) does not work for some reason, but a simple is() is good for now
+        //assertThat(path, actual.isIsUnsigned(),
+        //        is((expected.isIsUnsigned() != null && expected.isIsUnsigned()) ? is(true)
+        //                : either(is(false)).or(is(nullValue()))));
+        assertThat(path, actual.isIsUnsigned(), is(expected.isIsUnsigned()));
         assertThat(path, actual.getSeparator(), is(expected.getSeparator()));
         if (Arrays.asList("float", "double").contains(actual.getType())) {
             // precision in the file is not necessarily the same
