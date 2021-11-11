@@ -4,7 +4,7 @@
 
   <groupId>io.github.hlfsousa</groupId>
   <artifactId>ncml-binding</artifactId>
-  <version>0.5.4-downgraded-SNAPSHOT</version>
+  <version>0.5.4</version>
   <packaging>pom</packaging>
 
   <name>NcML Binding</name>
@@ -35,7 +35,7 @@
     <connection>scm:git:git://github.com/hlfsousa/ncml-binding.git</connection>
     <developerConnection>scm:git:ssh://github.com/hlfsousa/ncml-binding.git</developerConnection>
     <url>http://github.com/hlfsousa/ncml-binding/tree/master</url>
-    <tag>HEAD</tag>
+    <tag>ncml-binding-0.5.4</tag>
   </scm>
 
   <properties>
