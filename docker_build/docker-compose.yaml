@@ -1,0 +1,7 @@
+version: "3"
+services:
+  maven:
+    build:
+      context: .
+    volumes:
+      - ..:/code
