@@ -52,6 +52,9 @@ public class ScalarNumberConverter implements Converter<Number> {
             numericArray = Array.factory(dataType, new int[] {1});
             numericArray.setObject(0, value);
         }
+        if (unsigned) {
+            numericArray.setUnsigned(true);
+        }
         return numericArray;
     }
 

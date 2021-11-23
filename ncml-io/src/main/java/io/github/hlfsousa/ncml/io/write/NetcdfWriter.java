@@ -50,8 +50,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
-
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLDimension;
 import io.github.hlfsousa.ncml.annotation.CDLDimensions;
@@ -391,14 +389,7 @@ public class NetcdfWriter {
             }
             name = runtimeConfiguration.getRuntimeName(parent, name);
             String attributeName = name;
-            DataType dataType = null;
             Array attributeValue;
-            if (attributeDecl.dataType() != null && !attributeDecl.dataType().isEmpty()) {
-                dataType = DataType.getType(attributeDecl.dataType());
-                if (attributeDecl.unsigned()) {
-                    dataType = DataType.getType(dataType.getPrimitiveClassType());
-                }
-            }
             try {
                 Object value = accessor.invoke(model);
                 if (value == null && defaultAttributeValueUsed) {
@@ -517,6 +508,7 @@ public class NetcdfWriter {
             }
         }
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
+        variable.setUnsigned(variableDecl.unsigned());
         if (accessor.getReturnType().isInterface()) {
             createVariableStructure(writer, variable, varModel);
         }

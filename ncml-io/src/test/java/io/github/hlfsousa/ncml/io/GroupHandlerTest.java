@@ -40,6 +40,9 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import io.github.hlfsousa.ncml.io.read.GroupHandler;
+import ucar.ma2.Array;
+import ucar.ma2.ArrayString;
+import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
@@ -67,7 +70,9 @@ public class GroupHandlerTest {
         when(childGroup.getShortName()).thenReturn("child_group");
         when(childGroup.getFullName()).thenReturn("child_group");
         when(rootGroup.findAttribute("description")).thenReturn(description);
-        when(description.getStringValue()).thenReturn(DESCRIPTION_ATTRIBUTE_VALUE);
+        Array attributeValues = Array.factory(String.class, Index.scalarIndexImmutable.getShape());
+        attributeValues.setObject(Index.scalarIndexImmutable, DESCRIPTION_ATTRIBUTE_VALUE);
+        when(description.getValues()).thenReturn(attributeValues);
         when(description.getFullName()).thenReturn("description");
         when(childGroup.findVariable("some_variable")).thenReturn(someVariable);
         when(someVariable.getFullName()).thenReturn("child_group/some_variable");

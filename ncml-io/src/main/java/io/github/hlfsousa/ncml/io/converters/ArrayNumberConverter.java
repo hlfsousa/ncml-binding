@@ -86,6 +86,7 @@ public class ArrayNumberConverter implements Converter<Object> {
                 empty = true;
             }
         }
+        Array result;
         if (!empty) {
             if (variableDecl.unsigned()) {
                 Array array = Array.factory(getUnsignedType(ArrayUtils.getComponentType(value.getClass())), shape);
@@ -94,9 +95,9 @@ public class ArrayNumberConverter implements Converter<Object> {
                 do {
                     idxIterator.setObjectNext(ArrayUtils.getElement(value, address));
                 } while (ArrayUtils.increment(address, shape));
-                return array;
+                result = array;
             } else {
-                return Array.factory(value);
+                result = Array.factory(value);
             }
         } else {
             DataType dataType;
@@ -105,8 +106,10 @@ public class ArrayNumberConverter implements Converter<Object> {
             } else {
                 dataType = DataType.getType(variableDecl.dataType());
             }
-            return Array.factory(dataType, shape);
+            result = Array.factory(dataType, shape);
         }
+        result.setUnsigned(variableDecl.unsigned());
+        return result;
     }
     
     @Override
@@ -118,8 +121,9 @@ public class ArrayNumberConverter implements Converter<Object> {
                 empty = true;
             }
         }
+        Array result;
         if (!empty) {
-            return Array.factory(value);
+            result =  Array.factory(value);
         } else {
             DataType dataType = null;
             if (!attributeDecl.dataType().isEmpty()) {
@@ -128,8 +132,10 @@ public class ArrayNumberConverter implements Converter<Object> {
                 Class<?> componentType = ArrayUtils.getComponentType(value.getClass());
                 dataType = DataType.getType(componentType);
             }
-            return Array.factory(dataType, shape);
+            result = Array.factory(dataType, shape);
         }
+        result.setUnsigned(attributeDecl.unsigned());
+        return result;
     }
 
     private Class<?> primitive(Class<?> type) {

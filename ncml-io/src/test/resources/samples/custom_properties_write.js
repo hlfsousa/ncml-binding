@@ -86,6 +86,10 @@ function createModel(model) {
         return value;
     }();
 
+    model.unsignedAttribute = 40000;
+    model.unsignedVariable = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.UnsignedVariableVO();
+    model.unsignedVariable.value = 200;
+
     return model;
 }
 
@@ -147,6 +151,10 @@ function verifyCreatedFile(netcdf, model, lowLevelCheck) {
     assertEquals(actualOtherString.dimensions[0].length, 1, "/someOtherString[dim.length]");
     assertNotNull(actualOtherString.value, "/someOtherString.value");
     assertTrue(arrayEquals(expectedOtherString.value, actualOtherString.value), "/someOtherString.value");
+
+    assertEquals(netcdf.unsignedAttribute, 40000, "/@unsignedAttribute");
+    assertNotNull(netcdf.unsignedVariable, "/unsignedVariable");
+    assertEquals(netcdf.unsignedVariable.value, 200, "/unsignedVariable");
 }
 
 function editModel(netcdf) {

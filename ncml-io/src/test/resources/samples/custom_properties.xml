@@ -57,5 +57,12 @@
   
   <variable name="someOtherString" type="string" shape="non_scalar" />
   <variable name="stringArray" type="string" shape="number_of_items" />
-
+  
+  <variable name="unsignedVariable" type="byte">
+    <attribute name="_Unsigned" value="true" />
+    <attribute name="referenceValue" type="byte" isUnsigned="true" value="200" />
+  </variable>
+  
+  <attribute name="unsignedAttribute" type="short" isUnsigned="true" />
+ 
 </netcdf>

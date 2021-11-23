@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
+import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
-import io.github.hlfsousa.ncml.io.converters.ArrayNumberConverter;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -81,6 +81,7 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
 
     }
 
+    protected final ConvertUtils convertUtils = ConvertUtils.getInstance();
     protected final T node;
     protected final boolean readOnly;
     protected final Map<String, Object> values = new LinkedHashMap<>();
@@ -183,21 +184,7 @@ public abstract class AbstractCDMNodeHandler<T extends CDMNode> {
             }
             return null;
         }
-        if (method.getReturnType().isEnum()) {
-            throw new UnsupportedOperationException("enum attribute not implemented yet");
-        }
-        if (method.getReturnType().isArray()) {
-            return new ArrayNumberConverter().toJavaObject(attribute.getValues(), method.getReturnType());
-        }
-        if (method.getReturnType().isInterface()) {
-            throw new UnsupportedOperationException("composite attribute (structure, opaque) not implemented yet");
-        }
-        switch (dataType) {
-        case STRING:
-            return attribute == null ? null : attribute.getStringValue();
-        default:
-            return attribute == null || attribute.getValues() == null ? null : attribute.getValues().getObject(0);
-        }
+        return convertUtils.toJavaObject(attribute.getValues(), method.getReturnType());
     }
 
     protected String stringValue() {
