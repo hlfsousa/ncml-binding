@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -71,7 +72,6 @@ public class ArrayAttributeTest {
      * NetCDF being tested.
      */
     @Test
-    @SuppressWarnings("deprecation")
     @Disabled("Enable manually when the model has to be re-generated, run this method only")
     public void createFile() throws Exception {
         RES_DIR.mkdirs();
@@ -98,10 +98,15 @@ public class ArrayAttributeTest {
         File logFile = new File("target/ArrayAttributeTest.err");
 
         File ncmlFile = new File(RES_DIR, "ArrayAttributeTest.xml");
-        assertThat(new ProcessBuilder(Arrays.asList("ncdump", "-h", "-x", NC_FILE.getAbsolutePath()))
-                .redirectOutput(Redirect.to(ncmlFile))
-                .redirectError(Redirect.to(logFile))
-                .start().waitFor(), is(0));
+        try {
+            assertThat(new ProcessBuilder(Arrays.asList("ncdump", "-h", "-x", NC_FILE.getAbsolutePath()))
+                    .redirectOutput(Redirect.to(ncmlFile))
+                    .redirectError(Redirect.to(logFile))
+                    .start().waitFor(), is(0));
+        } catch (Throwable t) {
+            Files.readAllLines(logFile.toPath()).forEach(System.err::println);
+            throw t;
+        }
 
         CodeGenerationTask codeGeneration = new CodeGenerationTask();
         codeGeneration.setHeaderURL(ncmlFile.toURI().toURL());

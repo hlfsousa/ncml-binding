@@ -79,27 +79,36 @@ public class AttributeConventions {
     public static enum ArrayScaling {
         TO_RAW {
             @Override
-            public Array transform(Array scaledArray, Number scaleFactor, Number addOffset, Number missingValue) {
-                Array rawArray = Array.factory(
-                        missingValue != null ? DataType.getType(missingValue.getClass(), false) : DataType.SHORT,
-                        scaledArray.getShape());
+            public Array transform(DataType dataType, Array scaledArray, Number scaleFactor, Number addOffset, Number missingValue) {
+                Array rawArray = Array.factory(dataType, scaledArray.getShape());
                 for (IndexIterator writeIt = rawArray.getIndexIterator(), readIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
                     double scaledValue = readIt.getDoubleNext();
                     if (missingValue != null && Double.isNaN(scaledValue)) {
-                        writeIt.setShortNext(missingValue.shortValue());
+                        writeIt.setLongNext(missingValue.longValue());
                     } else {
-                        writeIt.setIntNext((int) Math.round(
+                        writeIt.setLongNext(Math.round(
                                 (scaledValue - addOffset.doubleValue()) / scaleFactor.doubleValue()));
                     }
                 }
                 return rawArray;
             }
+
+            @Override
+            public void substituteMissingValues(Variable variable, Array value, Object missingValue) {
+                IndexIterator iterator = value.getIndexIterator();
+                while (iterator.hasNext()) {
+                    if (iterator.getObjectNext() == null) {
+                        iterator.setObjectCurrent(missingValue);
+                    }
+                }
+            }
         },
         TO_SCALED {
             @Override
-            public Array transform(Array rawArray, Number scaleFactor, Number addOffset, Number missingValue) {
-                Array scaledArray = Array.factory(DataType.getType(scaleFactor.getClass(), false), rawArray.getShape());
+            public Array transform(DataType dataType, Array rawArray, Number scaleFactor, Number addOffset, Number missingValue) {
+                boolean signed = true; // TODO get signedness from scale_factor attribute
+                Array scaledArray = Array.factory(DataType.getType(scaleFactor.getClass(), signed), rawArray.getShape());
                 for (IndexIterator readIt = rawArray.getIndexIterator(), writeIt = scaledArray.getIndexIterator();
                         readIt.hasNext();) {
                     double rawValue = readIt.getDoubleNext();
@@ -111,9 +120,24 @@ public class AttributeConventions {
                 }
                 return scaledArray;
             }
+
+            @Override
+            public void substituteMissingValues(Variable variable, Array value, Object missingValue) {
+                if (missingValue == null) {
+                    return;
+                }
+                IndexIterator iterator = value.getIndexIterator();
+                while (iterator.hasNext()) {
+                    if (missingValue.equals(iterator.getObjectNext())) {
+                        iterator.setObjectCurrent(null);
+                    }
+                }
+            }
         };
 
-        public abstract Array transform(Array arrayValue, Number scaleFactor, Number addOffset, Number missingValue);
+        public abstract Array transform(DataType dataType, Array arrayValue, Number scaleFactor, Number addOffset, Number missingValue);
+
+        public abstract void substituteMissingValues(Variable variable, Array value, Object missingValue);
 
     }
 
@@ -147,12 +171,15 @@ public class AttributeConventions {
             if (value == null) {
                 value = variable.read();
             }
-            Number missingValue = null;
             Attribute missingValueAttribute = variable.findAttribute(convention.getMissingValueAttributeName());
+            Number missingValue = null;
             if (missingValueAttribute != null) {
-                assert !missingValueAttribute.isString() : convention.getMissingValueAttributeName()
-                        + " must be numeric";
-                missingValue = missingValueAttribute.getNumericValue();
+                if (!variable.getDataType().isNumeric()) {
+                    scaling.substituteMissingValues(variable, value, missingValueAttribute.getValue(0));
+                    return value;
+                }
+                missingValue = missingValueAttribute.getNumericValue(); // number or numeric string (implicit type)
+                assert missingValue != null : convention.getMissingValueAttributeName() + " must be numeric";
             }
             Attribute scaleFactorAttribute = variable.findAttribute(convention.getScaleFactorAttributeName());
             if (value != null && scaleFactorAttribute != null) {
@@ -166,7 +193,8 @@ public class AttributeConventions {
                             + " must be numeric";
                     addOffset = addOffsetAttribute.getNumericValue();
                 }
-                value = scaling.transform(value, scaleFactor, addOffset, missingValue);
+                DataType dataType = variable.getDataType();
+                value = scaling.transform(dataType, value, scaleFactor, addOffset, missingValue);
             }
             return value;
         } catch (IOException e) {

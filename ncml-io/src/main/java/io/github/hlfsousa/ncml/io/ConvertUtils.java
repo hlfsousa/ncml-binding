@@ -34,6 +34,7 @@ import io.github.hlfsousa.ncml.io.converters.ArrayNumberConverter;
 import io.github.hlfsousa.ncml.io.converters.ArrayStringConverter;
 import io.github.hlfsousa.ncml.io.converters.ScalarNumberConverter;
 import io.github.hlfsousa.ncml.io.converters.ScalarStringConverter;
+import io.github.hlfsousa.ncml.io.converters.VLenNumberConverter;
 import ucar.ma2.Array;
 
 /**
@@ -48,6 +49,7 @@ public class ConvertUtils {
     
     static {
         // default converters
+        INSTANCE.register(Object.class, new VLenNumberConverter());
         INSTANCE.register(Number.class, new ScalarNumberConverter());
         INSTANCE.register(Object.class, new ArrayNumberConverter());
         INSTANCE.register(String.class, new ScalarStringConverter());

@@ -121,7 +121,7 @@ public class NcmlFromFile {
             Group group = new Group();
             groups.add(group);
             group.setName(ncGroup.getShortName());
-            group.getEnumTypedefOrDimensionOrVariable().addAll(readAttributes(ncGroup));
+            group.getEnumTypedefOrDimensionOrVariable().addAll(readAttributes(ncGroup.attributes()));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readDimensions(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readVariables(ncGroup));
             group.getEnumTypedefOrDimensionOrVariable().addAll(readGroups(ncGroup));

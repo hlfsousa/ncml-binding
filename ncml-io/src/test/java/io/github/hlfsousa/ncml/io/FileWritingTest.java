@@ -124,10 +124,11 @@ public class FileWritingTest extends IOTest {
                 javascriptEngine.put("model", editedModel);
                 javascriptEngine.eval("verifyCreatedFile(netcdf, model)");
 
+                File editedFile = new File(fileFromScratch.getParentFile(), "editedContent.nc");
                 editedModel = javascriptEngine.eval("editModel(netcdf)");
-                writer.write(editedModel, fileFromScratch).close();
+                writer.write(editedModel, editedFile).close();
 
-                javascriptEngine.put("netcdf", reader.read(fileFromScratch, true));
+                javascriptEngine.put("netcdf", reader.read(editedFile, true));
                 javascriptEngine.put("model", editedModel);
                 javascriptEngine.eval("verifyEditedFile(netcdf, model)");
             } catch (Exception e) {

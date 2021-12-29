@@ -43,7 +43,7 @@
   </variable>
   
   <variable name="intMap:int_.*" type="int" />
-
+  
   <variable name="varLength" type="int" shape="number_of_items variable_length" />
 
 </netcdf>

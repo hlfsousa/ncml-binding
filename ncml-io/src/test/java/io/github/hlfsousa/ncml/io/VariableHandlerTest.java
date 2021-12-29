@@ -41,6 +41,7 @@ import org.mockito.quality.Strictness;
 import io.github.hlfsousa.ncml.io.read.VariableHandler;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
 
@@ -66,7 +67,9 @@ public class VariableHandlerTest {
     public void setupMocks() throws Exception {
         when(variable.findAttribute("long_name")).thenReturn(longName);
         when(variable.getFullName()).thenReturn("variable");
-        when(longName.getStringValue()).thenReturn("some variable");
+        Array longNameValue = Array.factory(DataType.STRING, Index.scalarIndexImmutable.getShape());
+        longNameValue.setObject(Index.scalarIndexImmutable, "some variable");
+        when(longName.getValues()).thenReturn(longNameValue);
 
         when(scalarVariable.isScalar()).thenReturn(true);
         when(scalarVariable.read()).thenReturn(Array.factory(DataType.DOUBLE, new int[0], new double[] { 1.0 }));

@@ -23,7 +23,8 @@ package io.github.hlfsousa.ncml.io.wrapper;
  */
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
 
 import java.io.File;
 import java.util.Arrays;
@@ -32,12 +33,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
-import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.NetcdfFiles;
 import ucar.nc2.Variable;
 
 public class NetcdfWrapperTest {
@@ -55,10 +54,11 @@ public class NetcdfWrapperTest {
         
     }
     
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetScaledVariable() throws Exception {
         String location = new File(getClass().getResource("/samples/ECMWF_ERA-40_subset.nc").toURI()).getAbsolutePath();
-        try (NetcdfFile netcdf = NetcdfFiles.open(location)) {
+        try (NetcdfFile netcdf = new NetcdfFile(location)) {
             Group rootGroup = netcdf.getRootGroup();
             Variable blh = rootGroup.findVariable("blh");
             Array rawArray = blh.read();

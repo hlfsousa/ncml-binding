@@ -35,6 +35,10 @@ function createModel(model) {
     for (var i = 0; i < 20; i++) {
 	    model.temperature.value[i] = random(5, 42);
     }
+    
+    model.distance = new Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfVO.DistanceVO(21.4);
+    Packages.io.github.hlfsousa.ncml.io.test.TestNetcdfInitializer.initialize(model);
+
     return model;
 }
 
@@ -52,6 +56,12 @@ function verifyCreatedFile(netcdf, model) {
 		var expectedValue = expectedTemperature.value[idx];
 		assertCloseTo(actualValue, expectedValue, 0.25, "/temperature.value[" + idx + "]")
 	}
+	
+	var actualDistance = model.distance;
+	assertNotNull(actualDistance, "/distance");
+	assertNotNull(actualDistance.value, "/distance.value");
+	var expectedDistance = netcdf.distance;
+	assertCloseTo(expectedDistance.value, actualDistance.value, 0.01, "/distance")
 }
 
 function editModel(netcdf) {

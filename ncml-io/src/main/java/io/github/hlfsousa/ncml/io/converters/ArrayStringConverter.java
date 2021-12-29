@@ -1,5 +1,8 @@
 package io.github.hlfsousa.ncml.io.converters;
 
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+
 /*-
  * #%L
  * ncml-io
@@ -27,6 +30,7 @@ import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.ArrayUtils;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayString;
 import ucar.ma2.DataType;
 import ucar.ma2.IndexIterator;
 
@@ -44,12 +48,12 @@ public class ArrayStringConverter implements Converter<Object> {
 
     private Array toArray(Object value) {
         Array array = Array.factory(DataType.STRING, ArrayUtils.shapeOf(value));
-        IndexIterator indexIterator = array.getIndexIterator();
-        while (indexIterator.hasNext()) {
-            indexIterator.next();
-            indexIterator.setObjectCurrent(ArrayUtils.getElement(value, indexIterator.getCurrentCounter()));
-        }
-        return array;
+            IndexIterator indexIterator = array.getIndexIterator();
+            while (indexIterator.hasNext()) {
+                indexIterator.next();
+                indexIterator.setObjectCurrent(ArrayUtils.getElement(value, indexIterator.getCurrentCounter()));
+            }
+            return array;
     }
 
     @Override

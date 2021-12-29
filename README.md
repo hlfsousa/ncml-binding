@@ -4,6 +4,10 @@ NcML is the XML semantics of the Common Data Language, which is used as the impl
 
 NetCDF is maintained by Unidata: https://www.unidata.ucar.edu/software/netcdf/
 
+## Compatibility
+
+This release uses an older NetCDF version, compatible with NetCDF-C 4.6.3 to 4.7.4.
+
 ## Processing a NetCDF file
 
 As a developer, you need not know absolutely anything about NetCDF files in order to read one. You don't need to know SQL or how the RDBMS stores data to use JPA, so why would have to learn NetCDF? But just as you need a database, you will need to install the [NetCDF tools](https://www.unidata.ucar.edu/downloads/netcdf/). Once installed, you will use the header file to generate your classes. To generate a header XML from some file (if the header was not provided), use the `ncdump` command:

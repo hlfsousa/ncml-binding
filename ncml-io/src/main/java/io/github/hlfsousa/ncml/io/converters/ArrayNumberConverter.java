@@ -47,6 +47,14 @@ public class ArrayNumberConverter implements Converter<Object> {
             return DataType.INT;
         } else if (componentType == BigInteger.class) {
             return DataType.LONG;
+        } else if (componentType == Float.class || componentType == float.class) {
+            /* NetCDF does not support BigDecimal as number (at some point we must stop value expansion). We assume here
+             * that declaring unsigned decimal is a matter of semantics, and do not actually do any conversion. This
+             * could cause an overflow, and that would require using a language that supports unsigned types natively.
+             */
+            return DataType.FLOAT;
+        } else if (componentType == Double.class || componentType == double.class) {
+            return DataType.DOUBLE;
         }
         throw new IllegalArgumentException(componentType.getName());
     }
@@ -64,6 +72,9 @@ public class ArrayNumberConverter implements Converter<Object> {
         if (signed instanceof Long) {
             return new BigInteger(Long.toUnsignedString(((Number) signed).longValue()));
         }
+        if (signed instanceof Float || signed instanceof Double) {
+            return (Number) signed;
+        }
         throw new IllegalArgumentException(signed.getClass().getName());
     }
 
@@ -76,6 +87,7 @@ public class ArrayNumberConverter implements Converter<Object> {
                 empty = true;
             }
         }
+        Array result;
         if (!empty) {
             if (variableDecl.unsigned()) {
                 Array array = Array.factory(getUnsignedType(ArrayUtils.getComponentType(value.getClass())), shape);
@@ -84,9 +96,9 @@ public class ArrayNumberConverter implements Converter<Object> {
                 do {
                     idxIterator.setObjectNext(ArrayUtils.getElement(value, address));
                 } while (ArrayUtils.increment(address, shape));
-                return array;
+                result = array;
             } else {
-                return Array.makeFromJavaArray(value);
+                result = Array.makeFromJavaArray(value);
             }
         } else {
             DataType dataType;
@@ -96,8 +108,9 @@ public class ArrayNumberConverter implements Converter<Object> {
                 dataType = DataType.getType(variableDecl.dataType())
                         .withSignedness(variableDecl.unsigned() ? Signedness.UNSIGNED : Signedness.SIGNED);
             }
-            return Array.factory(dataType, shape);
+            result = Array.factory(dataType, shape);
         }
+        return result;
     }
 
     @Override
@@ -109,8 +122,9 @@ public class ArrayNumberConverter implements Converter<Object> {
                 empty = true;
             }
         }
+        Array result;
         if (!empty) {
-            return Array.makeFromJavaArray(value, attributeDecl.unsigned());
+            result =  Array.makeFromJavaArray(value, attributeDecl.unsigned());
         } else {
             DataType dataType = null;
             if (!attributeDecl.dataType().isEmpty()) {
@@ -119,18 +133,31 @@ public class ArrayNumberConverter implements Converter<Object> {
                 Class<?> componentType = ArrayUtils.getComponentType(value.getClass());
                 dataType = DataType.getType(componentType, attributeDecl.unsigned());
             }
-            return Array.factory(dataType, shape);
+            result = Array.factory(dataType, shape);
+        }
+        return result;
+    }
+
+    private Class<?> primitive(Class<?> type) {
+        if (type.isPrimitive()) {
+            return type;
+        }
+        try {
+            return (Class<?>) type.getField("TYPE").get(null);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            throw new IllegalStateException("Unable to get TYPE field from " + type + ". Expected Number.", e);
         }
     }
 
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
+        Class<?> componentType = ArrayUtils.getComponentType(toType);
+        boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType
+                && array.getDataType().getPrimitiveClassType() != primitive(componentType);
         // shape=1 to scalar
         if (toType.isArray()) {
             int[] shape = array.getShape();
-            Class<?> componentType = ArrayUtils.getComponentType(toType);
             Object javaArray = ArrayUtils.createArray(shape, componentType);
-            boolean assumeUnsigned = array.getDataType().getPrimitiveClassType() != componentType;
             int[] address = new int[shape.length];
             IndexIterator idxIterator = array.getIndexIterator();
             do {
@@ -143,7 +170,11 @@ public class ArrayNumberConverter implements Converter<Object> {
             return javaArray;
         } else {
             assert array.getSize() == 1 : array.shapeToString();
-            return array.getObject(0);
+            Object scalarValue = array.getObject(0);
+            if (assumeUnsigned) {
+                scalarValue = toUnsigned(scalarValue);
+            }
+            return scalarValue;
         }
     }
 
