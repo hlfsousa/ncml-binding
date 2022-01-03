@@ -59,10 +59,10 @@ public class CodeGenerationTask {
     private File sourcesDir;
     private String rootClassName;
 
-    private Map<String, BiFunction<AbstractGroupWrapper, File, File>> additionalTemplates;
+    private Map<String, BiFunction<AbstractGroupWrapper, File, File>> customTemplates;
 
     public CodeGenerationTask() {
-        additionalTemplates = new HashMap<>();
+        customTemplates = new HashMap<>();
     }
 
     /**
@@ -121,7 +121,7 @@ public class CodeGenerationTask {
      *               file extension.
      */
     public void addTemplate(String path, String suffix) {
-        additionalTemplates.put(path,
+        customTemplates.put(path,
                 (group, destDir) -> new File(destDir, group.getTypeName() + suffix));
     }
 
@@ -134,7 +134,10 @@ public class CodeGenerationTask {
         
         NCMLCodeGenerator generator = new NCMLCodeGenerator(headerURL, readProperties());
         Map<String, BiFunction<AbstractGroupWrapper, File, File>> templates = new HashMap<>(generator.getTemplates());
-        templates.putAll(additionalTemplates);
+        if (!customTemplates.isEmpty()) {
+            templates.clear();
+        }
+        templates.putAll(customTemplates);
         generator.setTemplates(templates);
         generator.setModelPackage(rootPackage);
         generator.setRootGroupName(rootGroupName);

@@ -32,7 +32,6 @@ import java.util.Map;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.io.AttributeConventions;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
@@ -41,7 +40,6 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
 
     private static final AttributeConventions attributeConventions = new AttributeConventions();
 
-    private final ConvertUtils convertUtils = ConvertUtils.getInstance();
     private final Map<Method, Object> invocationCache = new HashMap<>();
     private Type valueType;
 
@@ -112,10 +110,7 @@ public class VariableHandler extends AbstractCDMNodeHandler<Variable> implements
         if (expectedType.isAssignableFrom(Array.class)) {
             return arrayValue;
         }
-        if (!node.isScalar()) {
-            return convertUtils.toJavaObject(arrayValue, expectedType);
-        }
-        return arrayValue.getObject(0);
+        return convertUtils.toJavaObject(arrayValue, expectedType);
     }
 
 }

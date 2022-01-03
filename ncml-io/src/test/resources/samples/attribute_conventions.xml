@@ -31,5 +31,11 @@
     <attribute name="scale_factor" type="double" value="0.25" />
     <attribute name="add_offset" type="double" value="15" />
   </variable>
+  
+  <variable name="distance" type="byte">
+    <attribute name="_Unsigned" value="true" />
+    <attribute name="scale_factor" type="double" value="0.1" /> <!-- test values between (128 and 255) * scale_factor -->
+    <attribute name="units" value="meters" />
+  </variable>
 
 </netcdf>

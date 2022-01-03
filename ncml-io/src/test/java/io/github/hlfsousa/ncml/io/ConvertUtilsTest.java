@@ -30,7 +30,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
@@ -132,7 +131,7 @@ public class ConvertUtilsTest {
 
         String[] revertedValue = convertUtils.toJavaObject(ncArray, String[].class);
         assertThat(revertedValue, is(javaArray));
-
+        
     }
 
 }

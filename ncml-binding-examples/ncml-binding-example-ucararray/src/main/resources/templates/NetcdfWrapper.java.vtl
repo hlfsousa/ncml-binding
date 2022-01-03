@@ -27,6 +27,7 @@ ${customContent.imports}
 #else
 // imports >>
 import io.github.hlfsousa.ncml.io.ConvertUtils;
+import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
 import io.github.hlfsousa.ncml.io.wrapper.NetcdfWrapper;
 import java.io.IOException;
 import java.util.*;
@@ -253,8 +254,8 @@ ${indent}    }
   #end
 #end
 
-    public ${group.typeName}Wrapper(Group group) {
-        super(group);
+    public ${group.typeName}Wrapper(Group group, RuntimeConfiguration configuration) {
+        super(group, configuration);
     }
 
 #if(!${group.variables.empty})
@@ -382,7 +383,7 @@ ${indent}    }
             for (Group child : group.getGroups()) {
                 Matcher matcher = regex.matcher(child.getShortName());
                 if (matcher.matches()) {
-                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child));
+                    groupMap.put(child.getShortName(), new ${typeName}Wrapper(child, runtimeConfiguration));
                 }
             }
             return groupMap;

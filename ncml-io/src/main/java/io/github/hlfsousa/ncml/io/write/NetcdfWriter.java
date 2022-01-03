@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -60,6 +61,7 @@ import io.github.hlfsousa.ncml.io.AttributeConventions;
 import io.github.hlfsousa.ncml.io.AttributeConventions.ArrayScaling;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import io.github.hlfsousa.ncml.io.RuntimeConfiguration;
+import io.github.hlfsousa.ncml.io.converters.VLenNumberConverter;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.DataType.Signedness;
@@ -78,16 +80,14 @@ import ucar.nc2.Variable;
  * 
  * @author Henrique Sousa
  */
-// NetcdfFileWriter is deprecated but there is no practical substitution as of 5.3.2
-@SuppressWarnings("deprecation")
 public class NetcdfWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfWriter.class);
     
     private static final AttributeConventions ATTRIBUTE_CONVENTIONS = new AttributeConventions();
 
-    private ConvertUtils convertUtils = ConvertUtils.getInstance();
-    private RuntimeConfiguration runtimeConfiguration;
+    protected ConvertUtils convertUtils = ConvertUtils.getInstance();
+    protected final RuntimeConfiguration runtimeConfiguration;
 
     private boolean defaultAttributeValueUsed;
     private boolean closeAfterCreation;
@@ -118,6 +118,17 @@ public class NetcdfWriter {
     }
 
     public NetcdfFile write(Object model, File location) throws IOException {
+        // assuming new file or overwrite
+        NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4, location.getAbsolutePath());
+        LOGGER.debug("Writing to " + location);
+        NetcdfFile netcdfFile = write(model, writer);
+        if (closeAfterCreation) {
+            netcdfFile.close();
+        }
+        return netcdfFile;
+    }
+
+    public NetcdfFile write(Object model, NetcdfFileWriter writer) throws IOException {
         CDLRoot rootAnnotation = getFullHierarchy(model).stream()
                 .map(t -> t.getAnnotation(CDLRoot.class))
                 .filter(a -> a != null)
@@ -127,29 +138,24 @@ public class NetcdfWriter {
         }
         
         Map<String,List<Dimension>> declaredDimensions = new HashMap<>();
-        collectDimensions(model, declaredDimensions, "/");
+        Set<String> usedDimensions = new HashSet<>();
+        collectDimensions(model, declaredDimensions, usedDimensions, "/");
         
-        LOGGER.debug("Writing to " + location);
-        // assuming new file or overwrite
-        NetcdfFileWriter writer = NetcdfFileWriter.createNew(Version.netcdf4, location.getAbsolutePath());
         // create root group
         Group rootGroup = writer.addGroup(null, null);
         LOGGER.debug("Creating structure");
-        createStructure(writer, rootGroup, model, declaredDimensions);
+        createStructure(writer, rootGroup, model, declaredDimensions, usedDimensions);
         writer.create();
         LOGGER.debug("Created structure:\n{}", writer.getNetcdfFile());
         LOGGER.debug("Writing content");
         writeContent(writer, rootGroup, model);
         LOGGER.debug("All done");
         NetcdfFile netcdfFile = writer.getNetcdfFile();
-        if (closeAfterCreation) {
-            netcdfFile.close();
-        }
         return netcdfFile;
     }
     
     @SuppressWarnings("unchecked")
-    private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, String localPath) {
+    private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, String localPath) {
         for (Class<?> type : getFullHierarchy(model)) {
             List<CDLDimension> dimensionsList = new ArrayList<>();
             Optional.ofNullable(type.getAnnotation(CDLDimensions.class))
@@ -175,14 +181,14 @@ public class NetcdfWriter {
                     Object value = accessor.invoke(model);
                     if (value instanceof Map) {
                         for (Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
-                            collectDimensions(entry.getValue(), declaredDimensions, localPath + entry.getKey() + '/');
+                            collectDimensions(entry.getValue(), declaredDimensions, usedDimensions, localPath + entry.getKey() + '/');
                         }
                     } else if (value != null) {
                         String name = groupAnnotation.name();
                         if (name.isEmpty()) {
                             name = accessor.getName().substring("get".length());
                         }
-                        collectDimensions(value, declaredDimensions, localPath + name + '/');
+                        collectDimensions(value, declaredDimensions, usedDimensions, localPath + name + '/');
                     }
                 } catch (ReflectiveOperationException e) {
                     throw new IllegalStateException(e);
@@ -205,27 +211,35 @@ public class NetcdfWriter {
                         if (!(entryValue instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
                             return;
                         }
-                        collectVariableDimensions(declaredDimensions, localPath, variableAnnotation, entryValue);
+                        LOGGER.debug("Collect dimensions for variable {}{}", localPath, varEntry.getKey());
+                        collectVariableDimensions(declaredDimensions, usedDimensions, localPath, variableAnnotation, entryValue);
                     }
                     return;
                 }
                 else if (!(value instanceof io.github.hlfsousa.ncml.declaration.Variable)) {
                     return;
                 }
-                
-                collectVariableDimensions(declaredDimensions, localPath, variableAnnotation, value);
+                LOGGER.debug("Collect dimensions for variable {}{}", localPath, variableAnnotation.name());
+                collectVariableDimensions(declaredDimensions, usedDimensions, localPath, variableAnnotation, value);
                 return;
             }
         });
         
     }
 
-    private void collectVariableDimensions(Map<String, List<Dimension>> declaredDimensions, String localPath,
+    private void collectVariableDimensions(Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, String localPath,
             CDLVariable variableAnnotation, Object value) {
         io.github.hlfsousa.ncml.declaration.Variable<?> variable = (io.github.hlfsousa.ncml.declaration.Variable<?>) value;
         if (variable.getDimensions() != null) {
             for (Dimension dimension : variable.getDimensions()) {
-                updateDimension(declaredDimensions, localPath, dimension);
+                Integer previousLength = updateDimension(declaredDimensions, localPath, dimension);
+                if (variable.getValue() != null) {
+                    if (!usedDimensions.add(getFullName(dimension, localPath, declaredDimensions)) && previousLength != null && !previousLength.equals(dimension.getLength())) {
+                        throw new IllegalStateException(
+                                "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
+                                        + dimension + ", previously declared as length = " + previousLength);
+                    }
+                }
             }
         } else if (variableAnnotation.shape().length > 0) {
             Object varValue = variable.getValue();
@@ -238,18 +252,24 @@ public class NetcdfWriter {
                             throw new IllegalStateException("Immutable dimension at " + localPath);
                         }
                         Dimension declared = findDimension(name, declaredDimensions, localPath);
+                        boolean newDimension = usedDimensions.add(getFullName(declared, localPath, declaredDimensions));
                         if (declared.isVariableLength()) {
                             continue; // variable length must be -1
                         }
-                        updateDimension(declaredDimensions, localPath, new Dimension(name, length,
+                        Integer previousLength = updateDimension(declaredDimensions, localPath, new Dimension(name, length,
                                 declared.isShared() && !declared.isVariableLength(), declared.isUnlimited(),
                                 declared.isVariableLength()));
+                        if (!newDimension && previousLength != null && !previousLength.equals(length)) {
+                            throw new IllegalStateException(
+                                    "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
+                                            + name + "=" + length + ", previously declared as length = " + previousLength);
+                        }
                         if (varValue.getClass().isArray()) {
                             varValue = java.lang.reflect.Array.get(varValue, 0); // to get next dimension
                         }
                     }
                 } else if (varValue instanceof Array) {
-                    
+                    throw new IllegalStateException("Support not present for collecting dimensions from Array");
                 }
             }
         }
@@ -269,9 +289,10 @@ public class NetcdfWriter {
         return null;
     }
     
-    private void updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
+    private Integer updateDimension(Map<String, List<Dimension>> declaredDimensions, String localPath,
             Dimension dimension) {
         String scope = localPath;
+        Integer previousValue = null;
         while (!scope.equals("")) {
             List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
             boolean found = false;
@@ -284,8 +305,9 @@ public class NetcdfWriter {
                         LOGGER.debug("Dropping declared dimension for replacement: {}", existing);
                         dimIterator.remove();
                         found = true;
+                        previousValue = existing.getLength();
                     } else {
-                        return;
+                        return previousValue;
                     }
                 }
             }
@@ -293,7 +315,7 @@ public class NetcdfWriter {
                 // add dimension to list
                 LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
                 dimensionsInScope.add(dimension);
-                return;
+                return previousValue;
             }
             scope = scope.replaceAll("[^/]*+/$", "");
         }
@@ -301,7 +323,23 @@ public class NetcdfWriter {
         List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>());
         LOGGER.debug("Adding dimension {} to scope {}", dimension, scope);
         dimensionsInScope.add(dimension);
-
+        return previousValue;
+    }
+    
+    private String getFullName(Dimension dimension, String localPath, Map<String, List<Dimension>> declaredDimensions) {
+        String scope = localPath;
+        while (!scope.equals("")) {
+            List<Dimension> dimensionsInScope = declaredDimensions.computeIfAbsent(scope, key -> new ArrayList<>());
+            boolean found = false;
+            for (Iterator<Dimension> dimIterator = dimensionsInScope.iterator(); dimIterator.hasNext() && !found; ) {
+                Dimension existing = dimIterator.next();
+                if (existing.getShortName().equals(dimension.getShortName())) {
+                    return scope + existing.getShortName();
+                }
+            }
+            scope = scope.replaceAll("[^/]*+/$", "");
+        }
+        return null;
     }
 
     private Set<Class<?>> getFullHierarchy(Object obj) {
@@ -314,22 +352,29 @@ public class NetcdfWriter {
     }
 
     private void createStructure(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions) {
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
         createAttributes(writer, group, model);
-        createLocalDimensions(writer, group, model, declaredDimensions);
+        createLocalDimensions(writer, group, model, declaredDimensions, usedDimensions);
         createVariables(writer, group, model);
-        createGroups(writer, group, model, declaredDimensions);
+        createGroups(writer, group, model, declaredDimensions, usedDimensions);
     }
 
     private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions) {
-        String fullName = group.getFullName() + "/";
-        if (!fullName.startsWith("/")) {
-            fullName = '/' + fullName;
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
+        String groupFullName;
+        {
+            String fullName = group.getFullName() + "/";
+            if (!fullName.startsWith("/")) {
+                fullName = '/' + fullName;
+            }
+            groupFullName = fullName;
         }
-        List<Dimension> dimensions = declaredDimensions.get(fullName);
+        List<Dimension> dimensions = declaredDimensions.get(groupFullName);
         if (dimensions != null) {
-            dimensions.stream().filter(Dimension::isShared).forEach(group::addDimension);
+            dimensions.stream()
+                    .filter(dim -> usedDimensions.contains(groupFullName + dim.getShortName()))
+                    .filter(dim -> dim.isShared())
+                    .forEach(group::addDimension);
         }
     }
 
@@ -348,14 +393,8 @@ public class NetcdfWriter {
                 name = getDefaultName(accessor);
             }
             name = runtimeConfiguration.getRuntimeName(parent, name);
-            Attribute.Builder attributeBuilder = Attribute.builder(name);
-            if (attributeDecl.dataType() != null && !attributeDecl.dataType().isEmpty()) {
-                DataType dataType = DataType.getType(attributeDecl.dataType());
-                if (attributeDecl.unsigned()) {
-                    dataType = DataType.getType(dataType.getPrimitiveClassType(), true);
-                }
-                attributeBuilder.setDataType(dataType);
-            }
+            String attributeName = name;
+            Array attributeValue;
             try {
                 Object value = accessor.invoke(model);
                 if (value == null && defaultAttributeValueUsed) {
@@ -367,11 +406,12 @@ public class NetcdfWriter {
                 if (value == null) {
                     return;
                 }
-                attributeBuilder.setValues(convertUtils.toArray(value, attributeDecl));
+                attributeValue = convertUtils.toArray(value, attributeDecl);
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to retrieve attribute value from accessor " + accessor, e);
             }
-            attributeConsumer.accept(attributeBuilder.build());
+            Attribute attribute = new Attribute(attributeName, attributeValue);
+            attributeConsumer.accept(attribute);
         });
     }
 
@@ -414,6 +454,10 @@ public class NetcdfWriter {
             CDLVariable variableDecl, Object varModel)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         name = runtimeConfiguration.getRuntimeName(group, name);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating variable '{}' from {}.{} {}", name, accessor.getDeclaringClass().getName(),
+                    accessor.getName(), variableDecl);
+        }
         Object varValue;
         Class<?> javaType;
         Class<?> variableType = accessor.getReturnType();
@@ -429,6 +473,7 @@ public class NetcdfWriter {
             final Method getValue = varModel.getClass().getMethod("getValue");
             varValue = getValue.invoke(varModel);
             if (varValue == null) {
+                LOGGER.debug("Variable {} skipped because value is null", name);
                 return;
             }
             javaType = getValue.getReturnType();
@@ -452,15 +497,30 @@ public class NetcdfWriter {
         if (varModel instanceof io.github.hlfsousa.ncml.declaration.Variable) {
             List<Dimension> dimensions = ((io.github.hlfsousa.ncml.declaration.Variable<?>)varModel).getDimensions();
             if (dimensions != null) {
+                shape = dimensions.stream()
+                        .map(d -> d.isVariableLength() ? "*" : d.getShortName())
+                        .collect(toList()).toArray(new String[dimensions.size()]);
+                /* or this (VLEN issue pending):
                 shape = dimensions.stream().map(Dimension::getShortName).collect(toList())
                         .toArray(new String[0]);
+                */
             }
         }
         if (shape.length > 1 && group.findDimension(shape[shape.length - 1]) == null) {
             shape[shape.length - 1] = "*";
         }
         String shapeStr = shape.length == 0 ? null : Arrays.stream(shape).collect(joining(" "));
+        {
+            Variable duplicate = group.findVariable(name);
+            if (duplicate != null) {
+                LOGGER.warn(
+                        "duplicate variable declaration for {} found, this should not happen. Make sure there are no name clashes at {}",
+                        name, varModel.getClass().getName());
+                return;
+            }
+        }
         Variable variable = writer.addVariable(group, name, dataType, shapeStr);
+        assert variable.getDataType().isUnsigned() == variableDecl.unsigned() : "getDataType above failed";
         if (accessor.getReturnType().isInterface()) {
             createVariableStructure(writer, variable, varModel);
         }
@@ -478,8 +538,7 @@ public class NetcdfWriter {
              * done here. */
             dataType = ((Array)varValue).getDataType();
         } else {
-            boolean unsigned = variableDecl.unsigned();
-            dataType = DataType.getType(javaType, unsigned);
+            dataType = DataType.getType(javaType, variableDecl.unsigned());
         }
         return dataType;
     }
@@ -491,7 +550,7 @@ public class NetcdfWriter {
 
     @SuppressWarnings("unchecked")
     private void createGroups(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions) {
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
         forEachAccessor(model, accessor -> {
             try {
                 CDLGroup groupDecl = accessor.getAnnotation(CDLGroup.class);
@@ -510,7 +569,7 @@ public class NetcdfWriter {
                                     + groupDecl.name() + " (runtime " + nameRegex.pattern() + ")");
                         }
                         Group childGroup = writer.addGroup(group, name);
-                        createStructure(writer, childGroup, entry.getValue(), declaredDimensions);
+                        createStructure(writer, childGroup, entry.getValue(), declaredDimensions, usedDimensions);
                     }
                 } else {
                     String name = groupDecl.name();
@@ -519,7 +578,7 @@ public class NetcdfWriter {
                     }
                     name = runtimeConfiguration.getRuntimeName(group, name);
                     Group childGroup = writer.addGroup(group, name);
-                    createStructure(writer, childGroup, childModel, declaredDimensions);
+                    createStructure(writer, childGroup, childModel, declaredDimensions, usedDimensions);
                 }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to read metadata to create group from method " + accessor, e);
@@ -594,18 +653,18 @@ public class NetcdfWriter {
         }
         
         try {
-        Array ncArray;
-        if (varValue instanceof Array) {
-            ncArray = (Array)varValue;
-        } else {
-            ncArray = convertUtils.toArray(varValue, variableDecl);
-        }
+            Array ncArray;
+            if (varValue instanceof Array) {
+                ncArray = (Array)varValue;
+            } else {
+                ncArray = convertUtils.toArray(varValue, variableDecl);
+            }
         
-        if (ncArray != null) {
-            ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
-        }
-        
-        writer.write(variable, ncArray);
+            if (ncArray != null && !variable.isVariableLength()) {
+                ncArray = ATTRIBUTE_CONVENTIONS.transformVariableValue(variable, ncArray, ArrayScaling.TO_RAW);
+            }
+
+            writer.write(variable, ncArray);
         } catch (Exception e) {
             throw new IllegalStateException("Error writing variable " + variable.getShortName(), e);
         }

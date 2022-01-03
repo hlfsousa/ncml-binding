@@ -27,6 +27,7 @@
                       https://www.unidata.ucar.edu/schemas/netcdf/ncml-2.2.xsd">
   <dimension name="number_of_items" length="10" />
   <dimension name="scalar" length="1" /><!-- Issue #84 -->
+  <dimension name="non_scalar" length="" /><!-- outside the scope of Issue #84 -->
 
   <attribute name="customglobalattribute" type="string" />
   
@@ -53,6 +54,15 @@
   <!-- Issue #36 -->
   <variable name="someString" type="string" shape="scalar" />
   <!-- this is declared as scalar, even though there is one dimension. Create interface: locate ".scaled", replace by check of dimensions and attributes where appropriate -->
+  
+  <variable name="someOtherString" type="string" shape="non_scalar" />
   <variable name="stringArray" type="string" shape="number_of_items" />
-
+  
+  <variable name="unsignedVariable" type="byte">
+    <attribute name="_Unsigned" value="true" />
+    <attribute name="referenceValue" type="byte" isUnsigned="true" value="200" />
+  </variable>
+  
+  <attribute name="unsignedAttribute" type="short" isUnsigned="true" />
+ 
 </netcdf>

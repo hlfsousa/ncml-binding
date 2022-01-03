@@ -26,6 +26,7 @@ import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayString;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
@@ -46,10 +47,10 @@ public class ScalarStringConverter implements Converter<String> {
         DataType dataType = DataType.STRING;
         Array stringArray;
         if (scalar) {
-            stringArray = Array.factory(dataType, new int[0]);
+            stringArray = new ArrayString.D0();
             stringArray.setObject(Index.scalarIndexImmutable, value);
         } else {
-            stringArray = Array.factory(dataType, new int[] {1});
+            stringArray = new ArrayString.D1(1);
             stringArray.setObject(0, value);
         }
         return stringArray;
@@ -67,6 +68,12 @@ public class ScalarStringConverter implements Converter<String> {
 
     @Override
     public boolean isApplicable(Array array) {
+        if (array.getDataType() == DataType.OBJECT) {
+            Object firstValue = array.getObject(array.getIndex());
+            if (firstValue instanceof String) {
+                return !array.getIndexIterator().hasNext();
+            }
+        }
         return array.getDataType() == DataType.STRING;
     }
 

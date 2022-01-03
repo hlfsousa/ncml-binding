@@ -9,12 +9,11 @@
   <artifactId>ncml-annotation</artifactId>
 
   <dependencies>
-  
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>cdm-core</artifactId>
     </dependency>
-  
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>

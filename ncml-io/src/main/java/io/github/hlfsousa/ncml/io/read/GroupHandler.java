@@ -33,9 +33,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.google.re2j.Matcher;
-import com.google.re2j.Pattern;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLGroup;
@@ -58,6 +57,18 @@ public class GroupHandler extends AbstractCDMNodeHandler<Group> implements Invoc
         super(group, readOnly, runtimeProperties);
         attributeConventions = new AttributeConventions();
         convertUtils = ConvertUtils.getInstance();
+    }
+    
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            if (this.node.isRoot()) {
+                this.node.getNetcdfFile().close();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        super.finalize();
     }
 
     @Override

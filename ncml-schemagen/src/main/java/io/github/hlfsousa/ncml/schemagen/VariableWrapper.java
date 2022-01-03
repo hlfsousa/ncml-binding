@@ -118,7 +118,7 @@ public class VariableWrapper extends AbstractAttributeContainer {
     }
     
     public String getShapeBrackets() {
-        if (variable.getShape() == null) {
+        if (variable.getShape() == null || variable.getShape().isEmpty()) {
             return "";
         }
         if (Boolean.parseBoolean(properties.getProperty(NCMLCodeGenerator.SCALAR_DIMENSION, "false"))) {
