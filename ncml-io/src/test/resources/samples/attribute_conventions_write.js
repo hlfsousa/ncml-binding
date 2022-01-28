@@ -78,4 +78,6 @@ function editModel(netcdf) {
 
 function verifyEditedFile(netcdf, model) {
     verifyCreatedFile(netcdf, model);
+
+    assertEquals(netcdf.unwrap().findDimension("unused_dim").getLength(), 5, "unused_dim dimension in file");
 }

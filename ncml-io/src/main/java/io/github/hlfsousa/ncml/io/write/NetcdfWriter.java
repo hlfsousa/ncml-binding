@@ -137,13 +137,14 @@ public class NetcdfWriter {
         }
         
         Map<String,List<Dimension>> declaredDimensions = new HashMap<>();
+        Set<String> presetDimensions = new HashSet<>();
         Set<String> usedDimensions = new HashSet<>();
-        collectDimensions(model, declaredDimensions, usedDimensions, "/");
+        collectDimensions(model, declaredDimensions, usedDimensions, presetDimensions, "/");
         
         // create root group
         Group rootGroup = writer.addGroup(null, null);
         LOGGER.debug("Creating structure");
-        createStructure(writer, rootGroup, model, declaredDimensions, usedDimensions);
+        createStructure(writer, rootGroup, model, declaredDimensions, usedDimensions, presetDimensions);
         writer.create();
         LOGGER.debug("Writing content");
         writeContent(writer, rootGroup, model);
@@ -153,7 +154,8 @@ public class NetcdfWriter {
     }
     
     @SuppressWarnings("unchecked")
-    private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, String localPath) {
+    private void collectDimensions(Object model, Map<String, List<Dimension>> declaredDimensions,
+            Set<String> usedDimensions, Set<String> presetDimensions, String localPath) {
         for (Class<?> type : getFullHierarchy(model)) {
             List<CDLDimension> dimensionsList = new ArrayList<>();
             Optional.ofNullable(type.getAnnotation(CDLDimensions.class))
@@ -165,6 +167,10 @@ public class NetcdfWriter {
                                 localDimension.variableLength() ?  -1 : Math.max(localDimension.length(), 1), 
                                 !localDimension.variableLength(),
                                 localDimension.unlimited(), localDimension.variableLength()));
+                if (!(localDimension.variableLength() || localDimension.unlimited()) && localDimension.length() > 0) {
+                    // assume that a dimension declared with a valid length is part of the semantics of the file
+                    presetDimensions.add(localPath + localDimension.name());
+                }
             }
         }
         
@@ -176,14 +182,14 @@ public class NetcdfWriter {
                     Object value = accessor.invoke(model);
                     if (value instanceof Map) {
                         for (Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
-                            collectDimensions(entry.getValue(), declaredDimensions, usedDimensions, localPath + entry.getKey() + '/');
+                            collectDimensions(entry.getValue(), declaredDimensions, usedDimensions, presetDimensions, localPath + entry.getKey() + '/');
                         }
                     } else if (value != null) {
                         String name = groupAnnotation.name();
                         if (name.isEmpty()) {
                             name = accessor.getName().substring("get".length());
                         }
-                        collectDimensions(value, declaredDimensions, usedDimensions, localPath + name + '/');
+                        collectDimensions(value, declaredDimensions, usedDimensions, presetDimensions, localPath + name + '/');
                     }
                 } catch (ReflectiveOperationException e) {
                     throw new IllegalStateException(e);
@@ -347,15 +353,15 @@ public class NetcdfWriter {
     }
 
     private void createStructure(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, Set<String> presetDimensions) {
         createAttributes(writer, group, model);
-        createLocalDimensions(writer, group, model, declaredDimensions, usedDimensions);
+        createLocalDimensions(writer, group, model, declaredDimensions, usedDimensions, presetDimensions);
         createVariables(writer, group, model);
-        createGroups(writer, group, model, declaredDimensions, usedDimensions);
+        createGroups(writer, group, model, declaredDimensions, usedDimensions, presetDimensions);
     }
 
     private void createLocalDimensions(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, Set<String> presetDimensions) {
         String groupFullName;
         {
             String fullName = group.getFullName() + "/";
@@ -367,7 +373,10 @@ public class NetcdfWriter {
         List<Dimension> dimensions = declaredDimensions.get(groupFullName);
         if (dimensions != null) {
             dimensions.stream()
-                    .filter(dim -> usedDimensions.contains(groupFullName + dim.getShortName()))
+                    .filter(dim -> {
+                        String key = groupFullName + dim.getShortName();
+                        return usedDimensions.contains(key) || presetDimensions.contains(key);
+                    })
                     .filter(dim -> dim.isShared())
                     .forEach(group::addDimension);
         }
@@ -537,7 +546,7 @@ public class NetcdfWriter {
 
     @SuppressWarnings("unchecked")
     private void createGroups(NetcdfFileWriter writer, Group group, Object model,
-            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions) {
+            Map<String, List<Dimension>> declaredDimensions, Set<String> usedDimensions, Set<String> presetDimensions) {
         forEachAccessor(model, accessor -> {
             try {
                 CDLGroup groupDecl = accessor.getAnnotation(CDLGroup.class);
@@ -556,7 +565,7 @@ public class NetcdfWriter {
                                     + groupDecl.name() + " (runtime " + nameRegex.pattern() + ")");
                         }
                         Group childGroup = writer.addGroup(group, name);
-                        createStructure(writer, childGroup, entry.getValue(), declaredDimensions, usedDimensions);
+                        createStructure(writer, childGroup, entry.getValue(), declaredDimensions, usedDimensions, presetDimensions);
                     }
                 } else {
                     String name = groupDecl.name();
@@ -565,7 +574,7 @@ public class NetcdfWriter {
                     }
                     name = runtimeConfiguration.getRuntimeName(group, name);
                     Group childGroup = writer.addGroup(group, name);
-                    createStructure(writer, childGroup, childModel, declaredDimensions, usedDimensions);
+                    createStructure(writer, childGroup, childModel, declaredDimensions, usedDimensions, presetDimensions);
                 }
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Unable to read metadata to create group from method " + accessor, e);
