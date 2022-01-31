@@ -164,10 +164,11 @@ public class NetcdfWriter {
             for (CDLDimension localDimension : dimensionsList) {
                 declaredDimensions.computeIfAbsent(localPath, key -> new ArrayList<>())
                         .add(new Dimension(localDimension.name(),
-                                localDimension.variableLength() ?  -1 : Math.max(localDimension.length(), 1), 
-                                !localDimension.variableLength(),
-                                localDimension.unlimited(), localDimension.variableLength()));
-                if (!(localDimension.variableLength() || localDimension.unlimited()) && localDimension.length() > 0) {
+                                localDimension.variableLength() ? -1 : Math.max(localDimension.length(),
+                                        localDimension.unlimited() ? 0 : 1),
+                                !localDimension.variableLength(), localDimension.unlimited(),
+                                localDimension.variableLength()));
+                if (!localDimension.variableLength() && (localDimension.length() > 0 || localDimension.unlimited())) {
                     // assume that a dimension declared with a valid length is part of the semantics of the file
                     presetDimensions.add(localPath + localDimension.name());
                 }

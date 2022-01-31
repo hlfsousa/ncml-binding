@@ -28,6 +28,7 @@
   <dimension name="number_of_items" length="10" />
   <dimension name="unused_dim" length="5" />
   <dimension name="invalid_dim" length="0" />
+  <dimension name="unlimited_dim" length="0" isUnlimited="true" />
   
   <variable name="temperature" type="short" shape="number_of_items">
     <attribute name="scale_factor" type="double" value="0.25" />
