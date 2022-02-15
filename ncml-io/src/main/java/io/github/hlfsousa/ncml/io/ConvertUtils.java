@@ -23,10 +23,7 @@ package io.github.hlfsousa.ncml.io;
  */
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
@@ -60,46 +57,34 @@ public class ConvertUtils {
         return INSTANCE;
     }
 
-    private final Map<Class<?>, List<Converter>> registry = new LinkedHashMap<>();
+    private final List<Converter> registry = new ArrayList<>();
 
     public <T> void register(Class<T> type, Converter<T> converter) {
-        registry.computeIfAbsent(type, key -> new ArrayList<>()).add(converter);
+        registry.add(converter);
     }
     
     public Array toArray(Object value, CDLAttribute attributeDecl) {
-        for (Entry<Class<?>, List<Converter>> entry : registry.entrySet()) {
-            if (entry.getKey().isInstance(value)) {
-                for (Converter converter : entry.getValue()) {
-                    if (converter.isApplicable(value)) {
-                        return converter.toArray(value, attributeDecl);
-                    }
-                }
+        for (Converter converter : registry) {
+            if (converter.isApplicable(value, attributeDecl)) {
+                return converter.toArray(value, attributeDecl);
             }
         }
-        throw new IllegalArgumentException("Unable to convert " + value + " to Array, no converter registered");
+        throw new IllegalArgumentException("Unable to convert " + value + " to " + attributeDecl + ", no converter registered");
     }
 
     public Array toArray(Object value, CDLVariable variableDecl) {
-        for (Entry<Class<?>, List<Converter>> entry : registry.entrySet()) {
-            if (entry.getKey().isInstance(value)) {
-                for (Converter converter : entry.getValue()) {
-                    if (converter.isApplicable(value)) {
+                for (Converter converter : registry) {
+                    if (converter.isApplicable(value, variableDecl)) {
                         return converter.toArray(value, variableDecl);
                     }
                 }
-            }
-        }
-        throw new IllegalArgumentException("Unable to convert " + value + " to Array, no converter registered");
+        throw new IllegalArgumentException("Unable to convert " + value + " to " + variableDecl + ", no converter registered");
     }
 
     public <T> T toJavaObject(Array array, Class<T> toType) {
-        for (Entry<Class<?>, List<Converter>> entry : registry.entrySet()) {
-            if (entry.getKey().isAssignableFrom(toType)) {
-                for (Converter converter : entry.getValue()) {
-                    if (converter.isApplicable(array)) {
-                        return (T) converter.toJavaObject(array, toType);
-                    }
-                }
+        for (Converter converter : registry) {
+            if (converter.isApplicable(array, toType)) {
+                return (T) converter.toJavaObject(array, toType);
             }
         }
         throw new IllegalArgumentException(

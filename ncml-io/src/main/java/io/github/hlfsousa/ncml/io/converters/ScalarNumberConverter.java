@@ -1,5 +1,7 @@
 package io.github.hlfsousa.ncml.io.converters;
 
+import java.util.Arrays;
+
 /*-
  * #%L
  * ncml-io
@@ -31,6 +33,8 @@ import ucar.ma2.Index;
 
 public class ScalarNumberConverter implements Converter<Number> {
 
+    private static final int[] SCALAR = new int[] {1};
+
     @Override
     public Array toArray(Number value, CDLVariable variableDecl) {
         return toArray(value, variableDecl.unsigned(), variableDecl.shape().length == 0);
@@ -49,7 +53,7 @@ public class ScalarNumberConverter implements Converter<Number> {
             numericArray = Array.factory(dataType, new int[0]);
             numericArray.setObject(Index.scalarIndexImmutable, value);
         } else {
-            numericArray = Array.factory(dataType, new int[] {1});
+            numericArray = Array.factory(dataType, SCALAR);
             numericArray.setObject(0, value);
         }
         if (unsigned) {
@@ -69,13 +73,19 @@ public class ScalarNumberConverter implements Converter<Number> {
     }
 
     @Override
-    public boolean isApplicable(Number value) {
-        return true;
+    public boolean isApplicable(Object value, CDLAttribute attributeDeclaration) {
+        return value instanceof Number && DataType.getType(attributeDeclaration.dataType()).isNumeric();
     }
 
     @Override
-    public boolean isApplicable(Array array) {
-        return array.getRank() == 0;
+    public boolean isApplicable(Object value, CDLVariable variableDeclaration) {
+        return value instanceof Number && DataType.getType(variableDeclaration.dataType()).isNumeric();
+    }
+
+    @Override
+    public boolean isApplicable(Array array, Class<?> toType) {
+        return array.getDataType().isNumeric() && (array.getRank() == 0 || Arrays.equals(array.getShape(), SCALAR))
+                && Number.class.isAssignableFrom(toType);
     }
 
 }

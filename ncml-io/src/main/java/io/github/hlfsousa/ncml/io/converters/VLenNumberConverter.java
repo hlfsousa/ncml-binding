@@ -71,9 +71,14 @@ public class VLenNumberConverter implements Converter<Object> {
         }
         return componentType;
     }
+    
+    @Override
+    public boolean isApplicable(Object value, CDLAttribute attributeDecl) {
+        return false; // attributes cannot be VLEN
+    }
 
     @Override
-    public boolean isApplicable(Object value) {
+    public boolean isApplicable(Object value, CDLVariable variableDeclaration) {
         int[] shape = ArrayUtils.shapeOf(value);
         if (shape.length <= 1) {
             return false;
@@ -96,8 +101,8 @@ public class VLenNumberConverter implements Converter<Object> {
     }
 
     @Override
-    public boolean isApplicable(Array array) {
-        if (array.getDataType()  == DataType.OBJECT) {
+    public boolean isApplicable(Array array, Class<?> toType) {
+        if (toType.isArray() && array.getDataType() == DataType.OBJECT) {
             Object firstElement = array.getIndexIterator().getObjectNext();
             if (firstElement instanceof Array) {
                 DataType dataType = ((Array) firstElement).getDataType();

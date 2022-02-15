@@ -34,8 +34,10 @@ public interface Converter<T> {
 
     T toJavaObject(Array array, Class<? extends T> toType);
 
-    boolean isApplicable(T value);
+    boolean isApplicable(Object value, CDLVariable variableDecl);
+    
+    boolean isApplicable(Object value, CDLAttribute attributeDecl);
 
-    boolean isApplicable(Array array);
+    boolean isApplicable(Array array, Class<?> toType);
 
 }

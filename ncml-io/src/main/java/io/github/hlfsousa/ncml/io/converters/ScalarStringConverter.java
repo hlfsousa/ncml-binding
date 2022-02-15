@@ -26,10 +26,10 @@ import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayString;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
-import ucar.ma2.IndexIterator;
 
 public class ScalarStringConverter implements Converter<String> {
 
@@ -44,7 +44,6 @@ public class ScalarStringConverter implements Converter<String> {
     }
 
     private Array toArray(String value, boolean scalar) {
-        DataType dataType = DataType.STRING;
         Array stringArray;
         if (scalar) {
             stringArray = new ArrayString.D0();
@@ -58,23 +57,35 @@ public class ScalarStringConverter implements Converter<String> {
 
     @Override
     public String toJavaObject(Array array, Class<? extends String> toType) {
+        if (array instanceof ArrayChar) {
+            return ((ArrayChar) array).getStringIterator().next();
+        }
         return (String) array.getObject(Index.scalarIndexImmutable);
     }
 
     @Override
-    public boolean isApplicable(String value) {
-        return true;
+    public boolean isApplicable(Object value, CDLAttribute attributeDecl) {
+        return DataType.getType(attributeDecl.dataType()) == DataType.STRING && attributeDecl.separator().length() == 0;
     }
 
     @Override
-    public boolean isApplicable(Array array) {
+    public boolean isApplicable(Object value, CDLVariable variableDecl) {
+        return DataType.getType(variableDecl.dataType()) == DataType.STRING && variableDecl.shape().length == 0;
+    }
+
+    @Override
+    public boolean isApplicable(Array array, Class<?> toType) {
+        if (!String.class.isAssignableFrom(toType)) {
+            return false;
+        }
         if (array.getDataType() == DataType.OBJECT) {
             Object firstValue = array.getObject(array.getIndex());
             if (firstValue instanceof String) {
                 return true;
             }
         }
-        return array.getDataType() == DataType.STRING;
+        return array.getDataType() == DataType.STRING
+                || array.getDataType() == DataType.CHAR && array.getShape().length == 1;
     }
 
 }

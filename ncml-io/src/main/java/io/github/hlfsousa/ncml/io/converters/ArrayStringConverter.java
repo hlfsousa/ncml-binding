@@ -30,6 +30,8 @@ import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.ArrayUtils;
 import io.github.hlfsousa.ncml.io.Converter;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayChar.StringIterator;
 import ucar.ma2.ArrayString;
 import ucar.ma2.DataType;
 import ucar.ma2.IndexIterator;
@@ -38,17 +40,21 @@ public class ArrayStringConverter implements Converter<Object> {
 
     @Override
     public Array toArray(Object value, CDLVariable variableDecl) {
-        return toArray(value);
+        return toArray(value, variableDecl.shape().length == 0);
     }
 
     @Override
     public Array toArray(Object value, CDLAttribute attributeDecl) {
-        return toArray(value);
+        return toArray(value, false); // TODO combine values?
     }
 
-    private Array toArray(Object value) {
+    private Array toArray(Object value, boolean scalar) {
         try {
             int[] lengths = ArrayUtils.shapeOf(value);
+            if (lengths.length == 0 && !scalar) {
+                lengths = new int[] { 1 };
+                value = new String[] { String.valueOf(value) };
+            }
             Class<?> arrayType = Class.forName(ArrayString.class.getName() + "$D" + lengths.length);
             Class<?>[] parameterTypes = new Class<?>[lengths.length];
             Arrays.fill(parameterTypes, int.class);
@@ -71,6 +77,30 @@ public class ArrayStringConverter implements Converter<Object> {
 
     @Override
     public Object toJavaObject(Array array, Class<? extends Object> toType) {
+        if (array.getDataType() == DataType.CHAR) {
+            return fromCharArray((ArrayChar) array, toType);
+        }
+        return fromStringArray(array, toType);
+    }
+
+    private Object fromCharArray(ArrayChar array, Class<? extends Object> toType) {
+        int[] rawShape = array.getShape();
+        int[] stringShape = new int[rawShape.length - 1];
+        System.arraycopy(rawShape, 0, stringShape, 0, stringShape.length);
+        if (stringShape.length == 0) {
+            // pseudo-scalar
+            return new String[] { array.getString() };
+        }
+        Object javaArray = ArrayUtils.createArray(stringShape, String.class);
+        int[] address = new int[stringShape.length];
+        StringIterator iterator = array.getStringIterator();
+        while (iterator.hasNext()) {
+            ArrayUtils.setElement(javaArray, address, iterator.next());
+        }
+        return javaArray;
+    }
+
+    private Object fromStringArray(Array array, Class<? extends Object> toType) {
         // shape=1 to scalar
         if (toType.isArray()) {
             if (array.getDataType() == DataType.OBJECT) {
@@ -96,8 +126,25 @@ public class ArrayStringConverter implements Converter<Object> {
             return array.getObject(0);
         }
     }
-
+    
     @Override
+    public boolean isApplicable(Object value, CDLAttribute attributeDecl) {
+        if (attributeDecl.separator().length() == 0) {
+            return false;
+        }
+        return value.getClass().isArray() && DataType.getType(attributeDecl.dataType()) == DataType.STRING
+                && ArrayUtils.getComponentType(value.getClass()).isAssignableFrom(String.class);
+    }
+    
+    @Override
+    public boolean isApplicable(Object value, CDLVariable variableDecl) {
+        if (variableDecl.shape().length == 0) {
+            return false;
+        }
+        return DataType.getType(variableDecl.dataType()) == DataType.STRING
+                && ArrayUtils.getComponentType(value.getClass()).isAssignableFrom(String.class);
+    }
+
     public boolean isApplicable(Object value) {
         if (value instanceof Array) {
             return isApplicable((Array) value);
@@ -113,14 +160,18 @@ public class ArrayStringConverter implements Converter<Object> {
     }
 
     @Override
-    public boolean isApplicable(Array array) {
-        if (array.getDataType() == DataType.OBJECT) {
-            Object firstValue = array.getObject(array.getIndex());
-            if (firstValue instanceof String) {
-                return true;
+    public boolean isApplicable(Array array, Class<?> toType) {
+        if (toType.isArray() && ArrayUtils.getComponentType(toType).isAssignableFrom(String.class)) {
+            if (array.getDataType() == DataType.OBJECT) {
+                Object firstValue = array.getObject(array.getIndex());
+                if (firstValue instanceof String) {
+                    return true;
+                }
             }
+            return array.getRank() > 0 && array.getDataType() == DataType.STRING
+                    || array.getRank() > 1 && array.getDataType() == DataType.CHAR;
         }
-        return array.getRank() > 0 && array.getDataType() == DataType.STRING;
+        return false;
     }
 
 }

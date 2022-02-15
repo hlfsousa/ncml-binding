@@ -127,7 +127,7 @@ public class ArrayNumberConverter implements Converter<Object> {
         } else {
             DataType dataType = null;
             if (!attributeDecl.dataType().isEmpty()) {
-                dataType = DataType.valueOf(attributeDecl.dataType());
+                dataType = DataType.getType(attributeDecl.dataType());
             } else {
                 Class<?> componentType = ArrayUtils.getComponentType(value.getClass());
                 dataType = DataType.getType(componentType);
@@ -183,26 +183,38 @@ public class ArrayNumberConverter implements Converter<Object> {
             return scalarValue;
         }
     }
-
+    
     @Override
-    public boolean isApplicable(Object value) {
+    public boolean isApplicable(Object value, CDLAttribute attributeDecl) {
+        return isApplicable(value, DataType.getType(attributeDecl.dataType()));
+    }
+    
+    @Override
+    public boolean isApplicable(Object value, CDLVariable variableDecl) {
+        return isApplicable(value, DataType.getType(variableDecl.dataType()));
+    }
+
+    public boolean isApplicable(Object value, DataType dataType) {
         if (value instanceof Array) {
-            return isApplicable((Array) value);
+            Array asArray = (Array) value;
+            DataType arrayType = asArray.getDataType();
+            return asArray.getRank() > 0 && arrayType.isNumeric() || arrayType == DataType.CHAR;
         }
         if (value == null || !value.getClass().isArray()) {
             return false;
         }
-        Class<?> componentType = value.getClass();
-        while (componentType.isArray()) {
-            componentType = componentType.getComponentType();
-        }
-        return componentType.isPrimitive();
+        Class<?> componentType = ArrayUtils.getComponentType(value.getClass());
+        return componentType.isPrimitive() && dataType.isNumeric() || dataType == DataType.CHAR;
     }
 
     @Override
-    public boolean isApplicable(Array array) {
+    public boolean isApplicable(Array array, Class<?> toType) {
+        if (!toType.isArray()) {
+            return false;
+        }
         // array rank check removed to deal with the shortcomings of client code
-        return array.getDataType().isNumeric() || array.getDataType() == DataType.CHAR;
+        return array.getDataType().isNumeric() 
+                || (ArrayUtils.getComponentType(toType) == char.class && array.getDataType() == DataType.CHAR);
     }
 
 }

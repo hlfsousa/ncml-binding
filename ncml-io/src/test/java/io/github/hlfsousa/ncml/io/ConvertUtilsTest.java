@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.ArrayObject;
 import ucar.ma2.DataType;
@@ -50,6 +51,12 @@ public class ConvertUtilsTest {
         
         @CDLVariable(dataType = "string")
         String getScalarString();
+        
+        @CDLVariable(dataType = "string", shape = { "n" })
+        String getArrayString();
+        
+        @CDLVariable(dataType = "char", shape = { "x", "y" })
+        char[][] getCharArray();
 
     }
 
@@ -68,12 +75,35 @@ public class ConvertUtilsTest {
     }
     
     @Test
+    public void testCharArray() throws Exception {
+        char[][] javaArray = { "abcdefghij".toCharArray(), "jihgfedcba".toCharArray() };
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getCharArray").getAnnotation(CDLVariable.class);
+
+        Array ncArray = convertUtils.toArray(javaArray, variableDecl);
+        assertThat(ncArray.getDataType(), is(DataType.CHAR));
+        assertThat(ncArray.getShape(), is(new int[] { javaArray.length, javaArray[0].length }));
+
+        char[][] revertedValue = convertUtils.toJavaObject(ncArray, char[][].class);
+        assertThat(revertedValue, is(javaArray));
+    }
+    
+    @Test
+    public void testScalarStringFromChar() throws Exception {
+        String value = "testScalarString";
+        // value read from NetCDF, does not match declaration strictly
+        Array scalarArray = ArrayChar.makeFromString(value, value.length());
+        String revertedValue = convertUtils.toJavaObject(scalarArray, String.class);
+        assertThat(revertedValue, is(value));
+    }
+    
+    @Test
     public void testScalarString() throws Exception {
         String value = "testScalarString";
         CDLVariable variableDecl = TestNetcdf.class.getMethod("getScalarString").getAnnotation(CDLVariable.class);
 
         Array scalarArray = convertUtils.toArray(value, variableDecl);
         assertThat(scalarArray.getObject(Index.scalarIndexImmutable), is(value));
+        assertThat(scalarArray.getRank(), is(0));
 
         String revertedValue = convertUtils.toJavaObject(scalarArray, String.class);
         assertThat(revertedValue, is(value));
@@ -132,7 +162,7 @@ public class ConvertUtilsTest {
     public void testArrayString() throws Exception {
         String[] javaArray = new String[100];
         Arrays.fill(javaArray, "testArrayString");
-        CDLVariable variableDecl = TestNetcdf.class.getMethod("getScalarString").getAnnotation(CDLVariable.class);
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getArrayString").getAnnotation(CDLVariable.class);
 
         Array ncArray = convertUtils.toArray(javaArray, variableDecl);
         assertThat(ncArray.getDataType(), is(DataType.STRING));
