@@ -23,6 +23,8 @@ package io.github.hlfsousa.ncml.io;
  */
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -179,6 +181,9 @@ public class AttributeConventions {
                 }
                 missingValue = missingValueAttribute.getNumericValue(); // number or numeric string (implicit type)
                 assert missingValue != null : convention.getMissingValueAttributeName() + " must be numeric";
+                if (value.isUnsigned() && missingValue.doubleValue() < 0) {
+                    missingValue = toUnsigned(missingValue);
+                }
             }
             Attribute scaleFactorAttribute = variable.findAttribute(convention.getScaleFactorAttributeName());
             if (value != null && scaleFactorAttribute != null) {
@@ -199,6 +204,22 @@ public class AttributeConventions {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read variable " + variable.getShortName(), e);
         }
+    }
+
+    private Number toUnsigned(Number value) {
+        Number unsigned;
+        if (value instanceof Byte) {
+            unsigned = (short) Byte.toUnsignedInt(value.byteValue());
+        } else if (value instanceof Short) {
+            unsigned = Short.toUnsignedInt(value.shortValue());
+        } else if (value instanceof Integer) {
+            unsigned = Integer.toUnsignedLong(value.intValue());
+        } else if (value instanceof Long) {
+            unsigned = new BigInteger(Long.toUnsignedString(value.longValue()));
+        } else {
+            throw new IllegalArgumentException("Unsupported type " + value.getClass());
+        }
+        return unsigned;
     }
 
     /**
