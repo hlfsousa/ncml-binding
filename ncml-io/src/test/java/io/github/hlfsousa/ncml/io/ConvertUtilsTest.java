@@ -30,7 +30,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
-import io.github.hlfsousa.ncml.io.ConvertUtils;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayInt;
@@ -57,6 +56,9 @@ public class ConvertUtilsTest {
         
         @CDLVariable(dataType = "char", shape = { "x", "y" })
         char[][] getCharArray();
+        
+        @CDLVariable(dataType = "char")
+        Character getScalarChar();
 
     }
 
@@ -72,6 +74,21 @@ public class ConvertUtilsTest {
 
         Long revertedValue = convertUtils.toJavaObject(scalarArray, Long.class);
         assertThat(revertedValue, is(value));
+    }
+    
+    @Test
+    public void testScalarChar() throws Exception {
+        char javaValue = 'A';
+        CDLVariable variableDecl = TestNetcdf.class.getMethod("getScalarChar").getAnnotation(CDLVariable.class);
+        
+        Array ncArray = convertUtils.toArray(javaValue, variableDecl);
+        assertThat(ncArray.getDataType(), is(DataType.CHAR));
+        assertThat(ncArray.getShape(), is(new int[0]));
+        
+        Character revertedValue = convertUtils.toJavaObject(ncArray, Character.class);
+        assertThat(revertedValue, is(javaValue));
+        revertedValue = convertUtils.toJavaObject(ncArray, char.class);
+        assertThat(revertedValue, is(javaValue));
     }
     
     @Test

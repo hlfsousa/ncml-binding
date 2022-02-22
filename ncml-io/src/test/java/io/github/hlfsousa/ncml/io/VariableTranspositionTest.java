@@ -232,7 +232,7 @@ public class VariableTranspositionTest {
 
     /**
      * This is a custom type of object for testing. This would be something used in a custom template. Besides the
-     * template, a new {@link Converter} would have to be registered ({@link ConvertUtils#register(Class, Converter)}). We
+     * template, a new {@link Converter} would have to be registered ({@link ConvertUtils#register(Converter)}). We
      * are only interested in transposition here.
      *
      * @param <T> type of array that this holds

@@ -29,6 +29,7 @@ import io.github.hlfsousa.ncml.annotation.CDLAttribute;
 import io.github.hlfsousa.ncml.annotation.CDLVariable;
 import io.github.hlfsousa.ncml.io.converters.ArrayNumberConverter;
 import io.github.hlfsousa.ncml.io.converters.ArrayStringConverter;
+import io.github.hlfsousa.ncml.io.converters.ScalarCharConverter;
 import io.github.hlfsousa.ncml.io.converters.ScalarNumberConverter;
 import io.github.hlfsousa.ncml.io.converters.ScalarStringConverter;
 import io.github.hlfsousa.ncml.io.converters.VLenNumberConverter;
@@ -46,11 +47,12 @@ public class ConvertUtils {
     
     static {
         // default converters
-        INSTANCE.register(Object.class, new VLenNumberConverter());
-        INSTANCE.register(Number.class, new ScalarNumberConverter());
-        INSTANCE.register(Object.class, new ArrayNumberConverter());
-        INSTANCE.register(String.class, new ScalarStringConverter());
-        INSTANCE.register(Object.class, new ArrayStringConverter());
+        INSTANCE.register(new VLenNumberConverter());
+        INSTANCE.register(new ScalarNumberConverter());
+        INSTANCE.register(new ArrayNumberConverter());
+        INSTANCE.register(new ScalarStringConverter());
+        INSTANCE.register(new ArrayStringConverter());
+        INSTANCE.register(new ScalarCharConverter());
     }
 
     public static ConvertUtils getInstance() {
@@ -59,7 +61,7 @@ public class ConvertUtils {
 
     private final List<Converter> registry = new ArrayList<>();
 
-    public <T> void register(Class<T> type, Converter<T> converter) {
+    public <T> void register(Converter<T> converter) {
         registry.add(converter);
     }
     
@@ -73,12 +75,13 @@ public class ConvertUtils {
     }
 
     public Array toArray(Object value, CDLVariable variableDecl) {
-                for (Converter converter : registry) {
-                    if (converter.isApplicable(value, variableDecl)) {
-                        return converter.toArray(value, variableDecl);
-                    }
-                }
-        throw new IllegalArgumentException("Unable to convert " + value + " to " + variableDecl + ", no converter registered");
+        for (Converter converter : registry) {
+            if (converter.isApplicable(value, variableDecl)) {
+                return converter.toArray(value, variableDecl);
+            }
+        }
+        throw new IllegalArgumentException("Unable to convert " + value + " to " + variableDecl
+                + ", no converter registered");
     }
 
     public <T> T toJavaObject(Array array, Class<T> toType) {
