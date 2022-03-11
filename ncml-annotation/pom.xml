@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.hlfsousa</groupId>
     <artifactId>ncml-binding</artifactId>
-    <version>0.5.6-downgraded</version>
+    <version>0.5.7-downgraded-SNAPSHOT</version>
   </parent>
   <artifactId>ncml-annotation</artifactId>
 
