@@ -254,17 +254,21 @@ public class NetcdfWriter {
                             throw new IllegalStateException("Immutable dimension at " + localPath);
                         }
                         Dimension declared = findDimension(name, declaredDimensions, localPath);
-                        boolean newDimension = usedDimensions.add(getFullName(declared, localPath, declaredDimensions));
-                        if (declared.isVariableLength()) {
-                            continue; // variable length must be -1
-                        }
-                        Integer previousLength = updateDimension(declaredDimensions, localPath, new Dimension(name, length,
-                                declared.isShared() && !declared.isVariableLength(), declared.isUnlimited(),
-                                declared.isVariableLength()));
-                        if (!newDimension && previousLength != null && !previousLength.equals(length)) {
-                            throw new IllegalStateException(
-                                    "Variable " + localPath + variableAnnotation.name() + " contains illegal dimension "
-                                            + name + "=" + length + ", previously declared as length = " + previousLength);
+                        if (declared != null) {
+                            // a local dimension may not be declared and is not shared; length check not needed
+                            boolean newDimension = usedDimensions.add(
+                                    getFullName(declared, localPath, declaredDimensions));
+                            if (declared.isVariableLength()) {
+                                continue; // variable length must be -1
+                            }
+                            Integer previousLength = updateDimension(declaredDimensions, localPath,
+                                    new Dimension(name, length, declared.isShared() && !declared.isVariableLength(),
+                                            declared.isUnlimited(), declared.isVariableLength()));
+                            if (!newDimension && previousLength != null && !previousLength.equals(length)) {
+                                throw new IllegalStateException("Variable " + localPath + variableAnnotation.name()
+                                        + " contains illegal dimension " + name + "=" + length
+                                        + ", previously declared as length = " + previousLength);
+                            }
                         }
                         if (varValue.getClass().isArray()) {
                             varValue = java.lang.reflect.Array.get(varValue, 0); // to get next dimension
