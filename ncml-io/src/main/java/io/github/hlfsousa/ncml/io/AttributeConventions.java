@@ -23,7 +23,6 @@ package io.github.hlfsousa.ncml.io;
  */
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import ucar.ma2.Array;
@@ -100,7 +99,8 @@ public class AttributeConventions {
             public void substituteMissingValues(Variable variable, Array value, Object missingValue) {
                 IndexIterator iterator = value.getIndexIterator();
                 while (iterator.hasNext()) {
-                    if (iterator.getObjectNext() == null) {
+                    if (iterator.getObjectNext() == null
+                            || (value.getDataType().isNumeric() && Double.isNaN(iterator.getDoubleCurrent()))) {
                         iterator.setObjectCurrent(missingValue);
                     }
                 }
